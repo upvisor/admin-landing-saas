@@ -106,7 +106,7 @@ export const Config: React.FC<Props> = ({ setTempEmail, automatization, tempEmai
                   design?.pages.map(page => <option key={page._id} value={`${process.env.NEXT_PUBLIC_WEB_URL}/${page.slug}`}>{page.page}</option>)
                 }
                 {
-                  funnels?.map(funnel => funnel.steps.filter(step => step.slug && step.slug !== '').map(step => <option key={step._id} value={`${process.env.NEXT_PUBLIC_WEB_URL}/${step.slug}`}>Embudo: {funnel.funnel} - {step.step}</option>))
+                  funnels?.map(funnel => funnel.steps.filter(step => step.slug && step.slug !== '').map(step => <option key={step._id} value={`http://${funnel.subdomain}.${process.env.NEXT_PUBLIC_WEB}/${step.slug}`}>Embudo: {funnel.funnel} - {step.step}</option>))
                 }
                 {
                   services?.map(service => service.steps.filter(step => step.slug && step.slug !== '').map(step => <option key={step._id} value={`${process.env.NEXT_PUBLIC_WEB_URL}/${step.slug}`}>Servicio: {service.name} - {step.step}</option>))
@@ -120,34 +120,11 @@ export const Config: React.FC<Props> = ({ setTempEmail, automatization, tempEmai
           </div>
           <div className='flex gap-4 w-full flex-col lg:flex-row'>
             <div className='flex flex-col gap-2'>
-              <p className='text-sm'>Agregar dato a la url:</p>
-              <Select change={(e: any) => {
-                e.preventDefault()
-                setTempEmail({...tempEmail, url: tempEmail.url + e.target.value})
-              }} value='' config='w-fit'>
-                <option value=''>Agregar dato cliente</option>
+              <p className='text-sm'>Seleccionar servicio si la url es un Checkout: (Selecciona primero la url de la página del Checkout)</p>
+              <Select change={(e: any) => setTempEmail({ ...tempEmail, url: e.target.value })}>
+                <option value=''>Selecciona un servicio</option>
                 {
-                  clientData.length
-                    ? clientData.map((data: any) => (
-                      <option key={data.data} value={'{' + data.data + '}'}>{data.name}</option>
-                    ))
-                    : ''
-                }
-              </Select>
-            </div>
-            <div className='flex flex-col gap-2'>
-              <p className='text-sm'>Agregar id servicio a la url:</p>
-              <Select change={(e: any) => {
-                e.preventDefault()
-                setTempEmail({...tempEmail, url: tempEmail.url + e.target.value})
-              }} value='' config='w-52 lg:w-fit'>
-                <option value=''>Agregar id</option>
-                {
-                  services?.length
-                    ? services.map(service => (
-                      <option key={service._id} value={service._id}>{service.name}</option>
-                    ))
-                    : ''
+                  services?.map(service => <option key={service._id} value={`${tempEmail.url}?email={email}&service=${service._id}`}>{service.name}</option>)
                 }
               </Select>
             </div>
@@ -165,7 +142,7 @@ export const Config: React.FC<Props> = ({ setTempEmail, automatization, tempEmai
               url: '',
               index: 0
             })
-          }} color='main'>Guardar correo</Button2>
+          }}>Guardar correo</Button2>
         </div>
       </div>
       <div className='flex flex-col h-fit gap-4 p-4 border border-black/5 bg-white w-full max-w-[600px] dark:bg-neutral-800 dark:border-neutral-700'>

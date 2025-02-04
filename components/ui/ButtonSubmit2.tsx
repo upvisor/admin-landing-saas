@@ -11,6 +11,6 @@ interface Props {
 
 export const ButtonSubmit2: React.FC<Props> = ({ submitLoading, textButton, action, color, config }) => {
   return (
-    <button onClick={action} className={`${config} ${submitLoading ? `cursor-not-allowed bg-${color}/80 hover:bg-${color}/80` : `hover:bg-${color}/80 bg-${color}`} shadow-md shadow-${color}/30 transition-colors duration-300 text-white text-sm rounded-xl h-9`}>{submitLoading ? <Spinner2 /> : textButton}</button>
+    <button onClick={action} className={`${config} ${submitLoading ? `cursor-not-allowed bg-${color}/80 hover:bg-${color}/80` : `hover:bg-${color}/80 bg-${color}`} transition-colors duration-300 text-white text-sm rounded-xl h-9`}>{submitLoading ? <Spinner2 /> : textButton}</button>
   )
 }

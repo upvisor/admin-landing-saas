@@ -1,8 +1,9 @@
 "use client"
 import { ICategoryPage, IFunnel, IPage, IService } from '@/interfaces'
 import React, { useState } from 'react'
-import { Button, Input, Select, Spinner, Textarea } from '../ui'
+import { Input, Select, Spinner } from '../ui'
 import axios from 'axios'
+import { ButtonDesign } from './ButtonDesign'
 
 interface Props {
     edit: any
@@ -18,9 +19,10 @@ interface Props {
     responsive: string
     services?: IService[]
     setServices?: any
+    style?: any
 }
 
-export const Contact: React.FC<Props> = ({ edit, design, pages, setPages, index, ind, inde, indx, funnels, setFunnels, responsive, services, setServices }) => {
+export const Contact: React.FC<Props> = ({ edit, design, pages, setPages, index, ind, inde, indx, funnels, setFunnels, responsive, services, setServices, style }) => {
 
   const [gradient, setGradient] = useState('')
   const [firstColor, setFirstColor] = useState('')
@@ -60,7 +62,7 @@ export const Contact: React.FC<Props> = ({ edit, design, pages, setPages, index,
                   />
                 </div>
                 <div className={`${responsive === '400px' ? 'w-full' : 'w-1/2 pl-4'} w-full m-auto sm:w-[560px] xl:w-1/2`}>
-                  <div className='rounded-xl border border-black/5 flex flex-col bg-white gap-4 p-6 sm:p-8 dark:shadow-none' style={{ boxShadow: '0px 3px 10px 3px #11111108' }}>
+                  <div className={`flex flex-col gap-4 p-6 sm:p-8`} style={{ boxShadow: style.design === 'Sombreado' ? `0px 3px 20px 3px ${style.borderColor}10` : '', borderRadius: style.form === 'Redondeadas' ? `${style.borderBlock}px` : '', color: design.info.textColor, border: style.design === 'Borde' ? `1px solid ${style.borderColor}` : '' }}>
                     {
                       index === 0
                         ? (
@@ -78,24 +80,24 @@ export const Contact: React.FC<Props> = ({ edit, design, pages, setPages, index,
                     }
                     <div className="flex flex-col gap-2">
                       <p>Nombre</p>
-                      <Input change={() => {}} placeholder='Nombre' />
+                      <input placeholder='Nombre' style={{ borderRadius: style.form === 'Redondeadas' ? `${style.borderButton}px` : '' }} className='p-2 text-sm border' />
                     </div>
                     <div className="flex flex-col gap-2">
                       <p>Email</p>
-                      <Input change={() => {}} placeholder='Email' />
+                      <input placeholder='Email' style={{ borderRadius: style.form === 'Redondeadas' ? `${style.borderButton}px` : '' }} className='p-2 text-sm border' />
                     </div>
                     <div className="flex flex-col gap-2">
                       <p>Telefono</p>
                       <div className='flex gap-2'>
                         <p className='my-auto'>+56</p>
-                        <Input change={() => {}} placeholder='Teléfono' />
+                        <input placeholder='Teléfono' style={{ borderRadius: style.form === 'Redondeadas' ? `${style.borderButton}px` : '' }} className='p-2 text-sm border' />
                       </div>
                     </div>
                     <div className="flex flex-col gap-2">
                       <p>Mensaje</p>
-                      <Textarea placeholder='Mensaje' change={undefined} value={''} config='h-24' />
+                      <textarea placeholder='Mensaje' style={{ borderRadius: style.form === 'Redondeadas' ? `${style.borderButton}px` : '' }} className='p-2 text-sm border h-24' />
                     </div>
-                    <Button>Enviar</Button>
+                    <ButtonDesign style={style} text='Enviar' />
                   </div>
                 </div>
               </>
@@ -353,7 +355,7 @@ export const Contact: React.FC<Props> = ({ edit, design, pages, setPages, index,
                   }} className={`${responsive === '400px' ? 'text-base' : 'text-lg'} p-1.5 h-20 rounded border bg-transparent`} style={{ color: design.info.textColor }} />
                 </div>
                 <div className="w-1/2 pl-4">
-                  <div className="rounded-xl border shadow-lg p-8 flex flex-col bg-white gap-4">
+                <div className={`${style.design === 'Borde' ? 'border' : ''} p-8 flex flex-col bg-white gap-4`} style={{ borderRadius: style.form === 'Redondeadas' ? `${style.borderBlock}px` : '', boxShadow: style.design === 'Sombreado' ? '0px 3px 20px 3px #11111110' : '' }}>
                   <input type='text' placeholder='Titulo del formulario' value={design.info.titleForm} onChange={(e: any) => {
                     if (inde !== undefined) {
                       const oldFunnels = [...funnels!]
@@ -371,21 +373,24 @@ export const Contact: React.FC<Props> = ({ edit, design, pages, setPages, index,
                   }} className='p-1.5 rounded border text-[20px] font-medium lg:text-[24px]' />
                     <div className="flex flex-col gap-2">
                       <p>Nombre</p>
-                      <input type="text" placeholder="Nombre" className="p-1.5 w-full rounded-md border transition-colors duration-100 focus:outline-none focus:border-main focus:ring-1 focus:ring-main dark:bg-neutral-800 dark:border-neutral-700" />
+                      <input placeholder='Nombre' style={{ borderRadius: style.form === 'Redondeadas' ? `${style.borderButton}px` : '' }} className='p-2 text-sm border' />
                     </div>
                     <div className="flex flex-col gap-2">
                       <p>Email</p>
-                      <input type="text" placeholder="Email" className="p-1.5 w-full rounded-md border transition-colors duration-100 focus:outline-none focus:border-main focus:ring-1 focus:ring-main dark:bg-neutral-800 dark:border-neutral-700" />
+                      <input placeholder='Email' style={{ borderRadius: style.form === 'Redondeadas' ? `${style.borderButton}px` : '' }} className='p-2 text-sm border' />
                     </div>
                     <div className="flex flex-col gap-2">
                       <p>Telefono</p>
-                      <input type="text" placeholder="Telefono" className="p-1.5 w-full rounded-md border transition-colors duration-100 focus:outline-none focus:border-main focus:ring-1 focus:ring-main dark:bg-neutral-800 dark:border-neutral-700" />
+                      <div className='flex gap-2'>
+                        <p className='my-auto'>+56</p>
+                        <input placeholder='Teléfono' style={{ borderRadius: style.form === 'Redondeadas' ? `${style.borderButton}px` : '' }} className='p-2 text-sm border' />
+                      </div>
                     </div>
                     <div className="flex flex-col gap-2">
                       <p>Mensaje</p>
-                      <textarea placeholder="Mensaje" className="p-1.5 w-full rounded-md border transition-colors duration-100 focus:outline-none focus:border-main focus:ring-1 focus:ring-main dark:bg-neutral-800 dark:border-neutral-700 h-36" />
+                      <textarea placeholder='Mensaje' style={{ borderRadius: style.form === 'Redondeadas' ? `${style.borderButton}px` : '' }} className='p-2 text-sm border h-24' />
                     </div>
-                    <Button>Enviar</Button>
+                    <ButtonDesign style={style} text='Enviar' />
                   </div>
                 </div>
               </>

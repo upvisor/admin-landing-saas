@@ -1,6 +1,6 @@
 "use client"
 import { Button, Button2, Button2Red, ButtonSubmit, ButtonSubmit2, Card, Input, Spinner, Textarea } from '@/components/ui'
-import { IClient, IFunnel, IMeeting, IService } from '@/interfaces'
+import { ICall, IClient, IForm, IFunnel, IMeeting, IService } from '@/interfaces'
 import { NumberFormat } from '@/utils'
 import axios from 'axios'
 import Head from 'next/head'
@@ -31,6 +31,15 @@ export default function Page ({ params }: { params: { slug: string } }) {
   const [price, setPrice] = useState('')
   const [loadingPrice, setLoadingPrice] = useState(false)
   const [service, setService] = useState<IService>()
+  const [leads, setLeads] = useState([])
+  const [forms, setForms] = useState<IForm[]>([])
+  const [popupForm, setPopupForm] = useState({ view: 'hidden', opacity: 'opacity-0', mouse: false })
+  const [selectForm, setSelectForm] = useState<IForm>()
+  const [selectLead, setSelectLead] = useState<any>()
+  const [contacts, setContacts] = useState([])
+  const [selectContact, setSelectContact] = useState<any>()
+  const [popupContact, setPopupContact] = useState({ view: 'hidden', opacity: 'opacity-0', mouse: false })
+  const [calls, setCalls] = useState<ICall[]>([])
 
   const router = useRouter()
 
@@ -97,6 +106,42 @@ export default function Page ({ params }: { params: { slug: string } }) {
       router.push('/clientes')
     }
   }
+
+  const getLeads = async () => {
+    const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/leads`)
+    setLeads(res.data)
+  }
+
+  useEffect(() => {
+    getLeads()
+  }, [])
+
+  const getForms = async () => {
+    const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/forms`)
+    setForms(res.data)
+  }
+
+  useEffect(() => {
+    getForms()
+  }, [])
+
+  const getContacts = async () => {
+    const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/contact`)
+    setContacts(res.data)
+  }
+
+  useEffect(() => {
+    getContacts()
+  }, [])
+
+  const getCalls = async () => {
+    const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/calls`)
+    setCalls(res.data)
+  }
+
+  useEffect(() => {
+    getCalls()
+  }, [])
 
   return (
     <>
@@ -203,6 +248,62 @@ export default function Page ({ params }: { params: { slug: string } }) {
           )
           : ''
       }
+      {
+        clientData?.email
+          ? (
+            <div onClick={() => {
+              if (!popupForm.mouse) {
+                setPopupForm({ ...popupForm, view: 'flex', opacity: 'opacity-0' })
+                setTimeout(() => {
+                  setPopupForm({ ...popupForm, view: 'hidden', opacity: 'opacity-0' })
+                }, 200)
+              }
+            }} className={`${popupForm.view} ${popupForm.opacity} transition-opacity duration-200 w-full h-full top-0 left-0 z-50 right-0 fixed flex bg-black/20 dark:bg-black/40`}>
+              <div onMouseEnter={() => setPopupForm({ ...popupForm, mouse: true })} onMouseLeave={() => setPopupForm({ ...popupForm, mouse: false })} className={`${popupForm.opacity === 'opacity-1' ? 'scale-100' : 'scale-90'} transition-transform duration-200 w-[700px] p-8 flex flex-col gap-4 rounded-xl border bg-white m-auto dark:bg-neutral-800 dark:border-neutral-700`} style={{ boxShadow: '0px 3px 10px 3px #11111108' }}>
+                <h3 className='text-lg font-medium'>Formulario {selectForm?.nameForm}</h3>
+                {
+                  selectForm?.labels.map(label => (
+                    <div key={label.name} className="flex flex-col gap-2">
+                      <p>{label.text !== '' ? label.text : label.name}</p>
+                      <p className='px-3 py-2 border shadow rounded-xl text-sm'>{selectLead[label.data!] ? selectLead[label.data!] : selectLead.data.find((data: any) => data.name === label.data)?.value}</p>
+                    </div>
+                  ))
+                }
+              </div>
+            </div>
+          )
+          : ''
+      }
+      {
+        clientData?.email
+          ? (
+            <div onClick={() => {
+              if (!popupContact.mouse) {
+                setPopupContact({ ...popupContact, view: 'flex', opacity: 'opacity-0' })
+                setTimeout(() => {
+                  setPopupContact({ ...popupContact, view: 'hidden', opacity: 'opacity-0' })
+                }, 200)
+              }
+            }} className={`${popupContact.view} ${popupContact.opacity} transition-opacity duration-200 w-full h-full top-0 left-0 z-50 right-0 fixed flex bg-black/20 dark:bg-black/40`}>
+              <div onMouseEnter={() => setPopupContact({ ...popupContact, mouse: true })} onMouseLeave={() => setPopupContact({ ...popupContact, mouse: false })} className={`${popupContact.opacity === 'opacity-1' ? 'scale-100' : 'scale-90'} transition-transform duration-200 w-[700px] p-8 flex flex-col gap-4 rounded-xl border bg-white m-auto dark:bg-neutral-800 dark:border-neutral-700`} style={{ boxShadow: '0px 3px 10px 3px #11111108' }}>
+                <h3 className='text-lg font-medium'>Formulario de contacto</h3>
+                <div className="flex flex-col gap-2">
+                  <p>Nombre</p>
+                  <p className='px-3 py-2 border shadow rounded-xl text-sm'>{selectContact?.name}</p>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <p>Email</p>
+                  <p className='px-3 py-2 border shadow rounded-xl text-sm'>{selectContact?.email}</p>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <p>Mensaje</p>
+                  <p className='px-3 py-2 border shadow rounded-xl text-sm'>{selectContact?.message}</p>
+                </div>
+              </div>
+            </div>
+          )
+          : ''
+      }
       <div className='bg-bg p-6 overflow-y-auto dark:bg-neutral-900 h-full'>
         <div className='flex flex-col gap-6 w-full max-w-[1280px] m-auto'>
           {
@@ -231,12 +332,16 @@ export default function Page ({ params }: { params: { slug: string } }) {
                               if (clientData.services?.find(serv => serv.service === service._id)?.step && clientData.services?.find(serv => serv.service === service._id)?.step !== '') {
                                 return (
                                   <div key={service._id} className='flex gap-4 justify-around overflow-y-auto'>
-                                    <p className='my-auto text-center min-w-32'>{clientData.services?.find(serv => serv.service === service._id)?.payStatus}</p>
+                                    {
+                                      clientData.services?.find(serv => serv.service === service._id)?.payStatus
+                                        ? <p className='my-auto text-center min-w-32'>{clientData.services?.find(serv => serv.service === service._id)?.payStatus}</p>
+                                        : ''
+                                    }
                                     <p className='my-auto text-center min-w-32'>{service.name}</p>
                                     {
                                       clientData.services?.find(serv => serv.service === service._id)?.price
                                         ? <p className='text-center my-auto min-w-32'>${NumberFormat(Number(clientData.services?.find(serv => serv.service === service._id)?.price))}</p>
-                                        : <Button2 color='main' action={(e: any) => {
+                                        : <Button2 action={(e: any) => {
                                           e.preventDefault()
                                           setService(service)
                                           setPopupPrice({ ...popupPrice, view: 'flex', opacity: 'opacity-0' })
@@ -288,19 +393,62 @@ export default function Page ({ params }: { params: { slug: string } }) {
                             : <p>Este cliente no esta en un embudo</p>
                         }
                       </Card>
-                      <Card title='Llamadas'>
+                      <Card title='Reuniones'>
                         {
                           meetings.length
                             ? meetings.map((meeting, index) => (
                               <button key={meeting._id} onClick={(e: any) => {
                                 e.preventDefault()
-                                router.push(`/llamadas/${meeting._id}`)
+                                router.push(`/reuniones/${meeting._id}`)
                               }} className={`${index + 1 < meetings.length ? 'border-b border-border' : ''} flex rounded-lg gap-4 p-4 justify-between transition-colors duration-150 hover:bg-neutral-100 dark:hover:bg-neutral-700`}>
-                                <p>{meeting.meeting}</p>
+                                <p>{calls?.find(call => call._id === meeting.meeting)?.nameMeeting}</p>
                                 <p>{new Date(meeting.date).toLocaleDateString()} - {new Date(meeting.date).toLocaleTimeString()}</p>
                               </button>
                             ))
                             : <p>Este cliente no ha agendado ninguna llamada</p>
+                        }
+                      </Card>
+                      <Card title='Formularios'>
+                        {
+                          clientData.forms?.length
+                            ? clientData.forms?.map((form, index) => {
+                              const lead: any = leads.find((lead: any) => lead.form === form.form)
+                              const formFind = forms.find((e: any) => e._id === form.form)
+                              return (
+                                <button key={lead?._id} onClick={(e: any) => {
+                                  e.preventDefault()
+                                  setSelectForm(formFind)
+                                  setSelectLead(lead)
+                                  setPopupForm({ ...popupForm, view: 'flex', opacity: 'opacity-0' })
+                                  setTimeout(() => {
+                                    setPopupForm({ ...popupForm, view: 'flex', opacity: 'opacity-1' })
+                                  }, 10)
+                                }} className={`${index + 1 < clientData.forms!.length ? 'border-b border-border' : ''} flex rounded-lg gap-4 p-4 justify-between transition-colors duration-150 hover:bg-neutral-100 dark:hover:bg-neutral-700`}>
+                                  <p>{formFind?.nameForm}</p>
+                                  <p>{new Date(lead?.createdAt!).toLocaleDateString()} - {new Date(lead?.createdAt!).toLocaleTimeString()}</p>
+                                </button>
+                              )
+                            })
+                            : <p>No hay formularios completados</p>
+                        }
+                      </Card>
+                      <Card title={'Contactos'}>
+                        {
+                          contacts.length
+                            ? contacts?.filter((contact: any) => contact.email === clientData.email).map((contact: any, index) => (
+                              <button key={contact?._id} onClick={(e: any) => {
+                                e.preventDefault()
+                                setSelectContact(contact)
+                                setPopupContact({ ...popupForm, view: 'flex', opacity: 'opacity-0' })
+                                setTimeout(() => {
+                                  setPopupContact({ ...popupForm, view: 'flex', opacity: 'opacity-1' })
+                                }, 10)
+                              }} className={`${index + 1 < clientData.forms!.length ? 'border-b border-border' : ''} flex rounded-lg gap-4 p-4 justify-between transition-colors duration-150 hover:bg-neutral-100 dark:hover:bg-neutral-700`}>
+                                <p>{contact?.message.split(' ').slice(0, 5).join(' ')}</p>
+                                <p>{new Date(contact?.createdAt!).toLocaleDateString()} - {new Date(contact?.createdAt!).toLocaleTimeString()}</p>
+                              </button>
+                            ))
+                            : <p>No hay contactos realizados.</p>
                         }
                       </Card>
                     </div>
@@ -346,7 +494,7 @@ export default function Page ({ params }: { params: { slug: string } }) {
                                         return (
                                           <div key={data.data} className='flex flex-col gap-2'>
                                             <p className='text-sm'>{data.data}</p>
-                                            <Input placeholder='Teléfono' value={clientData.data!.find(dat => dat.name === data.data)?.value} change={(e: any) => {
+                                            <Input placeholder={data.data} value={clientData.data!.find(dat => dat.name === data.data)?.value} change={(e: any) => {
                                               const oldData = [...clientData.data!]
                                               if (oldData.find(dat => dat.name === data.data)) {
                                                 oldData.find(dat => dat.name === data.data)!.value = e.target.value

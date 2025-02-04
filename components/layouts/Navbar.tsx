@@ -47,11 +47,40 @@ export const Navbar: React.FC<PropsWithChildren> = ({ children }) => {
 
   useEffect(() => {
     if (session === null) {
-      router.push('/ingresar')
+      router.push('/ingresar');
     } else if (session !== undefined) {
-      setLoading(false)
+      const userPermissions = session.user.permissions || [];
+
+      const permissionsRequired: { [key: string]: string } = {
+        '/pagos': 'Pagos',
+        '/servicios': 'Servicios',
+        '/embudos': 'Embudos',
+        '/crm': 'CRM',
+        '/llamadas': 'Llamadas',
+        '/estadisticas': 'Estadisticas',
+        '/clientes': 'Clientes',
+        '/campanas': 'Campañas',
+        '/automatizaciones': 'Automatizaciones',
+        '/mensajes': 'Mensajes',
+        '/blog': 'Blog',
+        '/diseno': 'Diseño',
+        '/configuracion': 'Configuracion'
+      };
+
+      const isRestrictedPage = Object.keys(permissionsRequired).some(page => 
+        pathname.includes(page) && !userPermissions.includes(permissionsRequired[page])
+      );
+
+      if (
+        session.user.type !== 'Administrador' &&
+        isRestrictedPage
+      ) {
+        router.push('/');
+      } else {
+        setLoading(false);
+      }
     }
-  }, [session, router])
+  }, [session, pathname, router]);
 
   useEffect(() => {
     setMounted(true)
@@ -129,22 +158,71 @@ export const Navbar: React.FC<PropsWithChildren> = ({ children }) => {
               <div className={`w-[250px] h-full z-50 border-r bg-bg border-border p-4 flex-col justify-between dark:border-neutral-800 dark:bg-neutral-900`}>
                 <div className='flex flex-col gap-1'>
                   <Link href='/' onClick={() => setMenu('hidden')} className={`transition-all duration-150 ${pathname === '/' ? 'bg-main shadow-md shadow-main/30' : 'hover:bg-neutral-100 dark:hover:bg-main/30'} flex gap-2 py-1.5 px-3 rounded-xl`}><AiOutlineHome className={`mt-auto mb-auto text-xl ${pathname === '/' ? 'text-white' : 'text-main'}`} /><p className={`${pathname === '/' ? 'text-white' : ''}`}>Inicio</p></Link>
-                  <Link href='/pagos' onClick={() => setMenu('hidden')} className={`transition-all duration-150 ${pathname.includes('/pagos') ? 'bg-main shadow-md shadow-main/30' : 'hover:bg-neutral-100 dark:hover:bg-main/30'} flex py-1.5 px-3 gap-2 rounded-xl`}><MdOutlinePayment className={`mt-auto mb-auto text-xl ${pathname.includes('/pagos') ? 'text-white' : 'text-main'}`} /><p className={`${pathname.includes('/pagos') ? 'text-white' : ''}`}>Pagos</p></Link>
-                  <Link href='/servicios' onClick={() => setMenu('hidden')} className={`transition-all duration-150 ${pathname.includes('/servicios') ? 'bg-main shadow-md shadow-main/30' : 'hover:bg-neutral-100 dark:hover:bg-main/30'} flex py-1.5 px-3 gap-2 rounded-xl`}><PiSuitcaseSimple className={`mt-auto mb-auto text-xl ${pathname.includes('/servicios') ? 'text-white' : 'text-main'}`} /><p className={`${pathname.includes('/servicios') ? 'text-white' : ''}`}>Servicios</p></Link>
-                  <Link href='/embudos' onClick={() => setMenu('hidden')} className={`transition-all duration-150 ${pathname.includes('/embudos') ? 'bg-main shadow-md shadow-main/30' : 'hover:bg-neutral-100 dark:hover:bg-main/30'} flex py-1.5 px-3 gap-2 rounded-xl`}><AiOutlineFunnelPlot className={`mt-auto mb-auto text-xl ${pathname.includes('/embudos') ? 'text-white' : 'text-main'}`} /><p className={`${pathname.includes('/embudos') ? 'text-white' : ''}`}>Embudos</p></Link>
-                  <Link href='/crm' onClick={() => setMenu('hidden')} className={`transition-all duration-150 ${pathname.includes('/crm') ? 'bg-main shadow-md shadow-main/30' : 'hover:bg-neutral-100 dark:hover:bg-main/30'} flex py-1.5 px-3 gap-2 rounded-xl`}><LiaClipboardListSolid className={`mt-auto mb-auto text-xl ${pathname.includes('/crm') ? 'text-white' : 'text-main'}`} /><p className={`${pathname.includes('/crm') ? 'text-white' : ''}`}>CRM</p></Link>
-                  <Link href='/llamadas' onClick={() => setMenu('hidden')} className={`transition-all duration-150 ${pathname.includes('/llamadas') ? 'bg-main shadow-md shadow-main/30' : 'hover:bg-neutral-100 dark:hover:bg-main/30'} flex py-1.5 px-3 gap-2 rounded-xl`}><MdOutlineCall className={`mt-auto mb-auto text-xl ${pathname.includes('/llamadas') ? 'text-white' : 'text-main'}`} /><p className={`${pathname.includes('/llamadas') ? 'text-white' : ''}`}>Llamadas</p></Link>
-                  <Link href='/estadisticas' onClick={() => setMenu('hidden')} className={`transition-all duration-150 ${pathname.includes('/estadisticas') ? 'bg-main shadow-md shadow-main/30' : 'hover:bg-neutral-100 dark:hover:bg-main/30'} flex gap-2 py-1.5 px-3 rounded-xl`}><AiOutlineFund className={`mt-auto mb-auto text-xl ${pathname.includes('/estadisticas') ? 'text-white' : 'text-main'}`} /><p className={`${pathname.includes('/estadisticas') ? 'text-white' : ''}`}>Estadisticas</p></Link>
-                  <Link href='/clientes' onClick={() => setMenu('hidden')} className={`transition-all duration-150 ${pathname.includes('/clientes') ? 'bg-main shadow-md shadow-main/30' : 'hover:bg-neutral-100 dark:hover:bg-main/30'} flex gap-2 py-1.5 px-3 rounded-xl`}><HiOutlineUsers className={`mt-auto mb-auto text-xl ${pathname.includes('/clientes') ? 'text-white' : 'text-main'}`} /><p className={`${pathname.includes('/clientes') ? 'text-white' : ''}`}>Clientes</p></Link>
-                  <Link href='/campanas' onClick={() => setMenu('hidden')} className={`transition-all duration-150 ${pathname.includes('/campanas') ? 'bg-main shadow-md shadow-main/30' : 'hover:bg-neutral-100 dark:hover:bg-main/30'} flex gap-2 py-1.5 px-3 rounded-xl`}><AiOutlineNotification className={`mt-auto mb-auto text-xl ${pathname.includes('/campanas') ? 'text-white' : 'text-main'}`} /><p className={`${pathname.includes('/campanas') ? 'text-white' : ''}`}>Campañas</p></Link>
-                  <Link href='/automatizaciones' onClick={() => setMenu('hidden')} className={`transition-all duration-150 ${pathname.includes('/automatizaciones') ? 'bg-main shadow-md shadow-main/30' : 'hover:bg-neutral-100 dark:hover:bg-main/30'} flex gap-2 py-1.5 px-3 rounded-xl`}><FaCogs className={`mt-auto mb-auto text-xl ${pathname.includes('/automatizaciones') ? 'text-white' : 'text-main'}`} /><p className={`${pathname.includes('/automatizaciones') ? 'text-white' : ''}`}>Automatizaciones</p></Link>
-                  <Link href='/mensajes' onClick={() => setMenu('hidden')} className={`transition-all duration-150 ${pathname.includes('/mensajes') ? 'bg-main' : 'hover:bg-neutral-100 dark:hover:bg-main/30'} flex py-1.5 px-3 gap-2 rounded-xl`}><AiOutlineMessage className={`mt-auto mb-auto text-xl ${pathname.includes('/mensajes') ? 'text-white' : 'text-main'}`} /><p className={`${pathname.includes('/mensajes') ? 'text-white' : ''}`}>Mensajes</p></Link>
-                  <Link href='/blog' onClick={() => setMenu('hidden')} className={`transition-all duration-150 ${pathname.includes('/blog') ? 'bg-main shadow-md shadow-main/30' : 'hover:bg-neutral-100 dark:hover:bg-main/30'} flex py-1.5 px-3 gap-2 rounded-xl`}><TfiWrite className={`mt-auto mb-auto text-xl ${pathname.includes('/blog') ? 'text-white' : 'text-main'}`} /><p className={`${pathname.includes('/blog') ? 'text-white' : ''}`}>Blog</p></Link>
-                  <Link href='/diseno' onClick={() => setMenu('hidden')} className={`transition-all duration-150 ${pathname.includes('/diseno') ? 'bg-main shadow-md shadow-main/30' : 'hover:bg-neutral-100 dark:hover:bg-main/30'} flex py-1.5 px-3 gap-2 rounded-xl`}><BsShop className={`mt-auto mb-auto text-xl ${pathname.includes('/diseno') ? 'text-white' : 'text-main'}`} /><p className={`${pathname.includes('/diseno') ? 'text-white' : ''}`}>Diseño</p></Link>
+                  {
+                    session?.user.type === 'Administrador' || session?.user.permissions?.includes('Pagos')
+                      ? <Link href='/pagos' onClick={() => setMenu('hidden')} className={`transition-all duration-150 ${pathname.includes('/pagos') ? 'bg-main shadow-md shadow-main/30' : 'hover:bg-neutral-100 dark:hover:bg-main/30'} flex py-1.5 px-3 gap-2 rounded-xl`}><MdOutlinePayment className={`mt-auto mb-auto text-xl ${pathname.includes('/pagos') ? 'text-white' : 'text-main'}`} /><p className={`${pathname.includes('/pagos') ? 'text-white' : ''}`}>Pagos</p></Link>
+                      : ''
+                  }
+                  {
+                    session?.user.type === 'Administrador' || session?.user.permissions?.includes('Servicios')
+                      ? <Link href='/servicios' onClick={() => setMenu('hidden')} className={`transition-all duration-150 ${pathname.includes('/servicios') ? 'bg-main shadow-md shadow-main/30' : 'hover:bg-neutral-100 dark:hover:bg-main/30'} flex py-1.5 px-3 gap-2 rounded-xl`}><PiSuitcaseSimple className={`mt-auto mb-auto text-xl ${pathname.includes('/servicios') ? 'text-white' : 'text-main'}`} /><p className={`${pathname.includes('/servicios') ? 'text-white' : ''}`}>Servicios</p></Link>
+                      : ''
+                  }
+                  {
+                    session?.user.type === 'Administrador' || session?.user.permissions?.includes('Embudos')
+                      ? <Link href='/embudos' onClick={() => setMenu('hidden')} className={`transition-all duration-150 ${pathname.includes('/embudos') ? 'bg-main shadow-md shadow-main/30' : 'hover:bg-neutral-100 dark:hover:bg-main/30'} flex py-1.5 px-3 gap-2 rounded-xl`}><AiOutlineFunnelPlot className={`mt-auto mb-auto text-xl ${pathname.includes('/embudos') ? 'text-white' : 'text-main'}`} /><p className={`${pathname.includes('/embudos') ? 'text-white' : ''}`}>Embudos</p></Link>
+                      : ''
+                  }
+                  {
+                    session?.user.type === 'Administrador' || session?.user.permissions?.includes('CRM')
+                      ? <Link href='/crm' onClick={() => setMenu('hidden')} className={`transition-all duration-150 ${pathname.includes('/crm') ? 'bg-main shadow-md shadow-main/30' : 'hover:bg-neutral-100 dark:hover:bg-main/30'} flex py-1.5 px-3 gap-2 rounded-xl`}><LiaClipboardListSolid className={`mt-auto mb-auto text-xl ${pathname.includes('/crm') ? 'text-white' : 'text-main'}`} /><p className={`${pathname.includes('/crm') ? 'text-white' : ''}`}>CRM</p></Link>
+                      : ''
+                  }
+                  {
+                    session?.user.type === 'Administrador' || session?.user.permissions?.includes('Estadisticas')
+                      ? <Link href='/estadisticas' onClick={() => setMenu('hidden')} className={`transition-all duration-150 ${pathname.includes('/estadisticas') ? 'bg-main shadow-md shadow-main/30' : 'hover:bg-neutral-100 dark:hover:bg-main/30'} flex gap-2 py-1.5 px-3 rounded-xl`}><AiOutlineFund className={`mt-auto mb-auto text-xl ${pathname.includes('/estadisticas') ? 'text-white' : 'text-main'}`} /><p className={`${pathname.includes('/estadisticas') ? 'text-white' : ''}`}>Estadisticas</p></Link>
+                      : ''
+                  }
+                  {
+                    session?.user.type === 'Administrador' || session?.user.permissions?.includes('Clientes')
+                      ? <Link href='/clientes' onClick={() => setMenu('hidden')} className={`transition-all duration-150 ${pathname.includes('/clientes') ? 'bg-main shadow-md shadow-main/30' : 'hover:bg-neutral-100 dark:hover:bg-main/30'} flex gap-2 py-1.5 px-3 rounded-xl`}><HiOutlineUsers className={`mt-auto mb-auto text-xl ${pathname.includes('/clientes') ? 'text-white' : 'text-main'}`} /><p className={`${pathname.includes('/clientes') ? 'text-white' : ''}`}>Clientes</p></Link>
+                      : ''
+                  }
+                  {
+                    session?.user.type === 'Administrador' || session?.user.permissions?.includes('Campañas')
+                      ? <Link href='/campanas' onClick={() => setMenu('hidden')} className={`transition-all duration-150 ${pathname.includes('/campanas') ? 'bg-main shadow-md shadow-main/30' : 'hover:bg-neutral-100 dark:hover:bg-main/30'} flex gap-2 py-1.5 px-3 rounded-xl`}><AiOutlineNotification className={`mt-auto mb-auto text-xl ${pathname.includes('/campanas') ? 'text-white' : 'text-main'}`} /><p className={`${pathname.includes('/campanas') ? 'text-white' : ''}`}>Campañas</p></Link>
+                      : ''
+                  }
+                  {
+                    session?.user.type === 'Administrador' || session?.user.permissions?.includes('Automatizaciones')
+                      ? <Link href='/automatizaciones' onClick={() => setMenu('hidden')} className={`transition-all duration-150 ${pathname.includes('/automatizaciones') ? 'bg-main shadow-md shadow-main/30' : 'hover:bg-neutral-100 dark:hover:bg-main/30'} flex gap-2 py-1.5 px-3 rounded-xl`}><FaCogs className={`mt-auto mb-auto text-xl ${pathname.includes('/automatizaciones') ? 'text-white' : 'text-main'}`} /><p className={`${pathname.includes('/automatizaciones') ? 'text-white' : ''}`}>Automatizaciones</p></Link>
+                      : ''
+                  }
+                  {
+                    session?.user.type === 'Administrador' || session?.user.permissions?.includes('Mensajes')
+                      ? <Link href='/mensajes' onClick={() => setMenu('hidden')} className={`transition-all duration-150 ${pathname.includes('/mensajes') ? 'bg-main' : 'hover:bg-neutral-100 dark:hover:bg-main/30'} flex py-1.5 px-3 gap-2 rounded-xl`}><AiOutlineMessage className={`mt-auto mb-auto text-xl ${pathname.includes('/mensajes') ? 'text-white' : 'text-main'}`} /><p className={`${pathname.includes('/mensajes') ? 'text-white' : ''}`}>Mensajes</p></Link>
+                      : ''
+                  }
+                  {
+                    session?.user.type === 'Administrador' || session?.user.permissions?.includes('Blog')
+                      ? <Link href='/blog' onClick={() => setMenu('hidden')} className={`transition-all duration-150 ${pathname.includes('/blog') ? 'bg-main shadow-md shadow-main/30' : 'hover:bg-neutral-100 dark:hover:bg-main/30'} flex py-1.5 px-3 gap-2 rounded-xl`}><TfiWrite className={`mt-auto mb-auto text-xl ${pathname.includes('/blog') ? 'text-white' : 'text-main'}`} /><p className={`${pathname.includes('/blog') ? 'text-white' : ''}`}>Blog</p></Link>
+                      : ''
+                  }
+                  {
+                    session?.user.type === 'Administrador' || session?.user.permissions?.includes('Diseño')
+                      ? <Link href='/diseno' onClick={() => setMenu('hidden')} className={`transition-all duration-150 ${pathname.includes('/diseno') ? 'bg-main shadow-md shadow-main/30' : 'hover:bg-neutral-100 dark:hover:bg-main/30'} flex py-1.5 px-3 gap-2 rounded-xl`}><BsShop className={`mt-auto mb-auto text-xl ${pathname.includes('/diseno') ? 'text-white' : 'text-main'}`} /><p className={`${pathname.includes('/diseno') ? 'text-white' : ''}`}>Diseño</p></Link>
+                      : ''
+                  }
                 </div>
-                <div className='border-t border-border pt-4 dark:border-neutral-800'>
-                  <Link href='/configuracion' onClick={() => setMenu('hidden')} className={`transition-all duration-150 ${pathname.includes('/configuracion') ? 'bg-main shadow-md shadow-main/30' : 'hover:bg-neutral-100 dark:hover:bg-main/30'} flex py-1.5 px-3 gap-2 rounded-xl`}><IoSettingsOutline className={`mt-auto mb-auto text-xl ${pathname.includes('/configuracion') ? 'text-white' : 'text-main'}`} /><p className={`${pathname.includes('/configuracion') ? 'text-white' : ''}`}>Configuración</p></Link>
-                </div>
+                {
+                  session?.user.type === 'Administrador' || session?.user.permissions?.includes('Configuración')
+                    ? (
+                      <div className='border-t border-border pt-4 dark:border-neutral-800'>
+                      <Link href='/configuracion' onClick={() => setMenu('hidden')} className={`transition-all duration-150 ${pathname.includes('/configuracion') ? 'bg-main shadow-md shadow-main/30' : 'hover:bg-neutral-100 dark:hover:bg-main/30'} flex py-1.5 px-3 gap-2 rounded-xl`}><IoSettingsOutline className={`mt-auto mb-auto text-xl ${pathname.includes('/configuracion') ? 'text-white' : 'text-main'}`} /><p className={`${pathname.includes('/configuracion') ? 'text-white' : ''}`}>Configuración</p></Link>
+                    </div>
+                    )
+                    : ''
+                }
               </div>
               <button onClick={() => setMenu('hidden')} className='h-full w-full bg-black/20' />
             </div>
@@ -175,20 +253,20 @@ export const Navbar: React.FC<PropsWithChildren> = ({ children }) => {
                     </div>
                     {
                       !mounted
-                        ? <Link href='/'><div className='h-10 w-1'><p>TIENDA</p></div></Link>
+                        ? <Link href='/'><div className='h-10 w-1'><p>UPVISOR</p></div></Link>
                         : storeData?.logo && storeData.logo !== ''
                           ? theme === 'system'
                             ? systemTheme === 'dark'
                               ? storeData.logoWhite && storeData.logoWhite !== ''
                                 ? <Link href='/'><Image className='h-10 object-contain w-fit' alt={`Logo ${storeData.name} estilo blanco`} src={storeData.logoWhite} width={200} height={150} /></Link>
-                                : <Link href='/'><div className='h-10 w-1 flex'><p className='text-3xl m-auto font-semibold'>TIENDA</p></div></Link>
+                                : <Link href='/'><div className='h-10 w-1 flex'><p className='text-3xl m-auto font-semibold'>UPVISOR</p></div></Link>
                               : <Link href='/'><Image className='h-10 object-contain w-fit' alt={`Logo ${storeData.name}`} src={storeData.logo} width={200} height={150} /></Link>
                             : theme === 'dark'
                               ? storeData.logoWhite && storeData.logoWhite !== ''
                                 ? <Link href='/'><Image className='h-10 object-contain w-fit' alt={`Logo ${storeData.name} estilo blanco`} src={storeData.logoWhite} width={200} height={150} /></Link>
-                                : <Link href='/'><div className='h-10 w-1 flex'><p className='text-3xl m-auto font-semibold'>TIENDA</p></div></Link>
+                                : <Link href='/'><div className='h-10 w-1 flex'><p className='text-3xl m-auto font-semibold'>UPVISOR</p></div></Link>
                               : <Link href='/'><Image className='h-10 object-contain w-fit' alt={`Logo ${storeData.name}`} src={storeData.logo} width={200} height={150} /></Link>
-                          : <Link href='/'><div className='h-10 w-1 flex'><p className='text-3xl m-auto font-semibold'>TIENDA</p></div></Link>
+                          : <Link href='/'><div className='h-10 w-1 flex'><p className='text-3xl m-auto font-semibold'>UPVISOR</p></div></Link>
                     }
                   </div>
                   <div className='hidden lg:flex gap-4'>

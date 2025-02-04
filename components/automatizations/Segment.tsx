@@ -69,7 +69,7 @@ export const Segment: React.FC<Props> = ({ setAutomatization, automatization, cl
           {
             automatization.startType === 'Tag añadido'
               ? clientTags.map(tag => (
-                <option key={tag._id} value={tag._id}>{tag.tag}</option>
+                <option key={tag._id}>{tag.tag}</option>
               ))
               : ''
           }

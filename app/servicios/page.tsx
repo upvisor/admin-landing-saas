@@ -72,7 +72,7 @@ export default function Page() {
           </div>
         </div>
       </div>
-      <PopupNewService popupService={popup} setPopupService={setPopup} newService={newService} setNewService={setNewService} loadingService={loading} setLoadingService={setLoading} getServices={getServices} error={error} title={title} newFunctionality={newFunctionality} setNewFunctionality={setNewFunctionality} tags={tags} getTags={getTags} />
+      <PopupNewService popupService={popup} setPopupService={setPopup} newService={newService} setNewService={setNewService} loadingService={loading} setLoadingService={setLoading} getServices={getServices} error={error} title={title} newFunctionality={newFunctionality} setNewFunctionality={setNewFunctionality} tags={tags} getTags={getTags} services={services} setError={setError} />
       <div className='p-4 lg:p-6 w-full min-h-full max-h-full flex flex-col gap-6 overflow-y-auto bg-bg dark:bg-neutral-900'>
         <div className='w-full flex gap-4 justify-between max-w-[1280px] mx-auto'>
           <h1 className='text-2xl font-medium my-auto'>Servicios</h1>

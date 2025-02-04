@@ -1,9 +1,11 @@
 "use client"
-import { ICall, IDesign, IFunnel, IPage, IService } from '@/interfaces'
+import { ICall, IClientData, IDesign, IFunnel, IPage, IService } from '@/interfaces'
 import React, { useState } from 'react'
-import { Button, Input, Select, Spinner } from '../ui'
+import { Button, Button2, Button2Secondary, ButtonSubmit2, Input, Select, Spinner } from '../ui'
 import axios from 'axios'
 import { NumberFormat } from '@/utils'
+import { ButtonDesign } from './ButtonDesign'
+import { IoMdClose } from 'react-icons/io'
 
 interface Props {
     edit: any
@@ -21,9 +23,16 @@ interface Props {
     setServices?: any
     responsive: string
     pageNeed: IPage[]
+    style?: any
+    clientData?: IClientData[]
+    getClientData?: any
+    setNewCall: any
+    setTitleMeeting: any
+    popupCall: any
+    setPopupCall: any
 }
 
-export const Plans: React.FC<Props> = ({ edit, pages, setPages, design, index, ind, inde, indx, funnels, setFunnels, calls, services, setServices, responsive, pageNeed }) => {
+export const Plans: React.FC<Props> = ({ edit, pages, setPages, design, index, ind, inde, indx, funnels, setFunnels, calls, services, setServices, responsive, pageNeed, style, clientData, getClientData, setNewCall, setTitleMeeting, popupCall, setPopupCall }) => {
   
   const [gradient, setGradient] = useState('')
   const [firstColor, setFirstColor] = useState('')
@@ -32,6 +41,8 @@ export const Plans: React.FC<Props> = ({ edit, pages, setPages, design, index, i
   const [error, setError] = useState('')
   const [loadingImage, setLoadingImage] = useState(false)
   const [errorImage, setErrorImage] = useState('')
+  const [newData, setNewData] = useState('')
+  const [loadingNewData, setLoadingNewData] = useState(false)
   
   return (
     <div className="w-full flex py-24 px-4" style={{ background: `${design.info.typeBackground === 'Degradado' ? design.info.background : design.info.typeBackground === 'Color' ? design.info.background : ''}` }}>
@@ -306,33 +317,306 @@ export const Plans: React.FC<Props> = ({ edit, pages, setPages, design, index, i
                     services?.map(service => <option key={service._id} value={service._id}>{service.name}</option>)
                   }
                 </Select>
+                <Select change={(e: any) => {
+                  if (inde !== undefined) {
+                    const oldFunnels = [...funnels!]
+                    oldFunnels[inde].steps[ind].design![index].info.video = e.target.value
+                    setFunnels(oldFunnels)
+                  } else if (indx !== undefined) {
+                    const oldServices = [...services!]
+                    oldServices[indx].steps[ind].design![index].info.video = e.target.value
+                    setServices(oldServices)
+                  } else {
+                    const oldPages = [...pages]
+                    oldPages[ind].design[index].info.video = e.target.value
+                    setPages(oldPages)
+                  }
+                }} config='w-fit m-auto' value={design.info.video}>
+                  <option value=''>Seleccionar Siguiente paso</option>
+                  <option>Realizar pago</option>
+                  <option>Completar formulario</option>
+                  <option>Agendar llamada</option>
+                </Select>
+                {
+                  design.info.video === 'Agendar llamada'
+                    ? (
+                      <>
+                        {
+                          calls?.length
+                            ? (
+                              <>
+                                <p className='m-auto'>Seleccionar llamada</p>
+                                <Select value={design.meeting} change={(e: any) => {
+                                  if (inde !== undefined) {
+                                    const oldFunnels = [...funnels!]
+                                    oldFunnels[inde].steps[ind].design![index].meeting = e.target.value
+                                    setFunnels(oldFunnels)
+                                  } else if (indx !== undefined) {
+                                    const oldServices = [...services!]
+                                    oldServices[indx].steps[ind].design![index].meeting = e.target.value
+                                    setServices(oldServices)
+                                  } else {
+                                    const oldPages = [...pages]
+                                    oldPages[ind].design[index].meeting = e.target.value
+                                    setPages(oldPages)
+                                  }
+                                }} config='w-fit m-auto'>
+                                  <option value=''>Seleccionar llamada</option>
+                                  {
+                                    calls.map(call => (
+                                      <option key={call._id} value={call._id}>{call.nameMeeting}</option>
+                                    ))
+                                  }
+                                </Select>
+                              </>
+                            )
+                            : (
+                              <p>No tienes llamadas creadas</p>
+                            )
+                        }
+                        <div className='flex gap-2 m-auto'>
+                          <Button2 action={(e: any) => {
+                            e.preventDefault()
+                            setLoading(true)
+                            setError('')
+                            setNewCall({ nameMeeting: '', duration: '15 minutos', description: '', title: '', labels: [{ data: '', name: '', text: '' }], buttonText: '', action: 'Mostrar mensaje', message: '' })
+                            setTitleMeeting('Crear llamada')
+                            setPopupCall({ ...popupCall, view: 'flex', opacity: 'opacity-0' })
+                            setTimeout(() => {
+                              setPopupCall({ ...popupCall, view: 'flex', opacity: 'opacity-1' })
+                            }, 10)
+                          }}>Crear llamada</Button2>
+                          {
+                            design.meeting && design.meeting !== ''
+                              ? <Button2Secondary action={(e: any) => {
+                                e.preventDefault()
+                                setError('')
+                                const call = calls?.find(call => call._id === design.meeting)
+                                setNewCall(call!)
+                                setTitleMeeting('Editar llamada')
+                                setPopupCall({ ...popupCall, view: 'flex', opacity: 'opacity-0' })
+                                setTimeout(() => {
+                                  setPopupCall({ ...popupCall, view: 'flex', opacity: 'opacity-1' })
+                                }, 10)
+                              }} color='main'>Editar llamada</Button2Secondary>
+                              : ''
+                          }
+                        </div>
+                      </>
+                    )
+                    : (
+                      <>
+                        <p className='m-auto'>Agregar preguntas adicionales al formulario</p>
+                          {
+                            design.info.form?.map((label, i) => (
+                              <>
+                                <p>Dato {i + 1}</p>
+                                <Input change={(e: any) => {
+                                  if (inde !== undefined) {
+                                    const oldFunnels = [...funnels!]
+                                    oldFunnels[inde].steps[ind].design![index].info.form![i].text = e.target.value
+                                    setFunnels(oldFunnels)
+                                  } else if (indx !== undefined) {
+                                    const oldServices = [...services!]
+                                    oldServices[indx].steps[ind].design![index].info.form![i].text = e.target.value
+                                    setServices(oldServices)
+                                  } else {
+                                    const oldPages = [...pages]
+                                    oldPages[ind].design[index].info.form![i].text = e.target.value
+                                    setPages(oldPages)
+                                  }
+                                }} value={label.text} placeholder='Texto campo'/>
+                                <Select value={label.data} change={(e: any) => {
+                                  if (inde !== undefined) {
+                                    const oldFunnels = [...funnels!]
+                                    oldFunnels[inde].steps[ind].design![index].info.form![i].data = e.target.value
+                                    oldFunnels[inde].steps[ind].design![index].info.form![i].name = clientData!.find(dat => dat.data === e.target.value)!.name
+                                    setFunnels(oldFunnels)
+                                  } else if (indx !== undefined) {
+                                    const oldServices = [...services!]
+                                    oldServices[indx].steps[ind].design![index].info.form![i].data = e.target.value
+                                    oldServices[indx].steps[ind].design![index].info.form![i].name = clientData!.find(dat => dat.data === e.target.value)!.name
+                                    setServices(oldServices)
+                                  } else {
+                                    const oldPages = [...pages]
+                                    oldPages[ind].design[index].info.form![i].data = e.target.value
+                                    oldPages[ind].design[index].info.form![i].name = clientData!.find(dat => dat.data === e.target.value)!.name
+                                    setPages(oldPages)
+                                  }
+                                }}>
+                                  <option value=''>Seleccionar dato</option>
+                                  {
+                                    clientData?.length
+                                      ? clientData.filter(data => data.data !== 'email' && data.data !== 'firstName' && data.data !== 'lastName' && data.data !== 'phone').map(data => (
+                                        <option key={data.data} value={data.data}>{data.name}</option>
+                                      ))
+                                      : ''
+                                  }
+                                </Select>
+                                <Select value={label.type} change={(e: any) => {
+                                  if (inde !== undefined) {
+                                    const oldFunnels = [...funnels!]
+                                    oldFunnels[inde].steps[ind].design![index].info.form![i].type = e.target.value
+                                    oldFunnels[inde].steps[ind].design![index].info.form![i].datas = ['']
+                                    setFunnels(oldFunnels)
+                                  } else if (indx !== undefined) {
+                                    const oldServices = [...services!]
+                                    oldServices[indx].steps[ind].design![index].info.form![i].type = e.target.value
+                                    oldServices[indx].steps[ind].design![index].info.form![i].datas = ['']
+                                    setServices(oldServices)
+                                  } else {
+                                    const oldPages = [...pages]
+                                    oldPages[ind].design[index].info.form![i].type = e.target.value
+                                    oldPages[ind].design[index].info.form![i].datas = ['']
+                                    setPages(oldPages)
+                                  }
+                                }}>
+                                  <option value=''>Seleccionar tipo de respuesta</option>
+                                  <option>Texto</option>
+                                  <option>Selector</option>
+                                </Select>
+                                {
+                                  label.type === 'Selector'
+                                    ? (
+                                      <>
+                                        {
+                                          label.datas?.map((data, indexx) => (
+                                            <div key={indexx} className='flex gap-2'>
+                                              <Input
+                                                change={(e: any) => {
+                                                  if (inde !== undefined) {
+                                                    const oldFunnels = [...funnels!]
+                                                    oldFunnels[inde].steps[ind].design![index].info.form![i].datas![indexx] = e.target.value
+                                                    setFunnels(oldFunnels)
+                                                  } else if (indx !== undefined) {
+                                                    const oldServices = [...services!]
+                                                    oldServices[indx].steps[ind].design![index].info.form![i].datas![indexx] = e.target.value
+                                                    setServices(oldServices)
+                                                  } else {
+                                                    const oldPages = [...pages]
+                                                    oldPages[ind].design[index].info.form![i].datas![indexx] = e.target.value
+                                                    setPages(oldPages)
+                                                  }
+                                                }}
+                                                value={data} // Aquí se pasa el valor actual del input
+                                                placeholder={`Respuesta ${indexx + 1}`}
+                                              />
+                                              <button onClick={(e: any) => {
+                                                e.preventDefault()
+                                                if (inde !== undefined) {
+                                                  const oldFunnels = [...funnels!]
+                                                  oldFunnels[inde].steps[ind].design![index].info.form![i].datas?.splice(indexx, 1)
+                                                  setFunnels(oldFunnels)
+                                                } else if (indx !== undefined) {
+                                                  const oldServices = [...services!]
+                                                  oldServices[indx].steps[ind].design![index].info.form![i].datas?.splice(indexx, 1)
+                                                  setServices(oldServices)
+                                                } else {
+                                                  const oldPages = [...pages]
+                                                  oldPages[ind].design[index].info.form![i].datas?.splice(indexx, 1)
+                                                  setPages(oldPages)
+                                                }
+                                              }}><IoMdClose className='text-2xl' /></button>
+                                            </div>
+                                          ))
+                                        }
+                                        <Button2 action={(e: any) => {
+                                          e.preventDefault()
+                                          if (inde !== undefined) {
+                                            const oldFunnels = [...funnels!]
+                                            oldFunnels[inde].steps[ind].design![index].info.form![i].datas?.push('')
+                                            setFunnels(oldFunnels)
+                                          } else if (indx !== undefined) {
+                                            const oldServices = [...services!]
+                                            oldServices[indx].steps[ind].design![index].info.form![i].datas?.push('')
+                                            setServices(oldServices)
+                                          } else {
+                                            const oldPages = [...pages]
+                                            oldPages[ind].design[index].info.form![i].datas?.push('')
+                                            setPages(oldPages)
+                                          }
+                                        }}>Agregar</Button2>
+                                        <div className='flex flex-col gap-2'>
+                                          <p>Crear dato personalizado</p>
+                                          <div className='flex gap-2'>
+                                            <Input change={(e: any) => setNewData(e.target.value)} value={newData} placeholder='Nuevo dato' />
+                                            <ButtonSubmit2 color='main' action={async (e: any) => {
+                                              e.preventDefault()
+                                              if (!loadingNewData) {
+                                                setLoadingNewData(true)
+                                                await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/client-data`, { data: newData })
+                                                setNewData('')
+                                                getClientData()
+                                                setLoadingNewData(false)
+                                              }
+                                            }} submitLoading={loadingNewData} textButton='Crear dato' config='w-36' />
+                                          </div>
+                                        </div>
+                                      </>
+                                    )
+                                    : ''
+                                }
+                              </>
+                            ))
+                          }
+                          <Button2 action={(e: any) => {
+                            e.preventDefault()
+                            if (inde !== undefined) {
+                              const oldFunnels = [...funnels!]
+                              if (oldFunnels[inde].steps[ind].design![index].info.form?.length) {
+                                oldFunnels[inde].steps[ind].design![index].info.form?.push({ data: '', name: '', text: '', type: 'text' })
+                              } else {
+                                oldFunnels[inde].steps[ind].design![index].info.form = [{ data: '', name: '', text: '', type: 'text' }]
+                              }
+                              setFunnels(oldFunnels)
+                            } else if (indx !== undefined) {
+                              const oldServices = [...services!]
+                              if (oldServices[indx].steps[ind].design![index].info.form?.length) {
+                                oldServices[indx].steps[ind].design![index].info.form?.push({ data: '', name: '', text: '', type: 'text' })
+                              } else {
+                                oldServices[indx].steps[ind].design![index].info.form = [{ data: '', name: '', text: '', type: 'text' }]
+                              }
+                              setServices(oldServices)
+                            } else {
+                              const oldPages = [...pages]
+                              if (oldPages[ind].design[index].info.form?.length) {
+                                oldPages[ind].design[index].info.form?.push({ data: '', name: '', text: '', type: 'text' })
+                              } else {
+                                oldPages[ind].design[index].info.form = [{ data: '', name: '', text: '', type: 'text' }]
+                              }
+                              setPages(oldPages)
+                            }
+                          }} config='m-auto'>Agregar pregunta</Button2>
+                      </>
+                    )
+                }
                 {
                   services?.find(service => service._id === design.service?.service)?.plans?.plans.length
                     ? (
                       <div className='flex gap-6 justify-around'>
                         {
                           services?.find(service => service._id === design.service?.service)?.plans?.plans.map(plan => (
-                            <div className='p-6 rounded-xl border border-black/5 w-full max-w-96 flex flex-col gap-4' key={plan._id} style={{ boxShadow: '0px 3px 10px 3px #11111108' }}>
+                            <div className={`p-6 w-full max-w-96 flex flex-col gap-4`} key={plan._id} style={{ boxShadow: style.design === 'Sombreado' ? `0px 3px 20px 3px ${style.borderColor}10` : '', borderRadius: style.form === 'Redondeadas' ? `${style.borderBlock}px` : '', border: style.design === 'Borde' ? `1px solid ${style.borderColor}` : '', color: design.info.textColor }}>
                               <p className='text-center font-medium text-xl'>{plan.name}</p>
                               <div className='flex gap-2 w-fit m-auto'>
                                 <p className='text-center font-bold text-3xl'>${NumberFormat(Number(plan.price))}</p>
                                 <p className='my-auto'>/ mes</p>
                               </div>
                               {
-                                services?.find(service => service._id === design.service?.service)?.plans?.functionalities.length
+                                services?.find(service => service._id === design.service?.service)?.plans?.plans[0].characteristics?.length
                                   ? (
                                     <>
                                       <p className='font-medium text-lg'>Funcionalidades:</p>
                                       <div className='flex flex-col gap-2'>
                                         {
-                                          plan.functionalities?.map(functionality => functionality.value ? <p key={functionality.name}>{functionality.name}: {functionality.value}</p> : '')
+                                          plan.characteristics?.map(characteristic => characteristic ? <p key={characteristic}>{characteristic}</p> : '')
                                         }
                                       </div>
                                     </>
                                   )
                                   : ''
                               }
-                              <Button config='w-full'>Me interesa este plan</Button>
+                              <ButtonDesign style={style} text='Me interesa este plan' config='w-full' />
                             </div>
                           ))
                         }
@@ -372,27 +656,29 @@ export const Plans: React.FC<Props> = ({ edit, pages, setPages, design, index, i
                       <div className='flex gap-6 justify-around'>
                         {
                           services?.find(service => service._id === design.service?.service)?.plans?.plans.map(plan => (
-                            <div className='p-6 rounded-xl border border-black/5 w-full max-w-96 flex flex-col gap-4' key={plan._id} style={{ boxShadow: '0px 3px 10px 3px #11111108' }}>
-                              <p className='text-center font-medium text-xl'>{plan.name}</p>
-                              <div className='flex gap-2 w-fit m-auto'>
-                                <p className='text-center font-bold text-3xl'>${NumberFormat(Number(plan.price))}</p>
-                                <p className='my-auto'>/ mes</p>
+                            <div className={`p-6 w-full max-w-96 flex flex-col gap-4 justify-between`} key={plan._id} style={{ boxShadow: style.design === 'Sombreado' ? `0px 3px 20px 3px ${style.borderColor}10` : '', borderRadius: style.form === 'Redondeadas' ? `${style.borderBlock}px` : '', border: style.design === 'Borde' ? `1px solid ${style.borderColor}` : '', color: design.info.textColor }}>
+                              <div className='flex flex-col gap-4 h-fit'>
+                                <p className='text-center font-medium text-xl'>{plan.name}</p>
+                                <div className='flex gap-2 w-fit m-auto'>
+                                  <p className='text-center font-bold text-3xl'>${NumberFormat(Number(plan.price))}</p>
+                                  <p className='my-auto'>/ mes</p>
+                                </div>
+                                {
+                                  services?.find(service => service._id === design.service?.service)?.plans?.plans[0].characteristics?.length
+                                    ? (
+                                      <>
+                                        <p className='font-medium text-lg'>Funcionalidades:</p>
+                                        <div className='flex flex-col gap-2'>
+                                          {
+                                            plan.characteristics?.map(characteristic => characteristic ? <p key={characteristic}>{characteristic}</p> : '')
+                                          }
+                                        </div>
+                                      </>
+                                    )
+                                    : ''
+                                }
                               </div>
-                              {
-                                services?.find(service => service._id === design.service?.service)?.plans?.functionalities.length
-                                  ? (
-                                    <>
-                                      <p className='font-medium text-lg'>Funcionalidades:</p>
-                                      <div className='flex flex-col gap-2'>
-                                        {
-                                          plan.functionalities?.map(functionality => functionality.value ? <p key={functionality.value}>{functionality.name}: {functionality.value}</p> : '')
-                                        }
-                                      </div>
-                                    </>
-                                  )
-                                  : ''
-                              }
-                              <Button config='w-full'>Me interesa este plan</Button>
+                              <ButtonDesign style={style} text='Me interesa este plan' config='w-full' />
                             </div>
                           ))
                         }

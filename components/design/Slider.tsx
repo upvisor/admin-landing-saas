@@ -7,7 +7,8 @@ import styles from "./Slider.module.css"
 import { Navigation, Pagination } from "swiper/modules"
 import axios from 'axios'
 import { Design, ICall, ICategoryPage, IDesign, IForm, IFunnel, IPage, IService } from '@/interfaces'
-import { Button } from '../ui'
+import { Button, Button2 } from '../ui'
+import { ButtonDesign } from './ButtonDesign'
 
 interface Props {
     design: IDesign
@@ -26,9 +27,10 @@ interface Props {
     forms: IForm[] | undefined
     services?: IService[]
     setServices?: any
+    style?: any
 }
 
-export const Slider: React.FC<Props> = ({ design, edit, pages, setPages, index, ind, inde, indx, pageNeed, funnels, setFunnels, responsive, calls, forms, services, setServices }) => {
+export const Slider: React.FC<Props> = ({ design, edit, pages, setPages, index, ind, inde, indx, pageNeed, funnels, setFunnels, responsive, calls, forms, services, setServices, style }) => {
   return (
     <div>
       <Swiper
@@ -61,7 +63,7 @@ export const Slider: React.FC<Props> = ({ design, edit, pages, setPages, index, 
                               />
                               {
                                 banner.button && banner.button !== '' && banner.buttonLink && banner.buttonLink !== ''
-                                  ? <Button>{banner.button}</Button>
+                                  ? <ButtonDesign style={style} text={banner.button} /> 
                                   : ''
                               }
                             </div>
@@ -73,7 +75,7 @@ export const Slider: React.FC<Props> = ({ design, edit, pages, setPages, index, 
                         <>
                         <div className="m-auto w-full p-4">
                           <div className='max-w-[1600px] w-full m-auto flex flex-col gap-4'>
-                            <input type='text' placeholder='Titulo' className='text-[25px] font-medium lg:text-[32px] text-white bg-transparent border p-1.5 border-neutral-500 rounded w-[800px]' value={banner.title} onChange={(e: any) => {
+                            <textarea placeholder='Titulo' value={banner.title} onChange={(e: any) => {
                               if (inde !== undefined) {
                                 const oldFunnels = [...funnels!]
                                 if (oldFunnels[inde].steps[ind].design![index].info.banner?.length) {
@@ -93,8 +95,8 @@ export const Slider: React.FC<Props> = ({ design, edit, pages, setPages, index, 
                                   setPages(oldPages)
                                 }
                               }
-                            }} />
-                            <input type='text' placeholder='Descripción' className='text-white text-sm lg:text-[16px] rounded bg-transparent border border-neutral-500 p-1.5' value={banner.description} onChange={(e: any) => {
+                            }} className={`${responsive === '400px' ? 'text-3xl' : 'text-5xl'} text-white font-semibold p-1.5 rounded border bg-transparent`} style={{ color: design.info.textColor }} />
+                            <textarea placeholder='Descripción' value={banner.description} onChange={(e: any) => {
                               if (inde !== undefined) {
                                 const oldFunnels = [...funnels!]
                                 if (oldFunnels[inde].steps[ind].design![index].info.banner?.length) {
@@ -114,11 +116,10 @@ export const Slider: React.FC<Props> = ({ design, edit, pages, setPages, index, 
                                   setPages(oldPages)
                                 }
                               }
-                              
-                            }} />
+                            }} className={`${responsive === '400px' ? 'text-base' : 'text-lg'} text-white p-1.5 rounded border bg-transparent`} style={{ color: design.info.textColor }} />
                             <div className='flex gap-4'>
-                              <div className='px-8 py-1.5 bg-main border border-main text-white rounded-md'>
-                                <input type='text' placeholder='Boton' className='bg-main text-white border border-neutral-500 rounded' value={banner.button} onChange={(e: any) => {
+                              <div className='px-6 py-2 text-white' style={{ backgroundColor: style?.primary, color: style?.button, borderRadius: style?.form === 'Redondeadas' ? `${style?.borderButton}px` : '' }}>
+                                <input type='text' placeholder='Boton' className='text-white border border-neutral-500 bg-transparent' value={banner.button} onChange={(e: any) => {
                                   if (inde !== undefined) {
                                     const oldFunnels = [...funnels!]
                                     if (oldFunnels[inde].steps[ind].design![index].info.banner?.length) {
@@ -213,27 +214,27 @@ export const Slider: React.FC<Props> = ({ design, edit, pages, setPages, index, 
                                 }
                               }
                             }} />
-                            <Button action={() => {
-                              if (inde !== undefined) {
-                                const oldFunnels = [...funnels!]
-                                if (oldFunnels[inde].steps[ind].design![index].info.banner?.length) {
-                                  oldFunnels[inde].steps[ind].design![index].info.banner?.push({ title: 'Lorem ipsum', description: 'Lorem, ipsum dolor sit amet consectetur adipisicing elit.', button: 'Lorem ipsum', buttonLink: '', image: '' })
-                                  setFunnels(oldFunnels)
+                            <Button2 action={() => {
+                                if (inde !== undefined) {
+                                  const oldFunnels = [...funnels!]
+                                  if (oldFunnels[inde].steps[ind].design![index].info.banner?.length) {
+                                    oldFunnels[inde].steps[ind].design![index].info.banner?.push({ title: 'Lorem ipsum', description: 'Lorem, ipsum dolor sit amet consectetur adipisicing elit.', button: 'Lorem ipsum', buttonLink: '', image: '' })
+                                    setFunnels(oldFunnels)
+                                  }
+                                } else if (indx !== undefined) {
+                                  const oldServices = [...services!]
+                                  if (oldServices[indx].steps[ind].design![index].info.banner?.length) {
+                                    oldServices[indx].steps[ind].design![index].info.banner?.push({ title: 'Lorem ipsum', description: 'Lorem, ipsum dolor sit amet consectetur adipisicing elit.', button: 'Lorem ipsum', buttonLink: '', image: '' })
+                                    setServices(oldServices)
+                                  }
+                                } else {
+                                  const oldPages = [...pages]
+                                  if (oldPages[ind].design[index].info.banner?.length) {
+                                    oldPages[ind].design[index].info.banner?.push({ title: 'Lorem ipsum', description: 'Lorem, ipsum dolor sit amet consectetur adipisicing elit.', button: 'Lorem ipsum', buttonLink: '', image: '' })
+                                    setPages(oldPages)
+                                  }
                                 }
-                              } else if (indx !== undefined) {
-                                const oldServices = [...services!]
-                                if (oldServices[indx].steps[ind].design![index].info.banner?.length) {
-                                  oldServices[indx].steps[ind].design![index].info.banner?.push({ title: 'Lorem ipsum', description: 'Lorem, ipsum dolor sit amet consectetur adipisicing elit.', button: 'Lorem ipsum', buttonLink: '', image: '' })
-                                  setServices(oldServices)
-                                }
-                              } else {
-                                const oldPages = [...pages]
-                                if (oldPages[ind].design[index].info.banner?.length) {
-                                  oldPages[ind].design[index].info.banner?.push({ title: 'Lorem ipsum', description: 'Lorem, ipsum dolor sit amet consectetur adipisicing elit.', button: 'Lorem ipsum', buttonLink: '', image: '' })
-                                  setPages(oldPages)
-                                }
-                              }
-                            }}>Agregar banner</Button>
+                              }}>Agregar banner</Button2>
                           </div>
                         </div>
                         <Image width={1920} height={1080} className={`absolute object-cover h-full w-full -z-10`} src={banner.image!} alt='banner' />

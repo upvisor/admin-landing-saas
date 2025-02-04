@@ -7,14 +7,16 @@ import { ButtonRed } from './ButtonRed'
 type CalendarProps = {
   availableDates: DateData[]
   setAvailableDates: any
+  selectedCalendar: any
 }
 
-export const Calendar: React.FC<CalendarProps> = ({ availableDates, setAvailableDates }) => {
+export const Calendar: React.FC<CalendarProps> = ({ availableDates, setAvailableDates, selectedCalendar }) => {
   const [date, setDate] = useState<Date>(new Date());
   const [selectedDateTime, setSelectedDateTime] = useState<Date | null>(null)
 
   useEffect(() => {
     const getDates = async () => {
+      if (selectedCalendar === 'Seleccionar calendario') return;
       try {
         const currentDate = new Date(); // Obtener la fecha y hora actual
         const currentHour = currentDate.getHours(); // Obtener la hora actual
@@ -22,8 +24,8 @@ export const Calendar: React.FC<CalendarProps> = ({ availableDates, setAvailable
         // Obtener las fechas ya agendadas
         const meetingsRes = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/meetings`);
         const meetings = meetingsRes.data.map((meeting: any) => new Date(meeting.date));
-    
-        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/calendar`);
+
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/calendar/${selectedCalendar}`);
         const datesWithConvertedDates = res.data.dates.map((dateItem: any) => ({
           ...dateItem,
           date: new Date(dateItem.date)
@@ -67,7 +69,7 @@ export const Calendar: React.FC<CalendarProps> = ({ availableDates, setAvailable
     };
 
     getDates()
-  }, [])
+  }, [selectedCalendar])
 
   const handleChangeMonth = (increment: number): void => {
     setDate(prevDate => {

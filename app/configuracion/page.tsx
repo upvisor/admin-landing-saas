@@ -1,6 +1,6 @@
 "use client"
 import { Nav } from '@/components/configuration'
-import { ButtonSubmit, Card, Input, Select } from '@/components/ui'
+import { ButtonSubmit, Card, Input, Select, Spinner } from '@/components/ui'
 import { IStoreData } from '@/interfaces'
 import axios from 'axios'
 import Head from 'next/head'
@@ -11,6 +11,7 @@ export default function Page () {
 
   const [storeData, setStoreData] = useState<IStoreData>({
     name: '',
+    nameContact: '',
     email: '',
     phone: '',
     address: '',
@@ -64,6 +65,8 @@ export default function Page () {
   const [citys, setCitys] = useState<[]>()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [loadingLogo, setLoadingLogo] = useState(false)
+  const [loadingLogoWhite, setLoadingLogoWhite] = useState(false)
 
   const router = useRouter()
 
@@ -97,7 +100,8 @@ export default function Page () {
   }, [])
 
   const imageChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.length) {
+    if (e.target.files?.length && loadingLogo === false) {
+      setLoadingLogo(true)
       const formData = new FormData();
       formData.append('image', e.target.files[0]);
       formData.append('name', e.target.files[0].name);
@@ -108,11 +112,13 @@ export default function Page () {
         }
       })
       setStoreData({...storeData, logo: data})
+      setLoadingLogo(false)
     }
   }
 
   const imageChange2 = async (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.length) {
+    if (e.target.files?.length && loadingLogoWhite === false) {
+      setLoadingLogoWhite(true)
       const formData = new FormData();
       formData.append('image', e.target.files[0]);
       formData.append('name', e.target.files[0].name);
@@ -123,6 +129,7 @@ export default function Page () {
         }
       })
       setStoreData({...storeData, logoWhite: data})
+      setLoadingLogoWhite(false)
     }
   }
 
@@ -182,30 +189,52 @@ export default function Page () {
           <div className='flex w-full max-w-[1280px] mx-auto gap-6 flex-col lg:flex-row'>
             <Nav />
             <div className='w-full lg:w-3/4 flex flex-col gap-6'>
-              <h2 className='text-lg font-medium mt-3 pb-3 border-b dark:border-neutral-700'>Información de la tienda</h2>
+              <h2 className='text-lg font-medium mt-3 pb-3 border-b dark:border-neutral-700'>Información del negocio</h2>
               <Card title='Información general'>
                 <div className='flex flex-col gap-2'>
                   <p className='text-sm'>Nombre del negocio</p>
-                  <Input name='name' value={storeData.name} change={inputChange} placeholder='Nombre de la tienda' />
+                  <Input name='name' value={storeData.name} change={inputChange} placeholder='Nombre del negocio' />
+                </div>
+                <div className='flex flex-col gap-2'>
+                  <p className='text-sm'>Nombre de contacto</p>
+                  <Input name='nameContact' value={storeData.nameContact} change={inputChange} placeholder='Nombre de contacto' />
                 </div>
                 <div className='flex flex-col gap-2'>
                   <p className='text-sm'>Correo del negocio</p>
-                  <Input name='email' value={storeData.email} change={inputChange} placeholder='Correo de la tienda' />
+                  <Input name='email' value={storeData.email} change={inputChange} placeholder='Correo del negocio' />
                 </div>
                 <div className='flex flex-col gap-2'>
                   <p className='text-sm'>Teléfono del negocio</p>
                   <div className='flex gap-2'>
                     <p className='text-sm mt-auto mb-auto'>+56</p>
-                    <Input name='phone' value={storeData.phone} change={inputChange} placeholder='Teléfono de la tienda' />
+                    <Input name='phone' value={storeData.phone} change={inputChange} placeholder='Teléfono del negocio' />
                   </div>
                 </div>
                 <div className='flex flex-col gap-2'>
                   <p className='text-sm'>Logo del negocio</p>
-                  <input onChange={imageChange} type='file' className='text-sm block w-full file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:bg-main/10 file:text-main hover:file:bg-main/20' />
+                  {
+                    loadingLogo
+                      ? <Spinner />
+                      : <input onChange={imageChange} type='file' className='text-sm block w-full file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:bg-main/10 file:text-main hover:file:bg-main/20' />
+                  }
+                  {
+                    storeData.logo !== ''
+                      ? <img src={storeData.logo} alt='Logo del negocio' className='max-w-96' />
+                      : ''
+                  }
                 </div>
                 <div className='flex flex-col gap-2'>
                   <p className='text-sm'>Logo blanco del negocio</p>
-                  <input onChange={imageChange2} type='file' className='text-sm block w-full file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:bg-main/10 file:text-main hover:file:bg-main/20' />
+                  {
+                    loadingLogoWhite
+                      ? <Spinner />
+                      : <input onChange={imageChange2} type='file' className='text-sm block w-full file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:bg-main/10 file:text-main hover:file:bg-main/20' />
+                  }
+                  {
+                    storeData.logoWhite !== ''
+                      ? <img src={storeData.logoWhite} alt='Logo blanco del negocio' className='max-w-96' />
+                      : ''
+                  }
                 </div>
                 <div className='flex flex-col gap-2'>
                   <p className='text-sm'>Instagram del negocio</p>
@@ -224,7 +253,7 @@ export default function Page () {
                   <Input name='whatsapp' value={storeData.whatsapp} change={inputChange} placeholder='WhatsApp' />
                 </div>
               </Card>
-              <Card title='Ubicación de la tienda'>
+              <Card title='Ubicación del negocio'>
                 <div className='flex flex-col gap-2'>
                   <p className='text-sm'>Dirección</p>
                   <Input name='address' value={storeData.address} change={inputChange} placeholder='Dirección' />

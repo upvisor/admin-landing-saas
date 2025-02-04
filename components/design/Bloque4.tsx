@@ -4,6 +4,7 @@ import Image from 'next/image'
 import axios from 'axios'
 import { ICall, ICategoryPage, IDesign, IForm, IFunnel, IPage, IService } from '@/interfaces'
 import { Button, Input, Select, Spinner } from '../ui'
+import { ButtonDesign } from './ButtonDesign'
 
 interface Props {
     edit: any
@@ -22,9 +23,10 @@ interface Props {
     forms: IForm[] | undefined
     services?: IService[]
     setServices?: any
+    style?: any
 }
 
-export const Bloque4: React.FC<Props> = ({ edit, design, pages, setPages, index, ind, inde, indx, pageNeed, funnels, setFunnels, responsive, calls, forms, services, setServices }) => {
+export const Bloque4: React.FC<Props> = ({ edit, design, pages, setPages, index, ind, inde, indx, pageNeed, funnels, setFunnels, responsive, calls, forms, services, setServices, style }) => {
 
   const [gradient, setGradient] = useState('')
   const [firstColor, setFirstColor] = useState('')
@@ -84,7 +86,7 @@ export const Bloque4: React.FC<Props> = ({ edit, design, pages, setPages, index,
                     />
                     {
                       design.info.button && design.info.button !== '' && design.info.buttonLink && design.info.buttonLink !== ''
-                        ? <Button config='m-auto'>{design.info.button}</Button>
+                        ? <ButtonDesign style={style} text={design.info.button} config='m-auto' />
                         : ''
                     }
                   </div>
@@ -113,7 +115,7 @@ export const Bloque4: React.FC<Props> = ({ edit, design, pages, setPages, index,
                     />
                     {
                       design.info.button2 && design.info.button2 !== '' && design.info.buttonLink2 && design.info.buttonLink2 !== ''
-                        ? <Button config='m-auto'>{design.info.button2}</Button>
+                        ? <ButtonDesign style={style} text={design.info.button2} config='m-auto' />
                         : ''
                     }
                   </div>
@@ -142,14 +144,14 @@ export const Bloque4: React.FC<Props> = ({ edit, design, pages, setPages, index,
                     />
                     {
                       design.info.button3 && design.info.button3 !== '' && design.info.buttonLink3 && design.info.buttonLink3 !== ''
-                        ? <Button config='m-auto'>{design.info.button3}</Button>
+                        ? <ButtonDesign style={style} text={design.info.button3} config='m-auto' />
                         : ''
                     }
                   </div>
                 </div>
                 {
                   design.info?.image && design.info.image !== ''
-                    ? <Image className='h-fit mx-auto mt-4' width={480} height={300} alt='Imagen slider prueba' src={design.info.image} />
+                    ? <Image className='h-fit mx-auto mt-4' style={{ borderRadius: `${style.borderBlock}px`, border: style.design === 'Borde' ? `1px solid ${style.borderColor}` : '' }} width={480} height={300} alt='Imagen slider prueba' src={design.info.image} />
                     : ''
                 }
               </>
@@ -420,8 +422,8 @@ export const Bloque4: React.FC<Props> = ({ edit, design, pages, setPages, index,
                       }
                     }} className={`${responsive === '400px' ? 'text-base' : 'text-lg'} p-1.5 rounded border bg-transparent text-center`} style={{ color: design.info.textColor }} />
                     <div className='flex gap-4 m-auto'>
-                      <div className='bg-main border border-main w-fit text-white py-1.5 px-6 rounded-xl shadow-md shadow-main/30'>
-                        <input type='text' placeholder='Boton 1' value={design.info.button} onChange={(e: any) => {
+                      <div className='w-fit text-white py-2 px-6' style={{ backgroundColor: style.primary, color: style.button, borderRadius: style.form === 'Redondeadas' ? `${style.borderButton}px` : '' }}>
+                        <input type='text' placeholder='Boton' value={design.info.button} onChange={(e: any) => {
                           if (inde !== undefined) {
                             const oldFunnels = [...funnels!]
                             oldFunnels[inde].steps[ind].design![index].info.button = e.target.value
@@ -435,7 +437,7 @@ export const Bloque4: React.FC<Props> = ({ edit, design, pages, setPages, index,
                             oldPages[ind].design[index].info.button = e.target.value
                             setPages(oldPages)
                           }
-                        }} className='w-32 bg-main rounded border border-neutral-500' />
+                        }} className='text-sm lg:text-[16px] bg-transparent border border-neutral-500' />
                       </div>
                       <select value={design.info.buttonLink} onChange={(e: any) => {
                         if (inde !== undefined) {
@@ -507,8 +509,8 @@ export const Bloque4: React.FC<Props> = ({ edit, design, pages, setPages, index,
                       }
                     }} className={`${responsive === '400px' ? 'text-base' : 'text-lg'} p-1.5 rounded border bg-transparent text-center`} style={{ color: design.info.textColor }} />
                     <div className='flex gap-4 m-auto'>
-                      <div className='bg-main border border-main w-fit text-white py-1.5 px-6 rounded-xl shadow-md shadow-main/30'>
-                        <input type='text' placeholder='Boton 2' value={design.info.button2} onChange={(e: any) => {
+                      <div className='w-fit text-white py-2 px-6' style={{ backgroundColor: style.primary, color: style.button, borderRadius: style.form === 'Redondeadas' ? `${style.borderButton}px` : '' }}>
+                        <input type='text' placeholder='Boton' value={design.info.button2} onChange={(e: any) => {
                           if (inde !== undefined) {
                             const oldFunnels = [...funnels!]
                             oldFunnels[inde].steps[ind].design![index].info.button2 = e.target.value
@@ -522,7 +524,7 @@ export const Bloque4: React.FC<Props> = ({ edit, design, pages, setPages, index,
                             oldPages[ind].design[index].info.button2 = e.target.value
                             setPages(oldPages)
                           }
-                        }} className='w-32 bg-main rounded border border-neutral-500' />
+                        }} className='text-sm lg:text-[16px] bg-transparent border border-neutral-500' />
                       </div>
                       <select value={design.info.buttonLink2} onChange={(e: any) => {
                         if (inde !== undefined) {
@@ -594,8 +596,8 @@ export const Bloque4: React.FC<Props> = ({ edit, design, pages, setPages, index,
                       }
                     }} className={`${responsive === '400px' ? 'text-base' : 'text-lg'} p-1.5 rounded border bg-transparent text-center`} style={{ color: design.info.textColor }} />
                     <div className='flex gap-4 m-auto'>
-                      <div className='bg-main border border-main w-fit text-white py-1.5 px-6 rounded-xl shadow-md shadow-main/30'>
-                        <input type='text' placeholder='Boton 3' value={design.info.button3} onChange={(e: any) => {
+                      <div className='w-fit text-white py-2 px-6' style={{ backgroundColor: style.primary, color: style.button, borderRadius: style.form === 'Redondeadas' ? `${style.borderButton}px` : '' }}>
+                        <input type='text' placeholder='Boton' value={design.info.button3} onChange={(e: any) => {
                           if (inde !== undefined) {
                             const oldFunnels = [...funnels!]
                             oldFunnels[inde].steps[ind].design![index].info.button3 = e.target.value
@@ -609,7 +611,7 @@ export const Bloque4: React.FC<Props> = ({ edit, design, pages, setPages, index,
                             oldPages[ind].design[index].info.button3 = e.target.value
                             setPages(oldPages)
                           }
-                        }} className='w-32 bg-main rounded border border-neutral-500' />
+                        }} className='text-sm lg:text-[16px] bg-transparent border border-neutral-500' />
                       </div>
                       <select value={design.info.buttonLink3} onChange={(e: any) => {
                         if (inde !== undefined) {
@@ -652,7 +654,7 @@ export const Bloque4: React.FC<Props> = ({ edit, design, pages, setPages, index,
                 </div>
                 {
                   design.info?.image && design.info.image !== ''
-                    ? <Image className='h-fit mx-auto mt-4' width={480} height={300} alt='Imagen slider prueba' src={design.info.image} />
+                    ? <Image className='h-fit mx-auto mt-4' style={{ borderRadius: `${style.borderBlock}px`, border: style.design === 'Borde' ? `1px solid ${style.borderColor}` : '' }} width={480} height={300} alt='Imagen slider prueba' src={design.info.image} />
                     : ''
                 }
                 {

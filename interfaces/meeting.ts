@@ -11,4 +11,6 @@ export interface IMeeting {
     service?: string
     funnel?: string
     step?: string
+    calendar?: string
+    type?: string
 }

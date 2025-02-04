@@ -3,6 +3,7 @@ import { ICategoryPage, IFunnel, IPage, IService } from '@/interfaces'
 import React, { useState } from 'react'
 import { Button, Input, Select, Spinner } from '../ui'
 import axios from 'axios'
+import { ButtonDesign } from './ButtonDesign'
 
 interface Props {
     edit: any
@@ -18,9 +19,10 @@ interface Props {
     responsive: string
     services?: IService[]
     setServices?: any
+    style?: any
 }
 
-export const Subscription: React.FC<Props> = ({ edit, pages, setPages, index, design, ind, inde, indx, funnels, setFunnels, responsive, services, setServices }) => {
+export const Subscription: React.FC<Props> = ({ edit, pages, setPages, index, design, ind, inde, indx, funnels, setFunnels, responsive, services, setServices, style }) => {
 
   const [gradient, setGradient] = useState('')
   const [firstColor, setFirstColor] = useState('')
@@ -37,8 +39,8 @@ export const Subscription: React.FC<Props> = ({ edit, pages, setPages, index, de
             <>
               <h3 className={`${responsive === '400px' ? 'text-xl' : 'text-3xl'} font-medium text-center`} style={{ color: design.info.textColor }}>{design.info.title}</h3>
               <div className='flex gap-2'>
-                <Input change={() => {}} placeholder='Email' />
-                <Button>Enviar</Button>
+                <input placeholder='Email' style={{ borderRadius: style.form === 'Redondeadas' ? `${style.borderButton}px` : '' }} className='text-sm px-3 py-2 border w-full' />
+                <ButtonDesign style={style} text='Enviar' />
               </div>
             </>
           )
@@ -276,8 +278,8 @@ export const Subscription: React.FC<Props> = ({ edit, pages, setPages, index, de
                 }
               }} className={`${responsive === '400px' ? 'text-xl' : 'text-3xl'} p-1.5 border rounded text-center font-medium m-auto bg-transparent w-full`} style={{ color: design.info.textColor }} />
               <div className='flex gap-2'>
-                <Input change={() => {}} placeholder='Email' />
-                <Button>Enviar</Button>
+                <input placeholder='Email' style={{ borderRadius: style.form === 'Redondeadas' ? `${style.borderButton}px` : '' }} className='text-sm px-3 py-2 border w-full' />
+                <ButtonDesign style={style} text='Enviar' />
               </div>
             </>
           )

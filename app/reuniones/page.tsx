@@ -1,6 +1,6 @@
 "use client"
 import { PopupNewCall } from "@/components/design"
-import { Button, Button2, Button2Red, ButtonSubmit, Select, Spinner, Table } from "@/components/ui"
+import { Button, Button2, Button2Red, ButtonSecondary, ButtonSubmit, Select, Spinner, Table } from "@/components/ui"
 import { ICall, IFunnel, IMeeting, ITag } from "@/interfaces"
 import axios from "axios"
 import Link from "next/link"
@@ -18,12 +18,15 @@ export default function CallsPage () {
   const [error, setError] = useState('')
   const [funnels, setFunnels] = useState<IFunnel[]>([])
   const [calls, setCalls] = useState<ICall[]>([])
-  const [filteredMeetings, setFilteredMeetings] = useState<IMeeting[]>([])
+  const [filteredMeetings, setFilteredMeetings] = useState<IMeeting[] | undefined>(undefined)
   const [callSelect, setCallSelect] = useState('')
   const [title, setTitle] = useState('Crear llamada')
   const [newData, setNewData] = useState('')
   const [loadingNewData, setLoadingNewData] = useState(false)
   const [clientData, setClientData] = useState([])
+  const [calendars, setCalendars] = useState<any>([])
+  const [selectCaledar, setSelectCaledar] = useState('')
+  const [filterCalls, setFilterCalls] = useState<ICall[]>([])
 
   const router = useRouter()
 
@@ -67,6 +70,15 @@ export default function CallsPage () {
     getClientData()
   }, [])
 
+  const getCalendars = async () => {
+    const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/calendar`)
+    setCalendars(res.data)
+  }
+
+  useEffect(() => {
+    getCalendars()
+  }, [])
+
   return (
     <>
       <div onClick={() => {
@@ -78,7 +90,7 @@ export default function CallsPage () {
         }
       }} className={`${popupDelete.view} ${popupDelete.opacity} transition-opacity duration-200 fixed w-full h-full bg-black/20 flex top-0 left-0 z-50 p-4`}>
         <div onMouseEnter={() => setPopupDelete({ ...popupDelete, mouse: true })} onMouseLeave={() => setPopupDelete({ ...popupDelete, mouse: false })} className={`${popupDelete.opacity === 'opacity-1' ? 'scale-100' : 'scale-90'} transition-transform duration-200 shadow-popup w-full max-w-[500px] max-h-[600px] overflow-y-auto p-5 lg:p-6 rounded-xl flex flex-col gap-4 m-auto border bg-white dark:shadow-popup-dark dark:bg-neutral-800 dark:border-neutral-700`}>
-          <p>¿Estas seguro que deseas eliminar la llamada: <span className='font-medium'>{newCall?.nameMeeting}</span>?</p>
+          <p>¿Estas seguro que deseas eliminar la reunion: <span className='font-medium'>{newCall?.nameMeeting}</span>?</p>
           <div className='flex gap-6'>
             <ButtonSubmit submitLoading={loading} textButton='Eliminar' action={async (e: any) => {
               e.preventDefault()
@@ -107,18 +119,18 @@ export default function CallsPage () {
       <main className="flex flex-col p-4 lg:p-6 gap-6 h-full w-full bg-bg dark:bg-neutral-900">
         <div className="w-full flex flex-col gap-6 mx-auto max-w-[1280px]">
           <div className="flex gap-4 justify-between flex-col lg:flex-row">
-            <h1 className="text-2xl font-medium my-auto">Llamadas</h1>
-            <div className="flex gap-6 flex-col lg:flex-row">
-              <Link href="/llamadas/disponibilidad" className="my-auto text-sm">Modificar disponibilidad</Link>
+            <h1 className="text-2xl font-medium my-auto">Reuniones</h1>
+            <div className="flex gap-4 flex-col lg:flex-row">
+              <Link href="/reuniones/disponibilidad" className="my-auto text-sm"><ButtonSecondary action={undefined}>Modificar disponibilidad</ButtonSecondary></Link>
               <Button action={(e: any) => {
                 e.preventDefault()
-                setTitle('Crear llamada')
-                setNewCall({ nameMeeting: '', duration: '15 minutos', title: '', price: '', tags: [], labels: [{ data: '', name: '', text: '' }], buttonText: '', action: 'Mostrar mensaje', description: '', message: '', redirect: '' })
+                setTitle('Crear reunion')
+                setNewCall({ type: '', nameMeeting: '', duration: '15 minutos', title: '', price: '', tags: [], labels: [{ data: '', name: '', text: '' }], buttonText: '', action: 'Mostrar mensaje', description: '', message: '', redirect: '', calendar: '' })
                 setPopupCall({ ...popupCall, view: 'flex', opacity: 'opacity-0' })
                 setTimeout(() => {
                   setPopupCall({ ...popupCall, view: 'flex', opacity: 'opacity-1' })
                 }, 10)
-              }}>Crear una nueva llamada</Button>
+              }}>Crear una nueva reunion</Button>
             </div>
           </div>
           {
@@ -133,54 +145,91 @@ export default function CallsPage () {
               : meetings.length || calls.length
                 ? (
                   <>
-                    <div className="flex gap-4 flex-col lg:flex-row">
-                      <Select change={(e: any) => {
-                        if (e.target.value === 'Todas las llamadas') {
-                          setNewCall({ nameMeeting: '', duration: '15 minutos', title: '', price: '', tags: [], labels: [{ data: '', name: '', text: '' }], buttonText: '', action: 'Mostrar mensaje', description: '', message: '', redirect: '' })
-                          setFilteredMeetings([])
-                        } else {
-                          setNewCall({ nameMeeting: '', duration: '15 minutos', title: '', price: '', tags: [], labels: [{ data: '', name: '', text: '' }], buttonText: '', action: 'Mostrar mensaje', description: '', message: '', redirect: '' })
-                          const allMeetings = [...meetings]
-                          const filterMeetings = allMeetings.filter(meeting => meeting.meeting === e.target.value)
-                          setFilteredMeetings(filterMeetings)
-                          setCallSelect(e.target.value)
-                        }
-                      }} config="w-fit max-w-full">
-                        <option>Todas las llamadas</option>
-                        {
-                          calls.map(call => (
-                            <option key={call._id}>{call.nameMeeting}</option>
-                          ))
-                        }
-                      </Select>
+                    <div className="flex gap-6 flex-wrap">
                       {
-                        callSelect !== ''
+                        calendars.length
                           ? (
-                            <>
-                              <Button2 color='main' action={(e: any) => {
-                                e.preventDefault()
-                                const call = calls.find(call => call.nameMeeting === callSelect)
-                                if (call) {
-                                  setNewCall(call)
+                            <div className="flex flex-col gap-2">
+                              <p>Seleccionar calendario</p>
+                              <div className="flex gap-4 flex-col lg:flex-row">
+                                <Select change={(e: any) => {
+                                  setSelectCaledar(e.target.value)
+                                  const callsFilter = calls.filter(call => call.calendar === e.target.value)
+                                  setFilterCalls(callsFilter)
+                                  const meetingsFilter = meetings.filter(meeting => meeting.calendar === e.target.value)
+                                  setFilteredMeetings(meetingsFilter)
+                                }} config="w-fit max-w-full">
+                                  <option value=''>Seleccionar calendario</option>
+                                  {
+                                    calendars.map((calendar: any) => (
+                                      <option key={calendar._id} value={calendar._id}>{calendar.name}</option>
+                                    ))
+                                  }
+                                </Select>
+                              </div>
+                            </div>
+                          )
+                          : ''
+                      }
+                      {
+                        selectCaledar !== ''
+                          ? (
+                            <div className="flex flex-col gap-2">
+                              <p>Seleccionar reunion</p>
+                              <div className="flex gap-4 flex-col lg:flex-row">
+                                <Select change={(e: any) => {
+                                  if (e.target.value === 'Todas las llamadas') {
+                                    setNewCall({ type: '', nameMeeting: '', duration: '15 minutos', title: '', price: '', tags: [], labels: [{ data: '', name: '', text: '' }], buttonText: '', action: 'Mostrar mensaje', description: '', message: '', redirect: '', calendar: '' })
+                                    const meetingsFiltered = meetings.filter(meeting => meeting.calendar === selectCaledar)
+                                    setFilteredMeetings(meetingsFiltered)
+                                    setCallSelect('')
+                                  } else {
+                                    setNewCall({ type: '', nameMeeting: '', duration: '15 minutos', title: '', price: '', tags: [], labels: [{ data: '', name: '', text: '' }], buttonText: '', action: 'Mostrar mensaje', description: '', message: '', redirect: '', calendar: '' })
+                                    const filterMeetings = meetings?.filter(meeting => meeting.meeting === e.target.value)
+                                    setFilteredMeetings(filterMeetings)
+                                    setCallSelect(e.target.value)
+                                  }
+                                }} config="w-fit max-w-full">
+                                  <option>Todas las reuniones</option>
+                                  {
+                                    filterCalls.map(call => (
+                                      <option key={call._id} value={call._id}>{call.nameMeeting}</option>
+                                    ))
+                                  }
+                                </Select>
+                                {
+                                  callSelect !== ''
+                                    ? (
+                                      <>
+                                        <Button2 action={(e: any) => {
+                                          e.preventDefault()
+                                          const call = calls.find(call => call.nameMeeting === callSelect)
+                                          if (call) {
+                                            setNewCall(call)
+                                          }
+                                          setTitle('Editar llamada')
+                                          setPopupCall({ ...popupCall, view: 'flex', opacity: 'opacity-0' })
+                                          setTimeout(() => {
+                                            setPopupCall({ ...popupCall, view: 'flex', opacity: 'opacity-1' })
+                                          }, 10)
+                                        }}>Editar reunion</Button2>
+                                        <Button2Red action={(e: any) => {
+                                          e.preventDefault()
+                                          const call = calls.find(call => call.nameMeeting === callSelect)
+                                          if (call) {
+                                            setNewCall(call)
+                                          }
+                                          setPopupDelete({ ...popupDelete, view: 'flex', opacity: 'opacity-0' })
+                                          setTimeout(() => {
+                                            setPopupDelete({ ...popupDelete, view: 'flex', opacity: 'opacity-1' })
+                                          }, 10)
+                                        }}>Eliminar reunion</Button2Red>
+                                      </>
+                                    )
+                                    : ''
                                 }
-                                setTitle('Editar llamada')
-                                setPopupCall({ ...popupCall, view: 'flex', opacity: 'opacity-0' })
-                                setTimeout(() => {
-                                  setPopupCall({ ...popupCall, view: 'flex', opacity: 'opacity-1' })
-                                }, 10)
-                              }}>Editar llamada</Button2>
-                              <Button2Red action={(e: any) => {
-                                e.preventDefault()
-                                const call = calls.find(call => call.nameMeeting === callSelect)
-                                if (call) {
-                                  setNewCall(call)
-                                }
-                                setPopupDelete({ ...popupDelete, view: 'flex', opacity: 'opacity-0' })
-                                setTimeout(() => {
-                                  setPopupDelete({ ...popupDelete, view: 'flex', opacity: 'opacity-1' })
-                                }, 10)
-                              }}>Eliminar llamada</Button2Red>
-                            </>
+                              </div>
+                            </div>
                           )
                           : ''
                       }
@@ -188,9 +237,9 @@ export default function CallsPage () {
                     {
                       meetings.length
                         ? (
-                          <Table th={['Nombre', 'Email', 'Teléfono', 'Fecha', 'Hora', 'LLamada']}>
+                          <Table th={['Nombre', 'Email', 'Teléfono', 'Fecha', 'Hora', 'Reunion']}>
                             {
-                              filteredMeetings.length
+                              filteredMeetings
                                 ? filteredMeetings.map((meeting, index) => {
                                   const meetingDate = new Date(meeting.date!)
                                   const day = String(meetingDate.getDate()).padStart(2, '0')
@@ -199,13 +248,13 @@ export default function CallsPage () {
                                   const hours = String(meetingDate.getHours()).padStart(2, '0')
                                   const minutes = String(meetingDate.getMinutes()).padStart(2, '0')
                                   return (
-                                    <tr key={meeting._id} onClick={() => router.push(`/llamadas/${meeting._id}`)} className={`${index + 1 < meetings.length ? 'border-b' : ''} bg-white border-neutral-300 cursor-pointer transition-colors duration-150 dark:bg-neutral-800 dark:border-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-700`}>
+                                    <tr key={meeting._id} onClick={() => router.push(`/reuniones/${meeting._id}`)} className={`${index + 1 < meetings.length ? 'border-b' : ''} bg-white border-neutral-300 cursor-pointer transition-colors duration-150 dark:bg-neutral-800 dark:border-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-700`}>
                                       <td className='p-3'>{meeting.firstName} {meeting.lastName}</td>
                                       <td className='p-3'>{meeting.email}</td>
                                       <td className='p-3'>+56{meeting.phone}</td>
                                       <td className='p-3'>{`${day}/${month}/${year}`}</td>
                                       <td className='p-3'>{`${hours}:${minutes}`}</td>
-                                      <td className='p-3'>{meeting.meeting}</td>
+                                      <td className='p-3'>{calls.find(call => call._id === meeting.meeting)?.nameMeeting}</td>
                                     </tr>
                                   )
                                 })
@@ -217,24 +266,24 @@ export default function CallsPage () {
                                   const hours = String(meetingDate.getHours()).padStart(2, '0')
                                   const minutes = String(meetingDate.getMinutes()).padStart(2, '0')
                                   return (
-                                    <tr key={meeting._id} onClick={() => router.push(`/llamadas/${meeting._id}`)} className={`${index + 1 < meetings.length ? 'border-b' : ''} bg-white border-neutral-300 cursor-pointer transition-colors duration-150 dark:bg-neutral-800 dark:border-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-700`}>
+                                    <tr key={meeting._id} onClick={() => router.push(`/reuniones/${meeting._id}`)} className={`${index + 1 < meetings.length ? 'border-b' : ''} bg-white border-neutral-300 cursor-pointer transition-colors duration-150 dark:bg-neutral-800 dark:border-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-700`}>
                                       <td className='p-3'>{meeting.firstName} {meeting.lastName}</td>
                                       <td className='p-3'>{meeting.email}</td>
                                       <td className='p-3'>+56{meeting.phone}</td>
                                       <td className='p-3'>{`${day}/${month}/${year}`}</td>
                                       <td className='p-3'>{`${hours}:${minutes}`}</td>
-                                      <td className='p-3'>{meeting.meeting}</td>
+                                      <td className='p-3'>{calls.find(call => call._id === meeting.meeting)?.nameMeeting}</td>
                                     </tr>
                                   )
                                 })
                             }
                           </Table>
                         )
-                        : <p>No hay llamadas agendadas</p>
+                        : <p>No hay reuniones agendadas</p>
                     }
                   </>
                 )
-                : <p>No hay llamadas agendadas</p>
+                : <p>No hay reuniones agendadas</p>
           }
         </div>
       </main>

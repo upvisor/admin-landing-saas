@@ -1,8 +1,9 @@
 import axios from 'axios'
 import React, { useEffect, useRef, useState } from 'react'
-import { Button, Button2, ButtonSubmit2, Input, Select, Textarea } from '../ui'
+import { Button, Button2, ButtonSubmit2, Calendar, Input, Select, Textarea } from '../ui'
 import { ICall, IClientData, IFunnel, ITag } from '@/interfaces'
 import { AiOutlineClose } from 'react-icons/ai'
+import { useSession } from 'next-auth/react'
 
 interface Props {
   popupCall: { view: string, opacity: string, mouse: boolean }
@@ -22,15 +23,28 @@ interface Props {
   setLoadingNewData: any
   clientData: IClientData[]
   getClientData: any
+  calls?: ICall[]
 }
 
-export const PopupNewCall: React.FC<Props> = ({ popupCall, setPopupCall, titleMeeting, newCall, setNewCall, getCalls, tags, getTags, error, setError, funnels, newData, setNewData, loadingNewData, setLoadingNewData, clientData, getClientData }) => {
+export const PopupNewCall: React.FC<Props> = ({ popupCall, setPopupCall, titleMeeting, newCall, setNewCall, getCalls, tags, getTags, error, setError, funnels, newData, setNewData, loadingNewData, setLoadingNewData, clientData, getClientData, calls }) => {
 
   const [loadingNewCall, setLoadingNewCall] = useState(false)
   const [newTag, setNewTag] = useState('')
   const [loadingTag, setLoadingTag] = useState(false)
+  const [calendars, setCalendars] = useState<any>([])
+
+  const { data: session } = useSession()
 
   const popupRef = useRef<HTMLFormElement | null>(null);
+
+  const getCalendars = async () => {
+    const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/calendar`)
+    setCalendars(res.data)
+  }
+
+  useEffect(() => {
+    getCalendars()
+  }, [])
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -54,6 +68,24 @@ export const PopupNewCall: React.FC<Props> = ({ popupCall, setPopupCall, titleMe
           e.preventDefault()
           if (!loadingNewCall) {
             setLoadingNewCall(true)
+            setError('')
+            if (session?.user.plan === 'Inicial' && calls?.filter(call => call.type === 'Llamada por Zoom').length === 2) {
+              setError('Solo puedes tener 2 llamadas por Zoom')
+              setLoadingNewCall(false)
+              return
+            } else if (session?.user.plan === 'Inicial' && calls?.filter(call => call.type === 'Visita').length === 2) {
+              setError('Solo puedes tener 2 visitas')
+              setLoadingNewCall(false)
+              return
+            } else if (session?.user.plan === 'Emprendedor' && calls?.filter(call => call.type === 'Llamada por Zoom').length === 5) {
+              setError('Solo puedes tener 5 llamadas por Zoom')
+              setLoadingNewCall(false)
+              return
+            } else if (session?.user.plan === 'Emprendedor' && calls?.filter(call => call.type === 'Visita').length === 5) {
+              setError('Solo puedes tener 5 visitas')
+              setLoadingNewCall(false)
+              return
+            }
             if (titleMeeting === 'Crear llamada') {
               if (newCall.nameMeeting !== '') {
                 await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/call`, newCall)
@@ -85,8 +117,25 @@ export const PopupNewCall: React.FC<Props> = ({ popupCall, setPopupCall, titleMe
           }
           <p className="text-lg font-medium">{titleMeeting}</p>
           <div className="flex flex-col gap-2">
+            <p>Tipo</p>
+            <Select change={(e: any) => setNewCall({ ...newCall, type: e.target.value })} value={newCall.type}>
+              <option value=''>Seleccionar tipo</option>
+              <option>Llamada por Zoom</option>
+              <option>Visita</option>
+            </Select>
+          </div>
+          <div className="flex flex-col gap-2">
             <p>Nombre de la llamada</p>
             <Input change={(e: any) => setNewCall({ ...newCall, nameMeeting: e.target.value })} placeholder='Nombre de la llamada' value={newCall.nameMeeting} />
+          </div>
+          <div className="flex flex-col gap-2">
+            <p>Seleccionar calendario</p>
+            <Select change={(e: any) => setNewCall({ ...newCall, calendar: e.target.value })} value={newCall.calendar}>
+              <option>Seleccionar calendario</option>
+              {
+                calendars.map((calendar: any) => <option key={calendar._id} value={calendar._id}>{calendar.name}</option>)
+              }
+            </Select>
           </div>
           <div className="flex flex-col gap-2">
             <p>Titulo</p>
@@ -100,6 +149,23 @@ export const PopupNewCall: React.FC<Props> = ({ popupCall, setPopupCall, titleMe
               <option value='25 minutos'>25 minutos</option>
               <option value='30 minutos'>30 minutos</option>
               <option value='40 minutos'>40 minutos</option>
+              {
+                newCall.type === 'Visita'
+                  ? (
+                    <>
+                      <option value='45 minutos'>45 minutos</option>
+                      <option value='50 minutos'>50 minutos</option>
+                      <option value='60 minutos'>60 minutos</option>
+                      <option value='70 minutos'>70 minutos</option>
+                      <option value='80 minutos'>80 minutos</option>
+                      <option value='90 minutos'>90 minutos</option>
+                      <option value='100 minutos'>100 minutos</option>
+                      <option value='110 minutos'>110 minutos</option>
+                      <option value='120 minutos'>120 minutos</option>
+                    </>
+                  )
+                  : ''
+              }
             </Select>
           </div>
           <div className="flex flex-col gap-2">
@@ -151,7 +217,7 @@ export const PopupNewCall: React.FC<Props> = ({ popupCall, setPopupCall, titleMe
                 ))
                 : ''
             }
-            <Button2 color='main' action={(e: any) => {
+            <Button2 action={(e: any) => {
               e.preventDefault()
               if (newCall.labels) {
                 const oldData = [...newCall.labels]
@@ -264,7 +330,7 @@ export const PopupNewCall: React.FC<Props> = ({ popupCall, setPopupCall, titleMe
               )
               : ''
           }
-          <Button type='submit' loading={loadingNewCall} config='w-full'>{titleMeeting === 'Crear llamada' ? 'Crear llamada' : 'Editar llamada'}</Button>
+          <Button type='submit' loading={loadingNewCall} config='w-full'>{titleMeeting === 'Crear reunion' ? 'Crear reunion' : 'Editar reunion'}</Button>
         </form>
       </div>
   )

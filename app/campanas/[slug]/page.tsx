@@ -91,7 +91,7 @@ export default function Page ({ params }: { params: { slug: string } }) {
                       <Link href='/campanas' className='border rounded-xl p-2 h-fit my-auto transition-colors duration-150 bg-white hover:bg-neutral-50 dark:bg-neutral-800 dark:border-neutral-600 dark:hover:bg-neutral-700'><BiArrowBack className='text-xl' /></Link>
                       <h1 className='text-xl font-medium mt-auto mb-auto'>Campaña: {email?._id}</h1>
                     </div>
-                    <Button2 color={'main'} action={(e: any) => {
+                    <Button2 action={(e: any) => {
                       e.preventDefault()
                       setPopup({ ...popup, view: 'flex', opacity: 'opacity-0' })
                       setTimeout(() => {

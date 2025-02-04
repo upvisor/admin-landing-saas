@@ -57,7 +57,7 @@ export const Step: React.FC<Props> = ({ email, index, setAutomatization, automat
                   ))
                 }
               </div>
-              <Button2 color='main' action={(e: any) => {
+              <Button2 action={(e: any) => {
                 e.preventDefault()
                 setSelectStep(index)
                 setPopupCondition({ ...popupCondition, view: 'flex', opacity: 'opacity-0' })
@@ -68,7 +68,7 @@ export const Step: React.FC<Props> = ({ email, index, setAutomatization, automat
             </div>
           )
           : (
-            <Button2 color='main' config='m-auto' action={(e: any) => {
+            <Button2 config='m-auto' action={(e: any) => {
               e.preventDefault()
               setSelectStep(index)
               setPopupCondition({ ...popupCondition, view: 'flex', opacity: 'opacity-0' })
@@ -82,7 +82,7 @@ export const Step: React.FC<Props> = ({ email, index, setAutomatization, automat
       <div key={email.affair} className='w-full max-w-[500px] p-5 flex flex-col gap-2 bg-white m-auto rounded-xl border border-black/5 dark:bg-neutral-800 dark:border-neutral-700' style={{ boxShadow: '0px 3px 10px 3px #11111108' }}>
         <p>Enviar correo</p>
         <p className='text-sm'>Asunto: {email.affair}</p>
-        <Button2 action={(e: any) => editEmail(email, index, e)} color='main'>Editar Correo</Button2>
+        <Button2 action={(e: any) => editEmail(email, index, e)}>Editar Correo</Button2>
       </div>
     </>
   )

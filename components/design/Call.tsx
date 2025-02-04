@@ -27,9 +27,10 @@ interface Props {
     services?: IService[]
     setServices?: any
     storeData?: IStoreData
+    style?: any
 }
 
-export const Call: React.FC<Props> = ({ edit, pages, setPages, design, index, ind, inde, indx, funnels, setFunnels, calls, setNewCall, setTitleMeeting, setPopupCall, popupCall, responsive, error, setError, services, setServices, storeData }) => {
+export const Call: React.FC<Props> = ({ edit, pages, setPages, design, index, ind, inde, indx, funnels, setFunnels, calls, setNewCall, setTitleMeeting, setPopupCall, popupCall, responsive, error, setError, services, setServices, storeData, style }) => {
   
   const [loading, setLoading] = useState(false)
   const [gradient, setGradient] = useState('')
@@ -323,21 +324,42 @@ export const Call: React.FC<Props> = ({ edit, pages, setPages, design, index, in
             }} className={`${responsive === '400px' ? 'text-base' : 'text-lg'} p-1.5 rounded border bg-transparent text-center`} style={{ color: design.info.textColor }} />
             </div>
             <div className="w-full flex px-4">
-              <div className="bg-white border border-black/5 rounded-xl m-auto w-full max-w-[1280px]" style={{ boxShadow: '0px 3px 10px 3px #11111108' }}>
+              <div className={`m-auto w-full max-w-[1280px]`} style={{ boxShadow: style.design === 'Sombreado' ? `0px 3px 20px 3px ${style.borderColor}10` : '', borderRadius: style.form === 'Redondeadas' ? `${style.borderBlock}px` : '', border: style.design === 'Borde' ? `1px solid ${style.borderColor}` : '', color: design.info.textColor }}>
                 <div className="lg:flex">
-                  <div className="p-6 border-b lg:border-b-0 lg:border-r flex flex-col gap-8 w-full lg:w-5/12">
+                  <div className="p-6 flex flex-col gap-8 w-full lg:w-5/12" style={{ borderRight: responsive === '400px' ? 'none' : `1px solid ${style.borderColor}`, borderBottom: responsive === '400px' ? `1px solid ${style.borderColor}` : 'none' }}>
                     <div className="flex flex-col gap-3">
+                      <p>Seleccionar logo</p>
+                      <Select change={(e: any) => {
+                        if (inde !== undefined) {
+                          const oldFunnels = [...funnels!]
+                          oldFunnels[inde].steps[ind].design![index].info.video = e.target.value
+                          setFunnels(oldFunnels)
+                        } else if (indx !== undefined) {
+                          const oldServices = [...services!]
+                          oldServices[indx].steps[ind].design![index].info.video = e.target.value
+                          setServices(oldServices)
+                        } else {
+                          const oldPages = [...pages]
+                          oldPages[ind].design[index].info.video = e.target.value
+                          setPages(oldPages)
+                        }
+                      }} config='text-black' value={design.info.video}>
+                        <option>Logo</option>
+                        <option>Logo blanco</option>
+                      </Select>
                       {
-                        storeData?.logo && storeData.logo !== ''
+                        storeData?.logo && storeData.logo !== '' && design.info.video === 'Logo'
                           ? <Image src={storeData.logo} alt={`Imagen logo ${storeData.name}`} width={200} height={150} className='w-40' />
-                          : <p className='text-lg font-medium'>{storeData?.name}</p>
+                          : storeData?.logoWhite && storeData.logoWhite !== '' && design.info.video === 'Logo blanco'
+                            ? <Image src={storeData.logoWhite} alt={`Imagen logo ${storeData.name}`} width={200} height={150} className='w-40' />
+                            : <p className='text-lg font-medium'>{storeData?.name}</p>
                       }
                       {
                         calls?.length
                           ? (
                             <>
                               <p>Seleccionar llamada</p>
-                              <Select value={design.meeting} change={(e: any) => {
+                              <Select value={design.meeting} config='text-black' change={(e: any) => {
                                 if (inde !== undefined) {
                                   const oldFunnels = [...funnels!]
                                   oldFunnels[inde].steps[ind].design![index].meeting = e.target.value
@@ -366,11 +388,11 @@ export const Call: React.FC<Props> = ({ edit, pages, setPages, design, index, in
                           )
                       }
                       <div className='flex gap-2'>
-                        <Button2 color='main' action={(e: any) => {
+                        <Button2 action={(e: any) => {
                           e.preventDefault()
                           setLoading(true)
                           setError('')
-                          setNewCall({ nameMeeting: '', duration: '15 minutos', description: '', title: '', labels: [{ data: '', name: '', text: '' }], buttonText: '', action: 'Mostrar mensaje', message: '' })
+                          setNewCall({ type: '', nameMeeting: '', duration: '15 minutos', description: '', title: '', labels: [{ data: '', name: '', text: '' }], buttonText: '', action: 'Mostrar mensaje', message: '', calendar: '' })
                           setTitleMeeting('Crear llamada')
                           setPopupCall({ ...popupCall, view: 'flex', opacity: 'opacity-0' })
                           setTimeout(() => {
@@ -482,14 +504,16 @@ export const Call: React.FC<Props> = ({ edit, pages, setPages, design, index, in
                   dangerouslySetInnerHTML={{ __html: design.info.description ? design.info.description : '' }}
                 />
               </div>
-              <div className="bg-white border border-black/5 rounded-xl m-auto w-full max-w-[1280px]" style={{ boxShadow: '0px 3px 10px 3px #11111108' }}>
+              <div className={`m-auto w-full max-w-[1280px]`} style={{ boxShadow: style.design === 'Sombreado' ? `0px 3px 20px 3px ${style.borderColor}10` : '', borderRadius: style.form === 'Redondeadas' ? `${style.borderBlock}px` : '', border: style.design === 'Borde' ? `1px solid ${style.borderColor}` : '', color: design.info.textColor }}>
                 <div className={`flex ${responsive === '400px' ? 'flex-col' : 'flex-row'}`}>
-                  <div className={`p-6 ${responsive === '400px' ? 'w-full border-b' : 'w-5/12 border-r'} flex flex-col gap-8`}>
+                  <div className={`p-6 ${responsive === '400px' ? 'w-full' : 'w-5/12'} flex flex-col gap-8`} style={{ borderRight: responsive === '400px' ? 'none' : `1px solid ${style.borderColor}`, borderBottom: responsive === '400px' ? `1px solid ${style.borderColor}` : 'none' }}>
                     <div className="flex flex-col gap-3">
                       {
-                        storeData?.logo && storeData.logo !== ''
+                        storeData?.logo && storeData.logo !== '' && design.info.video === 'Logo'
                           ? <Image src={storeData.logo} alt={`Imagen logo ${storeData.name}`} width={200} height={150} className='w-40' />
-                          : <p className='text-lg font-medium'>{storeData?.name}</p>
+                          : storeData?.logoWhite && storeData.logoWhite !== '' && design.info.video === 'Logo blanco'
+                            ? <Image src={storeData.logoWhite} alt={`Imagen logo ${storeData.name}`} width={200} height={150} className='w-40' />
+                            : <p className='text-lg font-medium'>{storeData?.name}</p>
                       }
                       {
                         calls?.find(call => call._id === design.meeting)

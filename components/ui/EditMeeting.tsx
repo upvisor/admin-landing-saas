@@ -10,6 +10,7 @@ type CalendarProps = {
   setScheduled: any
   setPopup: any
   popup: any
+  selectedCalendar: any
 };
 
 interface DateData {
@@ -17,7 +18,7 @@ interface DateData {
   hours: number[];
 }
 
-export const EditMeeting: React.FC<CalendarProps> = ({ meeting, scheduled, setScheduled, setPopup, popup }) => {
+export const EditMeeting: React.FC<CalendarProps> = ({ meeting, scheduled, setScheduled, setPopup, popup, selectedCalendar }) => {
   const [date, setDate] = useState<Date>(new Date());
   const [selectedDateTime, setSelectedDateTime] = useState<Date | null>(null);
   const [availableDates, setAvailableDates] = useState<DateData[]>([]);
@@ -33,7 +34,7 @@ export const EditMeeting: React.FC<CalendarProps> = ({ meeting, scheduled, setSc
       const meetingsRes = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/meetings`);
       const meetings = meetingsRes.data.map((meeting: any) => new Date(meeting.date));
   
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/calendar`);
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/calendar/${selectedCalendar}`);
       const datesWithConvertedDates = res.data.dates.map((dateItem: any) => ({
         ...dateItem,
         date: new Date(dateItem.date)

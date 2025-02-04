@@ -2,6 +2,7 @@ import axios from 'axios'
 import React, { useEffect, useRef, useState } from 'react'
 import { Button, Button2, ButtonSubmit2, Input, Select, Spinner2 } from '../ui'
 import { IClientData, IForm, IFunnel, ITag } from '@/interfaces'
+import { IoMdClose } from 'react-icons/io'
 
 interface Props {
   popupForm: { view: string, opacity: string, mouse: boolean }
@@ -21,9 +22,10 @@ interface Props {
   setLoadingNewData: any
   clientData: IClientData[]
   getClientData: any
+  style?: any
 }
 
-export const PopupNewForm: React.FC<Props> = ({ popupForm, setPopupForm, titleForm, newForm, setNewForm, getForms, tags, funnels, getTags, error, setError, newData, setNewData, loadingNewData, setLoadingNewData, clientData, getClientData }) => {
+export const PopupNewForm: React.FC<Props> = ({ popupForm, setPopupForm, titleForm, newForm, setNewForm, getForms, tags, funnels, getTags, error, setError, newData, setNewData, loadingNewData, setLoadingNewData, clientData, getClientData, style }) => {
 
   const [loadingNewForm, setLoadingNewForm] = useState(false)
   const [newTag, setNewTag] = useState('')
@@ -103,15 +105,15 @@ export const PopupNewForm: React.FC<Props> = ({ popupForm, setPopupForm, titleFo
                     <button onClick={(e: any) => {
                       e.preventDefault()
                       const oldInformations = [...newForm.informations]
-                      oldInformations[i].icon = '<svg style="width: 35px; height: 35px; color: #0071E3; margin-top: auto; margin-bottom: auto;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" className="my-auto h-7 w-7 flex-shrink-0 text-main"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5"></path></svg>'
+                      oldInformations[i].icon = `<svg style="width: 35px; height: 35px; color: ${style.primary}; margin-top: auto; margin-bottom: auto;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" className="my-auto h-7 w-7 flex-shrink-0 text-[${style.primary}]"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5"></path></svg>`
                       setNewForm({ ...newForm, informations: oldInformations })
-                    }} className={`p-2 rounded border ${information.icon === '<svg style="width: 35px; height: 35px; color: #0071E3; margin-top: auto; margin-bottom: auto;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" className="my-auto h-7 w-7 flex-shrink-0 text-main"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5"></path></svg>' ? 'border-main' : 'hover:border-main'} transition-colors duration-150`}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" className="my-auto h-7 w-7 flex-shrink-0 text-main"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5"></path></svg></button>
+                    }} className={`p-2 rounded border ${information.icon === `<svg style="width: 35px; height: 35px; color: ${style.primary}; margin-top: auto; margin-bottom: auto;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" className="my-auto h-7 w-7 flex-shrink-0 text-[${style.primary}]"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5"></path></svg>` ? `border-main` : `hover:border-main`} transition-colors duration-150`}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" className="my-auto h-7 w-7 flex-shrink-0 text-main"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5"></path></svg></button>
                     <button onClick={(e: any) => {
                       e.preventDefault()
                       const oldInformations = [...newForm.informations]
-                      oldInformations[i].icon = '<svg style="width: 35px; height: 35px; color: #0071E3; margin-top: auto; margin-bottom: auto;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" className="my-auto h-7 w-7 text-main flex-shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z"></path></svg>'
+                      oldInformations[i].icon = `<svg style="width: 35px; height: 35px; color: ${style.primary}; margin-top: auto; margin-bottom: auto;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" className="my-auto h-7 w-7 text-[${style.primary}] flex-shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z"></path></svg>`
                       setNewForm({ ...newForm, informations: oldInformations })
-                    }} className={`p-2 rounded border ${information.icon === '<svg style="width: 35px; height: 35px; color: #0071E3; margin-top: auto; margin-bottom: auto;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" className="my-auto h-7 w-7 text-main flex-shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z"></path></svg>' ? 'border-main' : 'hover:border-main'} transition-colors duration-150`}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" className="my-auto h-7 w-7 text-main flex-shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z"></path></svg></button>
+                    }} className={`p-2 rounded border ${information.icon === `<svg style="width: 35px; height: 35px; color: ${style.primary}; margin-top: auto; margin-bottom: auto;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" className="my-auto h-7 w-7 text-[${style.primary}] flex-shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z"></path></svg>` ? 'border-main' : 'hover:border-main'} transition-colors duration-150`}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" className="my-auto h-7 w-7 text-main flex-shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z"></path></svg></button>
                   </div>
                   <p>Texto</p>
                   <Input change={(e: any) => {
@@ -128,7 +130,7 @@ export const PopupNewForm: React.FC<Props> = ({ popupForm, setPopupForm, titleFo
                 </>
               ))
             }
-            <Button2 color='main' action={(e: any) => {
+            <Button2 action={(e: any) => {
               e.preventDefault()
               const oldInformations = [...newForm.informations]
               oldInformations.push({ icon: '', text: '' })
@@ -161,13 +163,55 @@ export const PopupNewForm: React.FC<Props> = ({ popupForm, setPopupForm, titleFo
                         : ''
                     }
                   </Select>
+                  <Select value={label.type} change={(e: any) => {
+                    const oldLabels = [...newForm.labels]
+                    oldLabels[i].type = e.target.value
+                    oldLabels[i].datas = ['']
+                    setNewForm({ ...newForm, labels: oldLabels })
+                  }}>
+                    <option value=''>Seleccionar tipo de respuesta</option>
+                    <option>Texto</option>
+                    <option>Selector</option>
+                  </Select>
+                  {
+                    label.type === 'Selector'
+                      ? (
+                        <>
+                          {
+                            label.datas?.map((data, index) => (
+                              <div key={data} className='flex gap-2'>
+                                <Input change={(e: any) => {
+                                  e.preventDefault()
+                                  const oldLabels = [...newForm.labels]
+                                  oldLabels![i].datas![index] =e.target.value
+                                  setNewForm({ ...newForm, labels: oldLabels })
+                                }} placeholder={`Respuesta ${i + 1}`} />
+                                <button onClick={(e: any) => {
+                                  e.preventDefault()
+                                  const oldLabels = [...newForm.labels]
+                                  oldLabels![i].datas?.splice(index, 1)
+                                  setNewForm({ ...newForm, labels: oldLabels })
+                                }}><IoMdClose className='text-2xl' /></button>
+                              </div>
+                            ))
+                          }
+                          <Button2 action={(e: any) => {
+                            e.preventDefault()
+                            const oldLabels = [...newForm.labels]
+                            oldLabels[i].datas?.push('')
+                            setNewForm({ ...newForm, labels: oldLabels })
+                          }}>Agregar </Button2>
+                        </>
+                      )
+                      : ''
+                  }
                 </>
               ))
             }
-            <Button2 color='main' action={(e: any) => {
+            <Button2 action={(e: any) => {
               e.preventDefault()
               const oldLabels = [...newForm.labels]
-              oldLabels.push({ data: '', name: '', text: '' })
+              oldLabels.push({ data: '', name: '', text: '', type: '' })
               setNewForm({ ...newForm, labels: oldLabels })
             }}>Agregar campo</Button2>
             <div className='flex flex-col gap-2'>

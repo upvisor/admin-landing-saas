@@ -1,8 +1,9 @@
 "use client"
-import { IDesign, IFunnel, IPage, IService } from '@/interfaces'
+import { IDesign, IFunnel, IPage, IService, IStoreData } from '@/interfaces'
 import axios from 'axios'
 import React, { useState } from 'react'
 import { Input, Select, Spinner } from '../ui'
+import Image from 'next/image'
 
 interface Props {
     edit: any
@@ -18,9 +19,11 @@ interface Props {
     responsive: string
     services?: IService[]
     setServices?: any
+    style?: any
+    storeData?: IStoreData
 }
 
-export const Video: React.FC<Props> = ({ edit, pages, setPages, design, index, ind, inde, indx, funnels, setFunnels, responsive, services, setServices }) => {
+export const Video: React.FC<Props> = ({ edit, pages, setPages, design, index, ind, inde, indx, funnels, setFunnels, responsive, services, setServices, style, storeData }) => {
 
   const [loadingVideo, setLoadingVideo] = useState(false)
   const [gradient, setGradient] = useState('')
@@ -291,24 +294,54 @@ export const Video: React.FC<Props> = ({ edit, pages, setPages, design, index, i
                     }
                   }} value={design.info.textColor} className='m-auto' />
                 </div>
+                <div className='flex flex-col gap-2'>
+                  <p className='font-medium m-auto'>Cual logo utilizar</p>
+                  <Select change={(e: any) => {
+                    if (inde !== undefined) {
+                      const oldFunnels = [...funnels!]
+                      oldFunnels[inde].steps[ind].design![index].info.titleForm = e.target.value
+                      setFunnels(oldFunnels)
+                    } else if (indx !== undefined) {
+                      const oldServices = [...services!]
+                      oldServices[indx].steps[ind].design![index].info.titleForm = e.target.value
+                      setServices(oldServices)
+                    } else {
+                      const oldPages = [...pages]
+                      oldPages[ind].design[index].info.titleForm = e.target.value
+                      setPages(oldPages)
+                    }
+                  }} config='w-fit m-auto' value={design.info.titleForm}>
+                    <option>Seleccionar color logo</option>
+                    <option>Logo principal</option>
+                    <option>Logo blanco</option>
+                    <option>Sin logo</option>
+                  </Select>
+                </div>
               </div>
-              <div className='bg-main p-1 w-fit'>
-                <input value={design.info.description} onChange={(e: any) => {
-                  if (inde !== undefined) {
-                    const oldFunnels = [...funnels!]
-                    oldFunnels[inde].steps[ind].design![index].info.description = e.target.value
-                    setFunnels(oldFunnels)
-                  } else if (indx !== undefined) {
-                    const oldServices = [...services!]
-                    oldServices[indx].steps[ind].design![index].info.description = e.target.value
-                    setServices(oldServices)
-                  } else {
-                    const oldPages = [...pages]
-                    oldPages[ind].design[index].info.description = e.target.value
-                    setPages(oldPages)
-                  }
-                }} className='p-1 border text-white bg-transparent' />
-              </div>
+              {
+                design.info.titleForm === 'Logo principal' && storeData?.logo && storeData.logo !== ''
+                  ? <button className='w-fit m-auto'><Image src={storeData.logo} alt={`Logo ${storeData.name}`} width={320} height={150} className='w-44 m-auto lg:w-52' /></button>
+                  : design.info.titleForm === 'Logo blanco' && storeData?.logoWhite && storeData.logoWhite !== ''
+                    ? <button className='w-fit m-auto'><Image src={storeData.logoWhite} alt={`Logo ${storeData.name}`} width={320} height={150} className='w-44 m-auto lg:w-52' /></button>
+                    : ''
+              }
+              <div className='p-2 w-fit' style={{ backgroundColor: style.primary, color: style.button }}>
+                  <input value={design.info.description} onChange={(e: any) => {
+                    if (inde !== undefined) {
+                      const oldFunnels = [...funnels!]
+                      oldFunnels[inde].steps[ind].design![index].info.description = e.target.value
+                      setFunnels(oldFunnels)
+                    } else if (indx !== undefined) {
+                      const oldServices = [...services!]
+                      oldServices[indx].steps[ind].design![index].info.description = e.target.value
+                      setServices(oldServices)
+                    } else {
+                      const oldPages = [...pages]
+                      oldPages[ind].design[index].info.description = e.target.value
+                      setPages(oldPages)
+                    }
+                  }} className='border p-1 text-white bg-transparent' />
+                </div>
               <textarea value={design.info.title} onChange={(e: any) => {
                 if (inde !== undefined) {
                   const oldFunnels = [...funnels!]
@@ -357,8 +390,15 @@ export const Video: React.FC<Props> = ({ edit, pages, setPages, design, index, i
           : (
             <div className='w-full p-4 flex flex-col gap-4' style={{ background: `${design.info.typeBackground === 'Degradado' ? design.info.background : design.info.typeBackground === 'Color' ? design.info.background : ''}` }}>
               {
+                design.info.titleForm === 'Logo principal' && storeData?.logo && storeData.logo !== ''
+                  ? <button className='w-fit m-auto'><Image src={storeData.logo} alt={`Logo ${storeData.name}`} width={320} height={150} className='w-44 m-auto lg:w-52' /></button>
+                  : design.info.titleForm === 'Logo blanco' && storeData?.logoWhite && storeData.logoWhite !== ''
+                    ? <button className='w-fit m-auto'><Image src={storeData.logoWhite} alt={`Logo ${storeData.name}`} width={320} height={150} className='w-44 m-auto lg:w-52' /></button>
+                    : ''
+              }
+              {
                 design.info.description && design.info.description !== ''
-                  ? <p className='text-white bg-main py-1.5 px-4 w-fit'>{design.info.description}</p>
+                  ? <p className='px-4 py-2 w-fit' style={{ backgroundColor: style?.primary, color: style?.button }}>{design.info.description}</p>
                   : ''
               }
               {

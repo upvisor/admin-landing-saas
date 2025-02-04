@@ -26,6 +26,7 @@ interface Props {
     setNewService: any
     setServices?: any
     storeData?: IStoreData
+    style?: any
 }
 
 declare global {
@@ -35,7 +36,7 @@ declare global {
     }
 }
 
-export const Checkout: React.FC<Props> = ({ edit, pages, setPages, design, index, ind, inde, indx, funnels, setFunnels, services, setError, setTitle, popupService, setPopupService, setNewService, setServices, storeData }) => {
+export const Checkout: React.FC<Props> = ({ edit, pages, setPages, design, index, ind, inde, indx, funnels, setFunnels, services, setError, setTitle, popupService, setPopupService, setNewService, setServices, storeData, style }) => {
 
   const [gradient, setGradient] = useState('')
   const [firstColor, setFirstColor] = useState('')
@@ -114,7 +115,7 @@ export const Checkout: React.FC<Props> = ({ edit, pages, setPages, design, index
             ? (
               <>
                 <div className='w-full flex mb-4'>
-                  <div className='flex flex-col gap-2 w-fit m-auto bg-white p-6 rounded-xl shadow-md boeder border-black/5'>
+                  <div className='flex flex-col gap-2 w-fit m-auto bg-white p-6 rounded-xl shadow-md border border-black/5'>
                     <div className='flex flex-col gap-2'>
                       <p className='m-auto font-medium'>Tipo fondo</p>
                       <Select change={(e: any) => {
@@ -366,21 +367,21 @@ export const Checkout: React.FC<Props> = ({ edit, pages, setPages, design, index
                     <p className='text-xl font-medium' style={{ color: design.info.textColor }}>Datos de contacto</p>
                     <div className='flex flex-col gap-2'>
                       <p style={{ color: design.info.textColor }}>Email</p>
-                      <Input placeholder='Email' change={undefined} />
+                      <input placeholder='Email' style={{ borderRadius: style.form === 'Redondeadas' ? `${style.borderButton}px` : '' }} className='p-2 text-sm border' />
                     </div>
                     <div className='flex gap-4'>
                       <div className='flex flex-col gap-2 w-1/2'>
                         <p style={{ color: design.info.textColor }}>Nombre</p>
-                        <Input placeholder='Nombre' change={undefined} />
+                        <input placeholder='Nombre' style={{ borderRadius: style.form === 'Redondeadas' ? `${style.borderButton}px` : '' }} className='p-2 text-sm border' />
                       </div>
                       <div className='flex flex-col gap-2 w-1/2'>
                         <p style={{ color: design.info.textColor }}>Apellido</p>
-                        <Input placeholder='Apellido' change={undefined} />
+                        <input placeholder='Apellido' style={{ borderRadius: style.form === 'Redondeadas' ? `${style.borderButton}px` : '' }} className='p-2 text-sm border' />
                       </div>
                     </div>
                     <div className='flex flex-col gap-2'>
                       <p style={{ color: design.info.textColor }}>Teléfono</p>
-                      <Input placeholder='Teléfono' change={undefined} />
+                      <input placeholder='Teléfono' style={{ borderRadius: style.form === 'Redondeadas' ? `${style.borderButton}px` : '' }} className='p-2 text-sm border' />
                     </div>
                   </div>
                   <div className='flex flex-col gap-6'>
@@ -390,8 +391,8 @@ export const Checkout: React.FC<Props> = ({ edit, pages, setPages, design, index
                     </div>
                   </div>
                 </div>
-                <div className='flex flex-col gap-4 w-2/5 p-6 bg-white rounded-xl border border-black/5' style={{ boxShadow: '0px 3px 10px 3px #11111108' }}>
-                  <p>Seleccionar producto o servicio</p>
+                <div className={`flex flex-col gap-4 w-2/5 p-6 h-fit`} style={{ boxShadow: style.design === 'Sombreado' ? `0px 3px 20px 3px ${style.borderColor}10` : '', borderRadius: style.form === 'Redondeadas' ? `${style.borderBlock}px` : '', border: style.design === 'Borde' ? `1px solid ${style.borderColor}` : '', color: design.info.textColor }}>
+                  <p>Seleccionar servicio</p>
                   <Select change={(e: any) => {
                     if (inde !== undefined) {
                       const oldFunnels = [...funnels!]
@@ -403,11 +404,11 @@ export const Checkout: React.FC<Props> = ({ edit, pages, setPages, design, index
                       setServices(oldServices)
                     } else {
                       const oldPages = [...pages]
-                      oldPages[ind].design[index].service = e.target.value
+                      oldPages[ind].design[index].service = { service: e.target.value }
                       setPages(oldPages)
                     }
-                  }} value={design.service?.service}>
-                    <option>Seleccionar producto o servicio</option>
+                  }} value={design.service?.service} config='text-black'>
+                    <option>Seleccionar servicio</option>
                     {
                       services.map(service => (
                         <option key={service._id} value={service._id}>{service.name}</option>
@@ -458,7 +459,6 @@ export const Checkout: React.FC<Props> = ({ edit, pages, setPages, design, index
                       ? (
                         <>
                           <p className='font-medium text-lg'>{services.find(servi => servi._id === design.service?.service)?.name}</p>
-                          <p>{services.find(servi => servi._id === design.service?.service)?.description}</p>
                           <p>Tipo de pago: {services.find(servi => servi._id === design.service?.service)?.typePrice}</p>
                           {
                             services.find(servi => servi._id === design.service?.service)?.typeService === 'Servicio unico' && (services.find(servi => servi._id === design.service?.service)?.typePrice === 'Facturación mensual' || services.find(servi => servi._id === design.service?.service)?.typePrice === 'Pago unico')
@@ -496,21 +496,21 @@ export const Checkout: React.FC<Props> = ({ edit, pages, setPages, design, index
                     <p className='text-xl font-medium' style={{ color: design.info.textColor }}>Datos de contacto</p>
                     <div className='flex flex-col gap-2'>
                       <p style={{ color: design.info.textColor }}>Email</p>
-                      <Input placeholder='Email' change={undefined} />
+                      <input placeholder='Email' style={{ borderRadius: style.form === 'Redondeadas' ? `${style.borderButton}px` : '' }} className='p-2 text-sm border' />
                     </div>
                     <div className='flex gap-4'>
                       <div className='flex flex-col gap-2 w-1/2'>
                         <p style={{ color: design.info.textColor }}>Nombre</p>
-                        <Input placeholder='Nombre' change={undefined} />
+                        <input placeholder='Nombre' style={{ borderRadius: style.form === 'Redondeadas' ? `${style.borderButton}px` : '' }} className='p-2 text-sm border' />
                       </div>
                       <div className='flex flex-col gap-2 w-1/2'>
                         <p style={{ color: design.info.textColor }}>Apellido</p>
-                        <Input placeholder='Apellido' change={undefined} />
+                        <input placeholder='Apellido' style={{ borderRadius: style.form === 'Redondeadas' ? `${style.borderButton}px` : '' }} className='p-2 text-sm border' />
                       </div>
                     </div>
                     <div className='flex flex-col gap-2'>
                       <p style={{ color: design.info.textColor }}>Teléfono</p>
-                      <Input placeholder='Teléfono' change={undefined} />
+                      <input placeholder='Teléfono' style={{ borderRadius: style.form === 'Redondeadas' ? `${style.borderButton}px` : '' }} className='p-2 text-sm border' />
                     </div>
                   </div>
                   <div className='flex flex-col gap-6'>
@@ -520,7 +520,7 @@ export const Checkout: React.FC<Props> = ({ edit, pages, setPages, design, index
                     </div>
                   </div>
                 </div>
-                <div className='flex flex-col gap-4 w-2/5 p-6 bg-white rounded-xl border border-black/5 h-fit' style={{ boxShadow: '0px 3px 10px 3px #11111108' }}>
+                <div className={`flex flex-col gap-4 w-2/5 p-6 h-fit`} style={{ borderRadius: style.form === 'Redondeadas' ? `${style.borderBlock}px` : '', boxShadow: style.design === 'Sombreado' ? `0px 3px 20px 3px ${style.borderColor}10` : '', border: style.design === 'Borde' ? `1px solid ${style.borderColor}` : '', color: design.info.textColor }}>
                   {
                     services.find(servi => servi._id === design.service?.service)?.name
                       ? ''
@@ -531,7 +531,6 @@ export const Checkout: React.FC<Props> = ({ edit, pages, setPages, design, index
                       ? (
                         <>
                           <p className='font-medium text-lg'>{services.find(servi => servi._id === design.service?.service)?.name}</p>
-                          <p>{services.find(servi => servi._id === design.service?.service)?.description}</p>
                           <p>Tipo de pago: {services.find(servi => servi._id === design.service?.service)?.typePrice}</p>
                           {
                             services.find(servi => servi._id === design.service?.service)?.typeService === 'Servicio unico' && (services.find(servi => servi._id === design.service?.service)?.typePrice === 'Facturación mensual' || services.find(servi => servi._id === design.service?.service)?.typePrice === 'Pago unico')

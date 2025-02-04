@@ -66,6 +66,7 @@ export const PopupNewPage: React.FC<Props> = ({ popupPage, setPopupPage, setLoad
                 getDesign()
                 setTimeout(() => {
                   setPopupPage({ ...popupPage, view: 'hidden', opacity: 'opacity-0' })
+                  setNewPage({ page: '', slug: '' })
                 }, 200)
                 setLoading(false)
               } else {

@@ -10,7 +10,7 @@ export default function FunnelPage () {
 
   const [funnels, setFunnels] = useState<IFunnel[]>([])
   const [popup, setPopup] = useState({ view: 'hidden', opacity: 'opacity-0', mouse: false })
-  const [newFunnel, setNewFunnel] = useState<IFunnel>({ funnel: '', slug: '', steps: [{ step: '', slug: '' }] })
+  const [newFunnel, setNewFunnel] = useState<IFunnel>({ funnel: '', subdomain: '', steps: [{ step: '', slug: '' }] })
   const [loadingFunnels, setLoadingFunnels] = useState(true)
   const [selectFunnel, setSelectFunnel] = useState<IFunnel>()
   const [clients, setClients] = useState<IClient[]>([])
@@ -52,7 +52,7 @@ export default function FunnelPage () {
 
   return (
     <>
-      <PopupNewFunnel popup={popup} setPopup={setPopup} getFunnels={getFunnels} newFunnel={newFunnel} setNewFunnel={setNewFunnel} selectFunnel={selectFunnel!} title={title} error={error} setError={setError} services={services} />
+      <PopupNewFunnel popup={popup} setPopup={setPopup} getFunnels={getFunnels} newFunnel={newFunnel} setNewFunnel={setNewFunnel} selectFunnel={selectFunnel!} title={title} error={error} setError={setError} services={services} funnels={funnels} />
       <PopupDeleteFunnel popupDelete={popupDelete} setPopupDelete={setPopupDelete} setSelectFunnel={setSelectFunnel} selectFunnel={selectFunnel!} getFunnels={getFunnels} />
       <PopupStadistics popup={popupStadistics} setPopup={setPopupStadistics} clients={clients} funnel={selectFunnel!} />
       <main className="w-full h-full p-4 lg:p-6 flex flex-col gap-6 bg-bg min-h-full max-h-full overflow-y-auto dark:bg-neutral-900">
@@ -62,7 +62,7 @@ export default function FunnelPage () {
             <Button action={(e: any) => {
               e.preventDefault()
               setError('')
-              setNewFunnel({ funnel: '', description: '', slug: '', steps: [{ step: '', slug: '' }] })
+              setNewFunnel({ funnel: '', description: '', subdomain: '', steps: [{ step: '', slug: '' }] })
               setTitle('Nuevo embudo')
               setPopup({ ...popup, view: 'flex', opacity: 'opacity-0' })
               setTimeout(() => {
@@ -107,7 +107,7 @@ export default function FunnelPage () {
                                 setTimeout(() => {
                                   setPopup({ ...popup, view: 'flex', opacity: 'opacity-1' })
                                 }, 10)
-                              } } color={"main"}>Editar embudo</Button2>
+                              } }>Editar embudo</Button2>
                               <ButtonSecondary2 action={(e: any) => {
                                 e.preventDefault()
                                 setPopupStadistics({ ...popupStadistics, view: 'flex', opacity: 'opacity-0' })

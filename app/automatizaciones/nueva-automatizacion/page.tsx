@@ -224,7 +224,7 @@ export default function Page () {
                     number: 0,
                     time: 'Días'
                   }) })
-                }} color='main' config='m-auto mt-4'>Agregar paso</Button2>
+                }} config='m-auto mt-4'>Agregar paso</Button2>
               </div>
               {
                 (tempEmail.buttonText !== '' || tempEmail.paragraph !== '' || tempEmail.title !== '')

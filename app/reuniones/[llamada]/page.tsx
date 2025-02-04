@@ -1,7 +1,7 @@
 "use client"
 import { PopupCancelMeeting } from "@/components/meetings"
 import { Button2, Button2Red, ButtonLink, EditMeeting, Spinner } from "@/components/ui"
-import { IClientData, IMeeting } from "@/interfaces"
+import { ICall, IClientData, IMeeting, IStoreData } from "@/interfaces"
 import axios from "axios"
 import Link from "next/link"
 import { useEffect, useState } from "react"
@@ -16,6 +16,8 @@ export default function Page ({ params }: { params: { llamada: string } }) {
   const [popupCancel, setPopupCancel] = useState({ view: 'hidden', opacity: 'opacity-0', mouse: false })
   const [scheduled, setScheduled] = useState(false)
   const [clientData, setClientData] = useState<IClientData[]>([])
+  const [storeData, setStoreData] = useState<IStoreData>()
+  const [calls, setCalls] = useState<ICall[]>([])
 
   useEffect(() => {
     const getMeeting = async () => {
@@ -46,6 +48,24 @@ export default function Page ({ params }: { params: { llamada: string } }) {
     getClientData()
   }, [])
 
+  useEffect(() => {
+    const getStoreData = async () => {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/store-data`)
+      setStoreData(res.data)
+    }
+
+    getStoreData()
+  }, [])
+
+  useEffect(() => {
+    const getCalls = async () => {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/calls`)
+      setCalls(res.data)
+    }
+
+    getCalls()
+  }, [])
+
   return (
     <>
       <PopupCancelMeeting popupCancel={popupCancel} setPopupCancel={setPopupCancel} meeting={meeting!} />
@@ -58,7 +78,11 @@ export default function Page ({ params }: { params: { llamada: string } }) {
         }
       }} className={`${popup.view} ${popup.opacity} transition-opacity duration-200 fixed w-full h-full bg-black/20 flex top-0 left-0 z-50`}>
         <div onMouseEnter={() => setPopup({ ...popup, mouse: true })} onMouseLeave={() => setPopup({ ...popup, mouse: false })} className={`${popup.opacity === 'opacity-1' ? 'scale-1' : 'scale-90'} transition-transform duration-200 w-full max-w-[700px] p-6 rounded-xl m-auto border border-border bg-white dark:bg-neutral-800 dark:border-neutral-700`}>
-          <EditMeeting meeting={meeting} scheduled={scheduled} setScheduled={setScheduled} setPopup={setPopup} popup={popup} />
+          {
+            meeting?.calendar
+              ? <EditMeeting meeting={meeting} scheduled={scheduled} setScheduled={setScheduled} setPopup={setPopup} popup={popup} selectedCalendar={meeting?.calendar} />
+              : ''
+          }
         </div>
       </div>
       <main className="bg-bg p-6 h-full flex flex-col gap-6 dark:bg-neutral-900">
@@ -74,10 +98,10 @@ export default function Page ({ params }: { params: { llamada: string } }) {
             : (
               <>
                 <div className="flex gap-4 w-full max-w-[1280px] mx-auto">
-                  <Link href='/llamadas' className='border rounded-xl p-2 h-fit my-auto bg-white transition-colors duration-150 hover:bg-neutral-50 dark:bg-neutral-800 dark:border-neutral-600 dark:hover:bg-neutral-700'><BiArrowBack className='text-xl' /></Link>
+                  <Link href='/reuniones' className='border rounded-xl p-2 h-fit my-auto bg-white transition-colors duration-150 hover:bg-neutral-50 dark:bg-neutral-800 dark:border-neutral-600 dark:hover:bg-neutral-700'><BiArrowBack className='text-xl' /></Link>
                   <div className="flex flex-col gap-2">
                     <h1 className="text-2xl font-medium">{meeting?.firstName} {meeting?.lastName}</h1>
-                    <p className="text-lg">{meeting?.meeting}</p>
+                    <p className="text-lg">{calls?.find(call => call._id === meeting?.meeting)?.nameMeeting} - {meeting?.type}</p>
                   </div>
                 </div>
                 <div className="p-6 rounded-xl border border-black/5 shadow-card w-full max-w-[1280px] mx-auto bg-white flex gap-16 dark:shadow-card-dark dark:bg-neutral-800 dark:border-neutral-700">
@@ -89,7 +113,7 @@ export default function Page ({ params }: { params: { llamada: string } }) {
                       setTimeout(() => {
                         setPopup({ ...popup, view: 'flex', opacity: 'opacity-1' })
                       }, 10)
-                    } } config="w-full" color={"main"}>Reprogramar</Button2>
+                    } } config="w-full">Reprogramar</Button2>
                     <Button2Red action={async (e: any) => {
                       e.preventDefault()
                       setPopupCancel({ ...popupCancel, view: 'flex', opacity: 'opacity-0' })
@@ -127,7 +151,21 @@ export default function Page ({ params }: { params: { llamada: string } }) {
                       <p className="font-medium">Fecha</p>
                       <p>{date}</p>
                     </div>
-                    <ButtonLink href={meeting!.url}>Ingresar a la llamada</ButtonLink>
+                    {
+                      meeting?.type === 'Visita'
+                        ? (
+                          <div className="flex flex-col gap-2">
+                            <p className="font-medium">Lugar</p>
+                            <p>{storeData?.address}, {storeData?.city}, {storeData?.region}</p>
+                          </div>
+                        )
+                        : ''
+                    }
+                    {
+                      meeting?.url
+                        ? <ButtonLink href={meeting?.url}>Ingresar a la llamada</ButtonLink>
+                        : ''
+                    }
                   </div>
                 </div>
               </>

@@ -5,6 +5,7 @@ import { Button, Input, Select, Spinner } from '../ui'
 import { NumberFormat } from '@/utils'
 import { LiaTrashAlt } from 'react-icons/lia'
 import axios from 'axios'
+import { ButtonDesign } from './ButtonDesign'
 
 interface Props {
     edit: any
@@ -20,9 +21,10 @@ interface Props {
     calls?: ICall[]
     services?: IService[]
     setServices?: any
+    style?: any
 }
 
-export const Calls: React.FC<Props> = ({ edit, pages, setPages, design, index, ind, inde, indx, funnels, setFunnels, calls, services, setServices }) => {
+export const Calls: React.FC<Props> = ({ edit, pages, setPages, design, index, ind, inde, indx, funnels, setFunnels, calls, services, setServices, style }) => {
 
   const [gradient, setGradient] = useState('')
   const [firstColor, setFirstColor] = useState('')
@@ -278,7 +280,7 @@ export const Calls: React.FC<Props> = ({ edit, pages, setPages, design, index, i
                           const call = calls?.find(call => call._id === meeting)
                           if (call) {
                             return (
-                              <div key={meeting} className='bg-white border border-black/5 p-6 rounded-xl' style={{ boxShadow: '0px 3px 10px 3px #11111108' }}>
+                              <div key={meeting} className={` p-6`} style={{ borderRadius: style.form === 'Redondeadas' ? `${style.borderBlock}px` : '', boxShadow: style.design === 'Sombreado' ? `0px 3px 20px 3px ${style.borderColor}10` : '', border: style.design === 'Borde' ? `1px solid ${style.borderColor}` : '', color: design.info.textColor }}>
                                 <div className='flex gap-6 justify-between'>
                                   <div className='flex flex-col gap-4'>
                                     <p className='text-lg font-medium'>{call.nameMeeting}</p>
@@ -294,7 +296,7 @@ export const Calls: React.FC<Props> = ({ edit, pages, setPages, design, index, i
                                     <p>{call.description}</p>
                                   </div>
                                   <div className='my-auto flex gap-4'>
-                                    <Button>Agendar llamada</Button>
+                                    <ButtonDesign style={style} text='Agendar llamada' />
                                     <button onClick={(e: any) => {
                                       e.preventDefault()
                                       const oldMeetings = [...design.meetings!]
@@ -328,7 +330,7 @@ export const Calls: React.FC<Props> = ({ edit, pages, setPages, design, index, i
                 const call = calls?.find(call => call._id === meeting)
                 if (call) {
                   return (
-                    <div key={meeting} className='bg-white border border-black/5 p-6 rounded-xl' style={{ boxShadow: '0px 3px 10px 3px #11111108' }}>
+                    <div key={meeting} className={` p-6`} style={{ borderRadius: style.form === 'Redondeadas' ? `${style.borderBlock}px` : '', boxShadow: style.design === 'Sombreado' ? `0px 3px 20px 3px ${style.borderColor}10` : '', border: style.design === 'Borde' ? `1px solid ${style.borderColor}` : '', color: design.info.textColor }}>
                       <div className='flex gap-6 justify-between'>
                         <div className='flex flex-col gap-4'>
                           <p className='text-lg font-medium'>{call.nameMeeting}</p>
@@ -344,7 +346,7 @@ export const Calls: React.FC<Props> = ({ edit, pages, setPages, design, index, i
                           <p>{call.description}</p>
                         </div>
                         <div className='my-auto'>
-                          <Button>Agendar llamada</Button>
+                          <ButtonDesign style={style} text='Agendar llamada' />
                         </div>
                       </div>
                     </div>

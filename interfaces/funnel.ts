@@ -3,9 +3,9 @@ import { IBanner } from "./design"
 export interface IFunnel {
     _id?: string
     funnel: string
+    subdomain: string
     description?: string
     service?: string
-    slug: string
     steps: IStep[]
 }
 
@@ -35,6 +35,7 @@ export interface IInfoFunnel {
     description3?: string
     button3?: string
     buttonLink3?: string
+    subTitle4?: string
     descriptionView?: boolean
     products?: string
     video?: string
@@ -43,4 +44,7 @@ export interface IInfoFunnel {
     background?: string
     textColor?: string
     faq?: [{ question?: string, response?: string }]
+    blocks?: [{ title?: string, description?: string, buttonText?: string, buttonLink?: string }]
+    reviews?: [{ review?: string, stars?: string, name?: string }]
+    form?: { type: string, text:  string, name: string, data: string, datas?: string[] }[]
 }

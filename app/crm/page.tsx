@@ -53,7 +53,7 @@ export default function Page() {
 
   return (
     <>
-      <PopupNewService popupService={popup} setPopupService={setPopup} newService={newService} setNewService={setNewService} loadingService={loadingService} setLoadingService={setLoadingService} getServices={getServices} error={error} title={title} newFunctionality={newFunctionality} setNewFunctionality={setNewFunctionality} tags={tags} getTags={getTags} />
+      <PopupNewService popupService={popup} setPopupService={setPopup} newService={newService} setNewService={setNewService} loadingService={loadingService} setLoadingService={setLoadingService} getServices={getServices} error={error} title={title} newFunctionality={newFunctionality} setNewFunctionality={setNewFunctionality} tags={tags} getTags={getTags} services={[]} setError={setError} />
       <div onClick={() => {
         if (!popup.mouse) {
           setPopupStadistics({ ...popupStadistics, view: 'flex', opacity: 'opacity-0' })
@@ -165,7 +165,7 @@ export default function Page() {
                                   setTimeout(() => {
                                     setPopup({ ...popup, view: 'flex', opacity: 'opacity-1' })
                                   }, 10)
-                                } } color={"main"} config="my-auto">Editar servicio</Button2>
+                                } } config="my-auto">Editar servicio</Button2>
                                 <ButtonSecondary2 action={(e: any) => {
                                   e.preventDefault()
                                   setPopupStadistics({ ...popupStadistics, view: 'flex', opacity: 'opacity-0' })

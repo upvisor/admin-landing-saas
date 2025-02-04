@@ -200,7 +200,7 @@ export default function Page ({ params }: { params: { slug: string } }) {
                       <Link href='/automatizaciones' className='border rounded-xl h-fit my-auto p-2 transition-colors duration-150 bg-white hover:bg-neutral-50 dark:bg-neutral-800 dark:border-neutral-600 dark:hover:bg-neutral-700'><BiArrowBack className='text-xl' /></Link>
                       <h1 className='text-2xl my-auto font-medium'>Automatización: {automatization?.name}</h1>
                     </div>
-                    <Button2 color={'main'} action={(e: any) => {
+                    <Button2 action={(e: any) => {
                       e.preventDefault()
                       setPopup({ ...popup, view: 'flex', opacity: 'opacity-0' })
                       setTimeout(() => {
@@ -228,7 +228,7 @@ export default function Page ({ params }: { params: { slug: string } }) {
                             number: 0,
                             time: 'Días'
                           }) })
-                        }} color='main' config='m-auto mt-4'>Agregar paso</Button2>
+                        }} config='m-auto mt-4'>Agregar paso</Button2>
                       </div>
                       {
                         (tempEmail.buttonText !== '' || tempEmail.paragraph !== '' || tempEmail.title !== '')

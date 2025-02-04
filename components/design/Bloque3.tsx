@@ -4,6 +4,8 @@ import React, { useState } from 'react'
 import Image from 'next/image'
 import { ICall, ICategoryPage, IDesign, IForm, IFunnel, IPage, IService } from '@/interfaces'
 import { Button, Input, Select, Spinner } from '../ui'
+import { ButtonDesign } from './ButtonDesign'
+import { ButtonDesign2 } from '.'
 
 interface Props {
     edit: any
@@ -22,9 +24,11 @@ interface Props {
     forms: IForm[] | undefined
     services?: IService[]
     setServices?: any
+    style?: any
+    storeData?: any
 }
 
-export const Bloque3: React.FC<Props> = ({ edit, design, index, pages, setPages, ind, inde, indx, pageNeed, funnels, setFunnels, responsive, calls, forms, services, setServices }) => {
+export const Bloque3: React.FC<Props> = ({ edit, design, index, pages, setPages, ind, inde, indx, pageNeed, funnels, setFunnels, responsive, calls, forms, services, setServices, style, storeData }) => {
 
   const [gradient, setGradient] = useState('')
   const [firstColor, setFirstColor] = useState('')
@@ -41,6 +45,13 @@ export const Bloque3: React.FC<Props> = ({ edit, design, index, pages, setPages,
           edit !== 'Bloque 3'
             ? (
               <>
+                {
+                  design.info.titleForm === 'Logo principal' && storeData?.logo && storeData.logo !== ''
+                    ? <button className='w-full m-auto mb-8'><Image src={storeData.logo} alt={`Logo ${storeData.name}`} width={320} height={150} className='w-44 m-auto lg:w-52' /></button>
+                    : design.info.titleForm === 'Logo blanco' && storeData?.logoWhite && storeData.logoWhite !== ''
+                      ? <button className='w-full m-auto mb-8'><Image src={storeData.logoWhite} alt={`Logo ${storeData.name}`} width={320} height={150} className='w-44 m-auto lg:w-52' /></button>
+                      : ''
+                }
                 {
                   index === 0
                     ? (
@@ -64,13 +75,26 @@ export const Bloque3: React.FC<Props> = ({ edit, design, index, pages, setPages,
                   dangerouslySetInnerHTML={{ __html: design.info.description ? design.info.description : '' }}
                 />
                 {
-                  design.info.button && design.info.button !== '' && design.info.buttonLink && design.info.buttonLink !== ''
-                    ? <Button config='m-auto'>{design.info.button}</Button>
+                  (design.info.button && design.info.button !== '' && design.info.buttonLink && design.info.buttonLink !== '') || (design.info.button2 && design.info.button2 !== '' && design.info.buttonLink2 && design.info.buttonLink2 !== '')
+                    ? (
+                      <div className='flex gap-4 w-fit m-auto'>
+                        {
+                          design.info.button && design.info.button !== '' && design.info.buttonLink && design.info.buttonLink !== ''
+                            ? <ButtonDesign style={style} text={design.info.button} config='m-auto' />
+                            : ''
+                        }
+                        {
+                          design.info.button2 && design.info.button2 !== '' && design.info.buttonLink2 && design.info.buttonLink2 !== ''
+                            ? <ButtonDesign2 style={style} text={design.info.button2} config='m-auto' />
+                            : ''
+                        }
+                      </div>
+                    )
                     : ''
                 }
                 {
                   design.info?.image && design.info.image !== ''
-                    ? <Image className='h-fit mx-auto' width={480} height={300} alt='Imagen slider prueba' src={design.info.image} />
+                    ? <Image className='h-fit mx-auto' style={{ borderRadius: `${style.borderBlock}px`, border: style.design === 'Borde' ? `1px solid ${style.borderColor}` : '' }} width={480} height={300} alt='Imagen slider prueba' src={design.info.image} />
                     : ''
                 }
               </>
@@ -292,7 +316,37 @@ export const Bloque3: React.FC<Props> = ({ edit, design, index, pages, setPages,
                       }
                     }} value={design.info.textColor} className='m-auto' />
                   </div>
+                  <div className='flex flex-col gap-2'>
+                    <p className='font-medium m-auto'>Cual logo utilizar</p>
+                    <Select change={(e: any) => {
+                      if (inde !== undefined) {
+                        const oldFunnels = [...funnels!]
+                        oldFunnels[inde].steps[ind].design![index].info.titleForm = e.target.value
+                        setFunnels(oldFunnels)
+                      } else if (indx !== undefined) {
+                        const oldServices = [...services!]
+                        oldServices[indx].steps[ind].design![index].info.titleForm = e.target.value
+                        setServices(oldServices)
+                      } else {
+                        const oldPages = [...pages]
+                        oldPages[ind].design[index].info.titleForm = e.target.value
+                        setPages(oldPages)
+                      }
+                    }} config='w-fit m-auto' value={design.info.titleForm}>
+                      <option>Seleccionar color logo</option>
+                      <option>Logo principal</option>
+                      <option>Logo blanco</option>
+                      <option>Sin logo</option>
+                    </Select>
+                  </div>
                 </div>
+                {
+                  design.info.titleForm === 'Logo principal' && storeData?.logo && storeData.logo !== ''
+                    ? <button className='w-full m-auto mb-8'><Image src={storeData.logo} alt={`Logo ${storeData.name}`} width={320} height={150} className='w-44 m-auto lg:w-52' /></button>
+                    : design.info.titleForm === 'Logo blanco' && storeData?.logoWhite && storeData.logoWhite !== ''
+                      ? <button className='w-full m-auto mb-8'><Image src={storeData.logoWhite} alt={`Logo ${storeData.name}`} width={320} height={150} className='w-44 m-auto lg:w-52' /></button>
+                      : ''
+                }
                 <textarea placeholder='Titulo' value={design.info.title} onChange={(e: any) => {
                   if (inde !== undefined) {
                     const oldFunnels = [...funnels!]
@@ -324,7 +378,7 @@ export const Bloque3: React.FC<Props> = ({ edit, design, index, pages, setPages,
                   }
                 }} className={`${responsive === '400px' ? 'text-base' : 'text-lg'} text-center p-1.5 rounded border bg-transparent`} style={{ color: design.info.textColor }} />
                 <div className='flex gap-4 m-auto'>
-                  <div className='bg-main border border-main w-fit text-white py-1.5 px-6 rounded-xl shadow-md shadow-main/30'>
+                  <div className='w-fit text-white py-2 px-6' style={{ backgroundColor: style.primary, color: style.button, borderRadius: style.form === 'Redondeadas' ? `${style.borderButton}px` : '' }}>
                     <input type='text' placeholder='Boton' value={design.info.button} onChange={(e: any) => {
                       if (inde !== undefined) {
                         const oldFunnels = [...funnels!]
@@ -339,7 +393,7 @@ export const Bloque3: React.FC<Props> = ({ edit, design, index, pages, setPages,
                         oldPages[ind].design[index].info.button = e.target.value
                         setPages(oldPages)
                       }
-                    }} className='font-medium bg-main rounded border border-neutral-500' />
+                    }} className='text-sm lg:text-[16px] bg-transparent border border-neutral-500' />
                   </div>
                   <select value={design.info.buttonLink} onChange={(e: any) => {
                     if (inde !== undefined) {
@@ -378,9 +432,64 @@ export const Bloque3: React.FC<Props> = ({ edit, design, index, pages, setPages,
                     }
                   </select>
                 </div>
+                <div className='flex gap-4 m-auto'>
+                  <div className='w-fit text-white py-2 px-6' style={{ backgroundColor: style.primary, color: style.button, borderRadius: style.form === 'Redondeadas' ? `${style.borderButton}px` : '' }}>
+                    <input type='text' placeholder='Boton' value={design.info.button2} onChange={(e: any) => {
+                      if (inde !== undefined) {
+                        const oldFunnels = [...funnels!]
+                        oldFunnels[inde].steps[ind].design![index].info.button2 = e.target.value
+                        setFunnels(oldFunnels)
+                      } else if (indx !== undefined) {
+                        const oldServices = [...services!]
+                        oldServices[indx].steps[ind].design![index].info.button2 = e.target.value
+                        setServices(oldServices)
+                      } else {
+                        const oldPages = [...pages]
+                        oldPages[ind].design[index].info.button2 = e.target.value
+                        setPages(oldPages)
+                      }
+                    }} className='text-sm lg:text-[16px] bg-transparent border border-neutral-500' />
+                  </div>
+                  <select value={design.info.buttonLink2} onChange={(e: any) => {
+                    if (inde !== undefined) {
+                      const oldFunnels = [...funnels!]
+                      oldFunnels[inde].steps[ind].design![index].info.buttonLink2 = e.target.value
+                      setFunnels(oldFunnels)
+                    } else if (indx !== undefined) {
+                      const oldServices = [...services!]
+                      oldServices[indx].steps[ind].design![index].info.buttonLink2 = e.target.value
+                      setServices(oldServices)
+                    } else {
+                      const oldPages = [...pages]
+                      oldPages[ind].design[index].info.buttonLink2 = e.target.value
+                      setPages(oldPages)
+                    }
+                  }} className='rounded border w-full'>
+                    <option>Acción boton</option>
+                    {
+                      pageNeed.map(page => (
+                        <option key={page.slug}>/{page.slug}</option>
+                      ))
+                    }
+                    {
+                      funnels?.map(funnel => {
+                        return funnel.steps.map(step => (
+                          <option key={step._id} value={step.slug}>{funnel.funnel} - {step.step}</option>
+                        ))
+                      })
+                    }
+                    <option>Abrir popup</option>
+                    {
+                      forms?.map(form => <option key={form._id} value={form._id}>Abrir formulario {form.nameForm} como popup</option>)
+                    }
+                    {
+                      calls?.map(call => <option key={call._id} value={call._id}>Abrir llamada {call.nameMeeting} como popup</option>)
+                    }
+                  </select>
+                </div>
                 {
                   design.info?.image && design.info.image !== ''
-                    ? <Image className='h-fit mx-auto' width={480} height={300} alt='Imagen slider prueba' src={design.info.image} />
+                    ? <Image className='h-fit mx-auto' style={{ borderRadius: `${style.borderBlock}px`, border: style.design === 'Borde' ? `1px solid ${style.borderColor}` : '' }} width={480} height={300} alt='Imagen slider prueba' src={design.info.image} />
                     : ''
                 }
                 {

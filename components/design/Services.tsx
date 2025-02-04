@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { Button, Input, Select, Spinner } from '../ui'
 import axios from 'axios'
 import { LiaTrashAlt } from 'react-icons/lia'
+import { ButtonDesign } from './ButtonDesign'
 
 interface Props {
     edit: any
@@ -21,9 +22,10 @@ interface Props {
     setServices?: any
     responsive: string
     pageNeed: IPage[]
+    style?: any
 }
 
-export const Services: React.FC<Props> = ({ edit, pages, setPages, design, index, ind, inde, indx, funnels, setFunnels, calls, services, setServices, responsive, pageNeed }) => {
+export const Services: React.FC<Props> = ({ edit, pages, setPages, design, index, ind, inde, indx, funnels, setFunnels, calls, services, setServices, responsive, pageNeed, style }) => {
   
     const [gradient, setGradient] = useState('')
     const [firstColor, setFirstColor] = useState('')
@@ -314,7 +316,7 @@ export const Services: React.FC<Props> = ({ edit, pages, setPages, design, index
                         const serviceFind = services?.find(servi => servi._id === service.service)
                         if (serviceFind) {
                           return (
-                            <div key={service.service} className='flex flex-col gap-2 p-4 rounded-xl border border-main/5 w-[350px] h-60 justify-center' style={{ boxShadow: '0px 3px 10px 3px #11111108' }}>
+                            <div key={service.service} className={`${style.design === 'Borde' ? 'border' : ''} flex flex-col gap-2 p-4 w-[350px] h-60 justify-center`} style={{ boxShadow: style.design === 'Sombreado' ? '0px 3px 20px 3px #11111110' : '', borderRadius: style.form === 'Redondeadas' ? `${style.borderBlock}px` : '' }}>
                               <p className='font-medium text-2xl text-center text-main'>{serviceFind.name}</p>
                               <p className='text-center'>{serviceFind.description}</p>
                               <Select change={(e: any) => {
@@ -346,7 +348,7 @@ export const Services: React.FC<Props> = ({ edit, pages, setPages, design, index
                                   })
                                 }
                               </Select>
-                              <Button config='mx-auto'>Ver más información</Button>
+                              <ButtonDesign style={style} text='Ver más información' config='mx-auto' />
                               <button className='m-auto' onClick={(e: any) => {
                                 e.preventDefault()
                                 if (inde !== undefined) {
@@ -403,7 +405,7 @@ export const Services: React.FC<Props> = ({ edit, pages, setPages, design, index
                         const serviceFind = services?.find(servi => servi._id === service.service)
                         if (serviceFind) {
                           return (
-                            <div key={service.service} className='flex flex-col gap-2 p-4 rounded-xl border border-main/5 w-[350px] h-60 justify-center' style={{ boxShadow: '0px 3px 10px 3px #11111108' }}>
+                            <div key={service.service} className={`${style.design === 'Borde' ? 'border' : ''} flex flex-col gap-2 p-4 w-[350px] h-60 justify-center`} style={{ boxShadow: style.design === 'Sombreado' ? '0px 3px 20px 3px #11111110' : '', borderRadius: style.form === 'Redondeadas' ? `${style.borderBlock}px` : '' }}>
                               {
                                 index === 0
                                 ? (
@@ -422,7 +424,7 @@ export const Services: React.FC<Props> = ({ edit, pages, setPages, design, index
                                 )
                               }
                               <p className='text-center'>{serviceFind.description}</p>
-                              <Button config='mx-auto'>Ver más información</Button>
+                              <ButtonDesign style={style} text='Ver más información' config='mx-auto' />
                             </div>
                           )
                         }

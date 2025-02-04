@@ -1,13 +1,13 @@
 "use client"
-import { Design, ICall, IForm, IFunnel, IPage, IPopupWeb, IService, IStoreData } from '@/interfaces'
+import { Design, ICall, IForm, IFunnel, IHeader, IPage, IPopupWeb, IService, IStoreData } from '@/interfaces'
 import axios from 'axios'
 import Head from 'next/head'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { BiArrowBack } from 'react-icons/bi'
 import Image from 'next/image'
-import { Bloque1, Bloque2, Bloque3, Bloque4, Bloque5, Call, Contact, Layout, Lead1, PopupNewCall, PopupNewForm, PopupNewPage, PopupPagesBlocks, Slider, Subscription, Video, PopupDeleteFunnel, PopupDeletePage, Bloque7, Checkout, Calls, Lead2, Services, Plans, Faq } from '@/components/design'
-import { Button, Button2, ButtonSecondary2, ButtonSubmit, Input, Select, Spinner, Textarea } from '@/components/ui'
+import { Bloque1, Bloque2, Bloque3, Bloque4, Bloque5, Call, Contact, Layout, Lead1, PopupNewCall, PopupNewForm, PopupNewPage, PopupPagesBlocks, Slider, Subscription, Video, PopupDeleteFunnel, PopupDeletePage, Bloque7, Checkout, Calls, Lead2, Services, Plans, Faq, Blocks, Reviews, Form, Lead3, Table } from '@/components/design'
+import { Button, Button2, Button2Red, ButtonSecondary2, ButtonSubmit, Input, Select, Spinner, Textarea } from '@/components/ui'
 import { SlArrowDown, SlArrowUp } from 'react-icons/sl'
 import { PopupNewFunnel } from '@/components/funnels'
 import { IoLaptopOutline, IoPhonePortraitOutline } from 'react-icons/io5'
@@ -25,7 +25,7 @@ export default function Page () {
       slug: '',
       header: true,
       design: [
-        { content: 'Carrusel', info: { banner: [{ title: 'Lorem ipsum', description: 'Lorem, ipsum dolor sit amet consectetur adipisicing elit.', button: 'Lorem ipsum', buttonLink: '', image: 'https://web-upvisor.b-cdn.net/Imagen%20prueba.jpg' }] } },
+        { content: 'Carrusel', info: { banner: [{ title: 'Lorem ipsum', description: 'Lorem, ipsum dolor sit amet consectetur adipisicing elit.', button: 'Lorem ipsum', buttonLink: '', image: 'https://upvisor-web.b-cdn.net/Imagen%20prueba.jpg' }] } },
         { content: 'Suscripción', info: { title: 'Suscribete a nuestra lista' } }
       ]
     },
@@ -39,7 +39,8 @@ export default function Page () {
       ]
     }
   ])
-  const [header, setHeader] = useState({ topStrip: 'Lorem ipsum dolor sit amet consectetur' })
+  const [header, setHeader] = useState<IHeader>({ topStrip: 'Lorem ipsum dolor sit amet consectetur' })
+  const [footer, setFooter] = useState({ bgColor: '#ffffff', textColor: '#111111' })
   const [popupWeb, setPopupWeb] = useState<IPopupWeb>({ active: false, wait: 5, title: '', description: '' })
   const [color, setColor] = useState('#000000')
   const [loading, setLoading] = useState(false)
@@ -62,13 +63,13 @@ export default function Page () {
   const [indexStep, setIndexStep] = useState(-1)
   const [selectFunnel, setSelectFunnel] = useState<IFunnel>()
   const [funnels, setFunnels] = useState<IFunnel[]>([])
-  const [newFunnel, setNewFunnel] = useState<IFunnel>({ funnel: '', slug: '', steps: [{ step: '', slug: '' }] })
+  const [newFunnel, setNewFunnel] = useState<IFunnel>({ funnel: '', subdomain: '', steps: [{ step: '', slug: '' }] })
   const [title, setTitle] = useState('')
   const [popupNewFunnel, setPopupNewFunnel] = useState({ view: 'hidden', opacity: 'opacity-0', mouse: false })
   const [forms, setForms] = useState<IForm[]>()
   const [popupForm, setPopupForm] = useState({ view: 'hidden', opacity: 'opacity-0', mouse: false })
   const [titleForm, setTitleForm] = useState('')
-  const [newForm, setNewForm] = useState<IForm>({ nameForm: '', informations: [{ icon: '', text: '' }], labels: [{ data: '', name: '', text: '' }], button: '', action: 'Ir a una pagina', tags: [] })
+  const [newForm, setNewForm] = useState<IForm>({ nameForm: '', informations: [{ icon: '', text: '' }], labels: [{ data: '', name: '', text: '', type: '', datas: [] }], button: '', action: 'Ir a una pagina', tags: [] })
   const [calls, setCalls] = useState<ICall[]>()
   const [newCall, setNewCall] = useState<ICall>({ nameMeeting: '', duration: '15 minutos', labels: [{ data: '', name: '', text: '' }], buttonText: '', tags: [], action: 'Mostrar mensaje' })
   const [popupCall, setPopupCall] = useState({ view: 'hidden', opacity: 'opacity-0', mouse: false })
@@ -94,6 +95,12 @@ export default function Page () {
   const [indexStepService, setIndexStepService] = useState(-1)
   const [type, setType] = useState('')
   const [menu, setMenu] = useState('hidden')
+  const [style, setStyle] = useState({ design: 'Borde', form: 'Redondeadas', primary: '', secondary: '', button: '#111111', borderButton: 0, borderBlock: 0, borderColor: '#000000' })
+  const [popupWhatsapp, setPopupWhatsapp] = useState({ view: 'hidden', opacity: 'opacity-0', mouse: false })
+  const [whatsapp, setWhatsapp] = useState(false)
+  const [editSubPage, setEditSubPage] = useState(-1)
+  const [loadingSubPage, setLoadingSubPage] = useState(false)
+  const [chat, setChat] = useState({ bgColor: '' })
 
   const getStoreData = async () => {
     const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/store-data`)
@@ -110,6 +117,9 @@ export default function Page () {
     if (data.pages) {
       setPages(data.pages)
       setHeader(data.header)
+      setFooter(data.footer)
+      setWhatsapp(data.whatsapp)
+      setChat(data.chat)
       if (data.popup) {
         setPopupWeb(data.popup)
       }
@@ -176,6 +186,15 @@ export default function Page () {
     getServices()
   }, [])
 
+  const getStyle = async () => {
+    const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/style`)
+    setStyle(res.data)
+  }
+
+  useEffect(() => {
+    getStyle()
+  }, [])
+
   const moveItem = (fromIndex: number, toIndex: number) => {
     const newPages = [...pages]
     const [removedItem] = newPages.splice(fromIndex, 1)
@@ -197,12 +216,6 @@ export default function Page () {
       setPages(updatedPages)
       axios.put(`${process.env.NEXT_PUBLIC_API_URL}/design/${id}`, { pages: updatedPages })
     }
-  }
-
-  const handleRemove = (index: number) => {
-    const nuevoArray = [...pages]
-    nuevoArray.splice(index, 1)
-    setPages(nuevoArray)
   }
 
   const moveBlock = (pageIndex: number, blockIndex: number, direction: 'up' | 'down') => {
@@ -235,14 +248,14 @@ export default function Page () {
 
   return (
     <>
-      <PopupNewFunnel popup={popupNewFunnel} setPopup={setPopupNewFunnel} getFunnels={getFunnels} newFunnel={newFunnel!} setNewFunnel={setNewFunnel} selectFunnel={selectFunnel!} title={title} error={error} setError={setError} services={services} />
+      <PopupNewFunnel popup={popupNewFunnel} setPopup={setPopupNewFunnel} getFunnels={getFunnels} newFunnel={newFunnel!} setNewFunnel={setNewFunnel} selectFunnel={selectFunnel!} title={title} error={error} setError={setError} services={services} funnels={funnels} />
       <PopupNewPage popupPage={popupPage} setPopupPage={setPopupPage} setLoading={setLoading} getDesign={getDesign} loading={loading} setNewPage={setNewPage} newPage={newPage} pages={pages} header={header} error={error} setError={setError} />
       <PopupPagesBlocks popup={popup} setPopup={setPopup} pages={pages} indexPage={indexPage} indexFunnel={indexFunnel} indexStep={indexStep} indexService={indexService} indexStepService={indexStepService} setPages={setPages} funnels={funnels} setFunnels={setFunnels} services={services} setServices={setServices} />
-      <PopupNewForm popupForm={popupForm} setPopupForm={setPopupForm} titleForm={titleForm} newForm={newForm} setNewForm={setNewForm} getForms={getForms} tags={tags} funnels={funnels} getTags={getTags} error={error} setError={setError} newData={newData} setNewData={setNewData} loadingNewData={loadingNewData} setLoadingNewData={setLoadingNewData} clientData={clientData} getClientData={getClientData} />
-      <PopupNewCall popupCall={popupCall} setPopupCall={setPopupCall} titleMeeting={titleMeeting} newCall={newCall} setNewCall={setNewCall} getCalls={getCalls} tags={tags} getTags={getTags} error={error} setError={setError} funnels={funnels} newData={newData} setNewData={setNewData} loadingNewData={loadingNewData} setLoadingNewData={setLoadingNewData} clientData={clientData} getClientData={getClientData} />
+      <PopupNewForm popupForm={popupForm} setPopupForm={setPopupForm} titleForm={titleForm} newForm={newForm} setNewForm={setNewForm} getForms={getForms} tags={tags} funnels={funnels} getTags={getTags} error={error} setError={setError} newData={newData} setNewData={setNewData} loadingNewData={loadingNewData} setLoadingNewData={setLoadingNewData} clientData={clientData} getClientData={getClientData} style={style} />
+      <PopupNewCall popupCall={popupCall} setPopupCall={setPopupCall} titleMeeting={titleMeeting} newCall={newCall} setNewCall={setNewCall} getCalls={getCalls} tags={tags} getTags={getTags} error={error} setError={setError} funnels={funnels} newData={newData} setNewData={setNewData} loadingNewData={loadingNewData} setLoadingNewData={setLoadingNewData} clientData={clientData} getClientData={getClientData} calls={calls} />
       <PopupDeleteFunnel popupDeleteFunnel={popupDeleteFunnel} setPopupDeleteFunnel={setPopupDeleteFunnel} selectFunnel={selectFunnel!} setFunnels={setFunnels} getFunnels={getFunnels} />
       <PopupDeletePage popupDeletePage={popupDeletePage} setPopupDeletePage={setPopupDeletePage} getPages={getDesign} page={selectPage} pages={pages} header={header} color={color} popupWeb={popupWeb} />
-      <PopupNewService popupService={popupService} setPopupService={setPopupService} newService={newService} setNewService={setNewService} loadingService={loadingService} setLoadingService={setLoadingService} getServices={getServices} error={error} title={title} newFunctionality={newFunctionality} setNewFunctionality={setNewFunctionality} tags={tags} getTags={getTags} />
+      <PopupNewService popupService={popupService} setPopupService={setPopupService} newService={newService} setNewService={setNewService} loadingService={loadingService} setLoadingService={setLoadingService} getServices={getServices} error={error} title={title} newFunctionality={newFunctionality} setNewFunctionality={setNewFunctionality} tags={tags} getTags={getTags} services={services} setError={setError} />
       <Head>
         <title>Personalizar sitio web</title>
       </Head>
@@ -275,48 +288,64 @@ export default function Page () {
                     <div className='flex flex-col gap-2'>
                       {
                         pages.map((page, index) => (
-                          <div key={page.slug} className='flex gap-4'>
-                            <button onClick={() => {
-                              setType('Page')
-                              setMenu('hidden')
-                              setPart(page.page)
-                            }} className='text-left w-full'>{page.page}</button>
-                            <div className='flex gap-2'>
-                              <div className='flex gap-1'>
-                                <input type='checkbox' checked={page.header} onChange={async (e: any) => {
-                                  const newPages = [...pages]
-                                  newPages[index].header = e.target.checked
-                                  setPages(newPages)
-                                  await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/design/${id}`, { pages: newPages })
-                                }} />
-                                <p className='my-auto'>Menu</p>
+                          <div key={page.slug} className='flex flex-col gap-2'>
+                            <div className='flex gap-4'>
+                              <button onClick={() => {
+                                setType('Page')
+                                setMenu('hidden')
+                                setPart(page.page)
+                              }} className='text-left w-full'>{page.page}</button>
+                              <div className='flex gap-2'>
+                                <div className='flex gap-1'>
+                                  <input type='checkbox' checked={page.header} onChange={async (e: any) => {
+                                    const newPages = [...pages]
+                                    newPages[index].header = e.target.checked
+                                    setPages(newPages)
+                                    await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/design/${id}`, { pages: newPages })
+                                  }} />
+                                  <p className='my-auto'>Menu</p>
+                                </div>
+                                {
+                                  page.header === true
+                                    ? (
+                                      <div className='flex gap-1'>
+                                        <input type='checkbox' checked={page.button === true ? true : false} onChange={async (e: any) => {
+                                          const newPages = [...pages]
+                                          newPages[index].button = e.target.checked
+                                          setPages(newPages)
+                                          await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/design/${id}`, { pages: newPages })
+                                        }} />
+                                        <p className='my-auto'>Boton</p>
+                                      </div>
+                                    )
+                                    : ''
+                                }
+                                <button onClick={() => handleMoveUp(index)}><SlArrowUp className='text-lg' /></button>
+                                <button onClick={() => handleMoveDown(index)}><SlArrowDown className='text-lg' /></button>
+                                <button onClick={(e: any) => {
+                                  e.preventDefault()
+                                  setSelectPage(page)
+                                  setPopupDeletePage({ ...popupDeletePage, view: 'flex', opacity: 'opacity-0' })
+                                  setTimeout(() => {
+                                    setPopupDeletePage({ ...popupDeletePage, view: 'flex', opacity: 'opacity-1' })
+                                  }, 10)
+                                }}><svg className="m-auto w-[17px]" role="presentation" viewBox="0 0 16 14"><path d="M15 0L1 14m14 0L1 0" stroke="currentColor" fill="none" fill-rule="evenodd"></path></svg></button>
                               </div>
-                              {
-                                page.header === true
-                                  ? (
-                                    <div className='flex gap-1'>
-                                      <input type='checkbox' checked={page.button === true ? true : false} onChange={async (e: any) => {
-                                        const newPages = [...pages]
-                                        newPages[index].button = e.target.checked
-                                        setPages(newPages)
-                                        await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/design/${id}`, { pages: newPages })
-                                      }} />
-                                      <p className='my-auto'>Boton</p>
-                                    </div>
-                                  )
-                                  : ''
-                              }
-                              <button onClick={() => handleMoveUp(index)}><SlArrowUp className='text-lg' /></button>
-                              <button onClick={() => handleMoveDown(index)}><SlArrowDown className='text-lg' /></button>
-                              <button onClick={(e: any) => {
-                                e.preventDefault()
-                                setSelectPage(page)
-                                setPopupDeletePage({ ...popupDeletePage, view: 'flex', opacity: 'opacity-0' })
-                                setTimeout(() => {
-                                  setPopupDeletePage({ ...popupDeletePage, view: 'flex', opacity: 'opacity-1' })
-                                }, 10)
-                              }}><svg className="m-auto w-[17px]" role="presentation" viewBox="0 0 16 14"><path d="M15 0L1 14m14 0L1 0" stroke="currentColor" fill="none" fill-rule="evenodd"></path></svg></button>
                             </div>
+                            {
+                              page.subPage?.map((subPage, i) => (
+                                <div key={subPage.slug} className='flex gap-2 ml-10 justify-between'>
+                                  <p>{subPage.page}</p>
+                                  <button onClick={async (e: any) => {
+                                    e.preventDefault()
+                                    const oldPages = [...pages]
+                                    oldPages[index].subPage?.splice(i, 1)
+                                    setPages(oldPages)
+                                    await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/design/${id}`, { pages: oldPages })
+                                  }}><svg className="m-auto w-[17px]" role="presentation" viewBox="0 0 16 14"><path d="M15 0L1 14m14 0L1 0" stroke="currentColor" fill="none" fill-rule="evenodd"></path></svg></button>
+                                </div>
+                              ))
+                            }
                           </div>
                         ))
                       }
@@ -378,7 +407,7 @@ export default function Page () {
                               )
                             }
                           })
-                          : ''
+                          : <p>No hay servicios creados</p>
                       }
                     </div>
                     <div className='flex flex-col gap-2'>
@@ -388,17 +417,35 @@ export default function Page () {
                         setTimeout(() => {
                           setPopupPage({ ...popupPage, view: 'flex', opacity: 'opacity-1' })
                         }, 10)
-                      }} color='main' config='w-full'>Agregar pagina</Button2>
+                      }} config='w-full'>Agregar pagina</Button2>
+                      {
+                        whatsapp
+                          ? (
+                            <button onClick={async(e: any) => {
+                              e.preventDefault()
+                              await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/design/${id}`, { whatsapp: false })
+                              setWhatsapp(false)
+                            }} className={`w-full bg-red-500 min-h-9 h-9 px-4 text-white text-sm rounded-xl transition-colors duration-300 hover:bg-red-500/80`}>Desactivar boton Whatsapp</button>
+                          )
+                          : (
+                            <button onClick={async(e: any) => {
+                              e.preventDefault()
+                              await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/design/${id}`, { whatsapp: true })
+                              setWhatsapp(true)
+                            }} className={`w-full bg-green-500 min-h-9 h-9 px-4 text-white text-sm rounded-xl transition-colors duration-300 hover:bg-green-500/80`}>Activar boton Whatsapp</button>
+                          )
+                      }
                       <ButtonSecondary2 action={(e: any) => {
-                      e.preventDefault()
-                      setError('')
-                      setNewFunnel({ funnel: '', description: '', slug: '', steps: [{ step: '', slug: '' }] })
-                      setTitle('Nuevo embudo')
-                      setPopupNewFunnel({ ...popupNewFunnel, view: 'flex', opacity: 'opacity-0' })
-                      setTimeout(() => {
-                        setPopupNewFunnel({ ...popupNewFunnel, view: 'flex', opacity: 'opacity-1' })
-                      }, 10)
-                    }} config='w-full'>Agregar embudo</ButtonSecondary2>
+                        e.preventDefault()
+                        setError('')
+                        setNewFunnel({ funnel: '', description: '', subdomain: '', steps: [{ step: '', slug: '' }] })
+                        setTitle('Nuevo embudo')
+                        setPopupNewFunnel({ ...popupNewFunnel, view: 'flex', opacity: 'opacity-0' })
+                        setTimeout(() => {
+                          setPopupNewFunnel({ ...popupNewFunnel, view: 'flex', opacity: 'opacity-1' })
+                        }, 10)
+                      }} config='w-full'>Agregar embudo</ButtonSecondary2>
+                      <button onClick={(e: any) => setPart('Estilo')} className='mt-2 text-sm'>Editar estilo del sitio web</button>
                     </div>
                   </div>
                 )
@@ -473,6 +520,45 @@ export default function Page () {
               })
             }
             {
+              part === 'Estilo'
+                ? (
+                  <div className='flex flex-col gap-4 p-4 mb-[104px]'>
+                    <div className='border-b pb-4 dark:border-neutral-700'>
+                      <button onClick={() => setPart('')} className='flex gap-2 pt-1 pb-1 pl-2 pr-2 rounded transition-colors duration-150 hover:bg-neutral-100 dark:hover:bg-neutral-700'><BiArrowBack className='text-xl my-auto' /><p className='my-auto'>Volver</p></button>
+                    </div>
+                    <h2 className='text-lg font-medium'>Estilo del sitio web</h2>
+                    <div className='flex flex-col gap-2'>
+                      <p>Tipo de diseño</p>
+                      <Select change={(e: any) => setStyle({ ...style, design: e.target.value })} value={style?.design}>
+                        <option>Borde</option>
+                        <option>Sombreado</option>
+                        <option>Ninguno</option>
+                      </Select>
+                    </div>
+                    <div className='flex flex-col gap-2'>
+                      <p>Tipo de formas</p>
+                      <Select change={(e: any) => setStyle({ ...style, form: e.target.value })} value={style?.form}>
+                        <option>Redondeadas</option>
+                        <option>Cuadradas</option>
+                      </Select>
+                    </div>
+                    <div className='flex flex-col gap-2'>
+                      <p>Color principal</p>
+                      <input type='color' onChange={(e: any) => setStyle({ ...style, primary: e.target.value })} value={style?.primary} />
+                    </div>
+                    <div className='flex flex-col gap-2'>
+                      <p>Color segundario</p>
+                      <input type='color' onChange={(e: any) => setStyle({ ...style, secondary: e.target.value })} value={style?.secondary} />
+                    </div>
+                    <div className='flex flex-col gap-2'>
+                      <p>Color texto boton</p>
+                      <input type='color' onChange={(e: any) => setStyle({ ...style, button: e.target.value })} value={style?.button} />
+                    </div>
+                  </div>
+                )
+                : ''
+            }
+            {
               part === 'Popup'
                 ? (
                   <div className='flex flex-col gap-4 mb-[104px]'>
@@ -529,20 +615,20 @@ export default function Page () {
                           calls?.map(call => <option key={call._id} value={call._id}>{call.nameMeeting}</option>)
                         }
                       </Select>
-                      <Button2 color='main' action={(e: any) => {
+                      <Button2 action={(e: any) => {
                         e.preventDefault()
                         setError('')
                         setTitleForm('Nuevo formulario')
-                        setNewForm({ nameForm: '', informations: [{ icon: '', text: '', subText: '' }], labels: [{ text: '', name: '', data: '' }], button: '', action: 'Ir a una pagina', tags: [], title: '' })
+                        setNewForm({ nameForm: '', informations: [{ icon: '', text: '', subText: '' }], labels: [{ text: '', name: '', data: '', type: '', datas: [] }], button: '', action: 'Ir a una pagina', tags: [], title: '' })
                         setPopupForm({ ...popupForm, view: 'flex', opacity: 'opacity-0' })
                         setTimeout(() => {
                           setPopupForm({ ...popupForm, view: 'flex', opacity: 'opacity-1' })
                         }, 10)
                       }}>Crear formulario</Button2>
-                      <Button2 color='main' action={(e: any) => {
+                      <Button2 action={(e: any) => {
                         e.preventDefault()
                         setError('')
-                        setNewCall({ nameMeeting: '', duration: '15 minutos', description: '', title: '', labels: [{ data: '', name: '', text: '' }], buttonText: '', action: 'Mostrar mensaje', message: '' })
+                        setNewCall({ type: '', nameMeeting: '', duration: '15 minutos', description: '', title: '', labels: [{ data: '', name: '', text: '' }], buttonText: '', action: 'Mostrar mensaje', message: '' })
                         setTitleMeeting('Crear llamada')
                         setPopupCall({ ...popupCall, view: 'flex', opacity: 'opacity-0' })
                         setTimeout(() => {
@@ -641,7 +727,7 @@ export default function Page () {
                           </>
                         ) 
                     }
-                    <Button2 color='main' action={(e: any) => {
+                    <Button2 action={(e: any) => {
                       setError('')
                       setNewFunnel(funnels.find(funnel => funnel.funnel === part)!)
                       setTitle(funnels.find(funnel => funnel.funnel === part)!.funnel)
@@ -733,7 +819,7 @@ export default function Page () {
                           }
                         })
                     }
-                    <Button2 color='main' action={(e: any) => {
+                    <Button2 action={(e: any) => {
                       setError('')
                       setNewService(services.find(service => service.name === part)!)
                       setTitle(services.find(service => service.name === part)!.name)
@@ -756,7 +842,7 @@ export default function Page () {
                           setLoading(true)
                           if (id) {
                             await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/page/${id}`, page)
-                            await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/design/${id}`, { color: color, header: header })
+                            await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/design/${id}`, { color: color, header: header, footer: footer })
                           }
                           setLoading(false)
                         }
@@ -825,6 +911,38 @@ export default function Page () {
                 }
               })
             }
+            {
+              part === 'Estilo'
+                ? (
+                  <div className='p-4 flex flex-col gap-2 fixed bg-white w-[349px] bottom-0 border-t dark:border-neutral-700 dark:bg-neutral-800'>
+                    <ButtonSubmit action={async () => {
+                      if (!loading) {
+                        setLoading(true)
+                        await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/style`, style)
+                        setLoading(false)
+                      }
+                    }} color='main' submitLoading={loading} textButton='Guardar' config='w-full' />
+                    <button className='text-sm'>Cancelar</button>
+                  </div>
+                )
+                : ''
+            }
+            {
+              part === 'Chat'
+                ? (
+                  <div className='p-4 flex flex-col gap-2 fixed bg-white w-[349px] bottom-0 border-t dark:border-neutral-700 dark:bg-neutral-800'>
+                    <ButtonSubmit action={async () => {
+                      if (!loading) {
+                        setLoading(true)
+                        await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/design/${id}`, { chat: chat })
+                        setLoading(false)
+                      }
+                    }} color='main' submitLoading={loading} textButton='Guardar' config='w-full' />
+                    <button className='text-sm'>Cancelar</button>
+                  </div>
+                )
+                : ''
+            }
           </div>
         </div>
         <div className='w-[350px] border-r hidden lg:flex flex-col justify-between bg-white dark:border-neutral-800 dark:bg-neutral-900' style={{ overflow: 'overlay' }}>
@@ -836,52 +954,101 @@ export default function Page () {
                   <div className='flex flex-col gap-2'>
                     {
                       pages.map((page, index) => (
-                        <div key={page.slug} className='flex gap-4'>
-                          <button onClick={() => {
-                            setType('Page')
-                            setPart(page.page)
-                          }} className='text-left w-full'>{page.page}</button>
-                          <div className='flex gap-2'>
-                            <div className='flex gap-1'>
-                              <input type='checkbox' checked={page.header} onChange={async (e: any) => {
-                                const newPages = [...pages]
-                                newPages[index].header = e.target.checked
-                                setPages(newPages)
-                                await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/design/${id}`, { pages: newPages })
-                              }} />
-                              <p className='my-auto'>Menu</p>
-                            </div>
-                            {
-                              page.header === true
-                                ? (
-                                  <div className='flex gap-1'>
-                                    <input type='checkbox' checked={page.button === true ? true : false} onChange={async (e: any) => {
-                                      const newPages = [...pages]
-                                      newPages[index].button = e.target.checked
-                                      setPages(newPages)
-                                      await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/design/${id}`, { pages: newPages })
-                                    }} />
-                                    <p className='my-auto'>Boton</p>
-                                  </div>
-                                )
-                                : ''
+                        <div key={page.slug} className='flex flex-col gap-2'>
+                          <div className='flex gap-4' draggable onDragStart={() => setNewPage({ ...newPage, page: page.page, slug: page.slug })} onDragOver={(e) => e.preventDefault()} onDrop={async () => {
+                            const oldPages = [...pages]
+                            if (oldPages[index].subPage?.length) {
+                              oldPages[index].subPage?.push({ page: newPage.page, slug: newPage.slug })
+                            } else {
+                              oldPages[index].subPage = [{ page: newPage.page, slug: newPage.slug }]
                             }
-                            <button onClick={() => handleMoveUp(index)}><SlArrowUp className='text-lg' /></button>
-                            <button onClick={() => handleMoveDown(index)}><SlArrowDown className='text-lg' /></button>
-                            <button onClick={(e: any) => {
-                              e.preventDefault()
-                              setSelectPage(page)
-                              setPopupDeletePage({ ...popupDeletePage, view: 'flex', opacity: 'opacity-0' })
-                              setTimeout(() => {
-                                setPopupDeletePage({ ...popupDeletePage, view: 'flex', opacity: 'opacity-1' })
-                              }, 10)
-                            }}><svg className="m-auto w-[17px]" role="presentation" viewBox="0 0 16 14"><path d="M15 0L1 14m14 0L1 0" stroke="currentColor" fill="none" fill-rule="evenodd"></path></svg></button>
+                            setPages(oldPages)
+                            await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/design/${id}`, { pages: oldPages })
+                          }}>
+                            <button onClick={() => {
+                              setType('Page')
+                              setPart(page.page)
+                            }} className='text-left w-full'>{page.page}</button>
+                            <div className='flex gap-2'>
+                              <div className='flex gap-1'>
+                                <input type='checkbox' checked={page.header} onChange={async (e: any) => {
+                                  const newPages = [...pages]
+                                  newPages[index].header = e.target.checked
+                                  setPages(newPages)
+                                  await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/design/${id}`, { pages: newPages })
+                                }} />
+                                <p className='my-auto'>Menu</p>
+                              </div>
+                              {
+                                page.header === true
+                                  ? (
+                                    <div className='flex gap-1'>
+                                      <input type='checkbox' checked={page.button === true ? true : false} onChange={async (e: any) => {
+                                        const newPages = [...pages]
+                                        newPages[index].button = e.target.checked
+                                        setPages(newPages)
+                                        await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/design/${id}`, { pages: newPages })
+                                      }} />
+                                      <p className='my-auto'>Boton</p>
+                                    </div>
+                                  )
+                                  : ''
+                              }
+                              <button onClick={() => handleMoveUp(index)}><SlArrowUp className='text-lg' /></button>
+                              <button onClick={() => handleMoveDown(index)}><SlArrowDown className='text-lg' /></button>
+                              <button onClick={(e: any) => {
+                                e.preventDefault()
+                                setSelectPage(page)
+                                setPopupDeletePage({ ...popupDeletePage, view: 'flex', opacity: 'opacity-0' })
+                                setTimeout(() => {
+                                  setPopupDeletePage({ ...popupDeletePage, view: 'flex', opacity: 'opacity-1' })
+                                }, 10)
+                              }}><svg className="m-auto w-[17px]" role="presentation" viewBox="0 0 16 14"><path d="M15 0L1 14m14 0L1 0" stroke="currentColor" fill="none" fill-rule="evenodd"></path></svg></button>
+                            </div>
                           </div>
+                          {
+                            page.subPage?.map((subPage, i) => (
+                              <div key={subPage.slug} className='flex gap-2 ml-10 justify-between'>
+                                {
+                                  editSubPage === i
+                                    ? (
+                                      <div className='flex gap-2'>
+                                        <Input value={subPage.page} change={(e: any) => {
+                                          const newPages = [...pages]
+                                          newPages[index].subPage![i].page = e.target.value
+                                          setPages(newPages)
+                                        }} />
+                                        <Button2 action={async (e: any) => {
+                                          e.preventDefault()
+                                          if (!loadingSubPage) {
+                                            setLoadingSubPage(true)
+                                            await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/design/${id}`, { pages: pages })
+                                            setEditSubPage(-1)
+                                            setLoadingSubPage(false)
+                                          }
+                                        }} loading={loadingSubPage}>Guardar</Button2>
+                                      </div>
+                                    )
+                                    : <p onClick={() => setEditSubPage(i)}>{subPage.page}</p>
+                                }
+                                <button onClick={async (e: any) => {
+                                  e.preventDefault()
+                                  const oldPages = [...pages]
+                                  oldPages[index].subPage?.splice(i, 1)
+                                  setPages(oldPages)
+                                  await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/design/${id}`, { pages: oldPages })
+                                }}><svg className="m-auto w-[17px]" role="presentation" viewBox="0 0 16 14"><path d="M15 0L1 14m14 0L1 0" stroke="currentColor" fill="none" fill-rule="evenodd"></path></svg></button>
+                              </div>
+                            ))
+                          }
                         </div>
                       ))
                     }
                     <div className='flex gap-4'>
                       <button onClick={() => setPart('Popup')} className='text-left w-full'>Popup</button>
+                    </div>
+                    <div className='flex gap-4'>
+                      <button onClick={() => setPart('Chat')} className='text-left w-full'>Chat</button>
                     </div>
                   </div>
                   <h2 className='text-lg font-medium'>Embudos</h2>
@@ -890,7 +1057,7 @@ export default function Page () {
                       funnels.length
                         ? (
                           funnels.map((funnel, index) => (
-                            <div key={funnel._id} className='flex gap-4 justify-between'>
+                            <div key={funnel._id} className='flex gap-4 justify-between' draggable onDragStart={() => setNewPage({ ...newPage, page: funnel.funnel, slug: funnel.steps[0].slug })} onDragOver={(e) => e.preventDefault()}>
                               <button onClick={(e: any) => {
                                 setType('Funnel')
                                 setPart(funnel.funnel)
@@ -935,7 +1102,7 @@ export default function Page () {
                             )
                           }
                         })
-                        : ''
+                        : <p>No hay servicios creados</p>
                     }
                   </div>
                   <div className='flex flex-col gap-2'>
@@ -945,17 +1112,35 @@ export default function Page () {
                       setTimeout(() => {
                         setPopupPage({ ...popupPage, view: 'flex', opacity: 'opacity-1' })
                       }, 10)
-                    }} color='main' config='w-full'>Agregar pagina</Button2>
+                    }} config='w-full'>Agregar pagina</Button2>
+                    {
+                      whatsapp
+                        ? (
+                          <button onClick={async(e: any) => {
+                            e.preventDefault()
+                            await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/design/${id}`, { whatsapp: false })
+                            setWhatsapp(false)
+                          }} className={`w-full bg-red-500 min-h-9 h-9 px-4 text-white text-sm rounded-xl transition-colors duration-300 hover:bg-red-500/80`}>Desactivar boton Whatsapp</button>
+                        )
+                        : (
+                          <button onClick={async(e: any) => {
+                            e.preventDefault()
+                            await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/design/${id}`, { whatsapp: true })
+                            setWhatsapp(true)
+                          }} className={`w-full bg-green-500 min-h-9 h-9 px-4 text-white text-sm rounded-xl transition-colors duration-300 hover:bg-green-500/80`}>Activar boton Whatsapp</button>
+                        )
+                    }
                     <ButtonSecondary2 action={(e: any) => {
-                    e.preventDefault()
-                    setError('')
-                    setNewFunnel({ funnel: '', description: '', slug: '', steps: [{ step: '', slug: '' }] })
-                    setTitle('Nuevo embudo')
-                    setPopupNewFunnel({ ...popupNewFunnel, view: 'flex', opacity: 'opacity-0' })
-                    setTimeout(() => {
-                      setPopupNewFunnel({ ...popupNewFunnel, view: 'flex', opacity: 'opacity-1' })
-                    }, 10)
-                  }} config='w-full'>Agregar embudo</ButtonSecondary2>
+                      e.preventDefault()
+                      setError('')
+                      setNewFunnel({ funnel: '', description: '', subdomain: '', steps: [{ step: '', slug: '' }] })
+                      setTitle('Nuevo embudo')
+                      setPopupNewFunnel({ ...popupNewFunnel, view: 'flex', opacity: 'opacity-0' })
+                      setTimeout(() => {
+                        setPopupNewFunnel({ ...popupNewFunnel, view: 'flex', opacity: 'opacity-1' })
+                      }, 10)
+                    }} config='w-full'>Agregar embudo</ButtonSecondary2>
+                    <button onClick={(e: any) => setPart('Estilo')} className='mt-2 text-sm'>Editar estilo del sitio web</button>
                   </div>
                 </div>
               )
@@ -1030,6 +1215,65 @@ export default function Page () {
             })
           }
           {
+            part === 'Estilo'
+              ? (
+                <div className='flex flex-col gap-4 p-4 mb-[104px]'>
+                  <div className='border-b pb-4 dark:border-neutral-700'>
+                    <button onClick={() => setPart('')} className='flex gap-2 pt-1 pb-1 pl-2 pr-2 rounded transition-colors duration-150 hover:bg-neutral-100 dark:hover:bg-neutral-700'><BiArrowBack className='text-xl my-auto' /><p className='my-auto'>Volver</p></button>
+                  </div>
+                  <h2 className='text-lg font-medium'>Estilo del sitio web</h2>
+                  <div className='flex flex-col gap-2'>
+                    <p>Tipo de diseño</p>
+                    <Select change={(e: any) => setStyle({ ...style, design: e.target.value })} value={style?.design}>
+                      <option>Borde</option>
+                      <option>Sombreado</option>
+                      <option>Ninguno</option>
+                    </Select>
+                  </div>
+                  <div className='flex flex-col gap-2'>
+                    <p>Tipo de formas</p>
+                    <Select change={(e: any) => setStyle({ ...style, form: e.target.value })} value={style?.form}>
+                      <option>Redondeadas</option>
+                      <option>Cuadradas</option>
+                    </Select>
+                  </div>
+                  {
+                    style.form === 'Redondeadas'
+                      ? (
+                        <>
+                          <div className='flex flex-col gap-2'>
+                            <p>Esquinas botones</p>
+                            <Input type='number' change={(e: any) => setStyle({ ...style, borderButton: e.target.value })} value={style.borderButton} />
+                          </div>
+                          <div className='flex flex-col gap-2'>
+                            <p>Esquinas bloques</p>
+                            <Input type='number' change={(e: any) => setStyle({ ...style, borderBlock: e.target.value })} value={style.borderBlock} />
+                          </div>
+                        </>
+                      )
+                      : ''
+                  }
+                  <div className='flex flex-col gap-2'>
+                    <p>Color principal</p>
+                    <input type='color' onChange={(e: any) => setStyle({ ...style, primary: e.target.value })} value={style?.primary} />
+                  </div>
+                  <div className='flex flex-col gap-2'>
+                    <p>Color segundario</p>
+                    <input type='color' onChange={(e: any) => setStyle({ ...style, secondary: e.target.value })} value={style?.secondary} />
+                  </div>
+                  <div className='flex flex-col gap-2'>
+                    <p>Color texto boton</p>
+                    <input type='color' onChange={(e: any) => setStyle({ ...style, button: e.target.value })} value={style?.button} />
+                  </div>
+                  <div className='flex flex-col gap-2'>
+                    <p>Color borde</p>
+                    <input type='color' onChange={(e: any) => setStyle({ ...style, borderColor: e.target.value })} value={style?.borderColor} />
+                  </div>
+                </div>
+              )
+              : ''
+          }
+          {
             part === 'Popup'
               ? (
                 <div className='flex flex-col gap-4 p-4 mb-[104px]'>
@@ -1086,26 +1330,42 @@ export default function Page () {
                         calls?.map(call => <option key={call._id} value={call._id}>{call.nameMeeting}</option>)
                       }
                     </Select>
-                    <Button2 color='main' action={(e: any) => {
+                    <Button2 action={(e: any) => {
                       e.preventDefault()
                       setError('')
                       setTitleForm('Nuevo formulario')
-                      setNewForm({ nameForm: '', informations: [{ icon: '', text: '', subText: '' }], labels: [{ text: '', name: '', data: '' }], button: '', action: 'Ir a una pagina', tags: [], title: '' })
+                      setNewForm({ nameForm: '', informations: [{ icon: '', text: '', subText: '' }], labels: [{ text: '', name: '', data: '', type: '', datas: [] }], button: '', action: 'Ir a una pagina', tags: [], title: '' })
                       setPopupForm({ ...popupForm, view: 'flex', opacity: 'opacity-0' })
                       setTimeout(() => {
                         setPopupForm({ ...popupForm, view: 'flex', opacity: 'opacity-1' })
                       }, 10)
                     }}>Crear formulario</Button2>
-                    <Button2 color='main' action={(e: any) => {
+                    <Button2 action={(e: any) => {
                       e.preventDefault()
                       setError('')
-                      setNewCall({ nameMeeting: '', duration: '15 minutos', description: '', title: '', labels: [{ data: '', name: '', text: '' }], buttonText: '', action: 'Mostrar mensaje', message: '' })
+                      setNewCall({ type: '', nameMeeting: '', duration: '15 minutos', description: '', title: '', labels: [{ data: '', name: '', text: '' }], buttonText: '', action: 'Mostrar mensaje', message: '' })
                       setTitleMeeting('Crear llamada')
                       setPopupCall({ ...popupCall, view: 'flex', opacity: 'opacity-0' })
                       setTimeout(() => {
                         setPopupCall({ ...popupCall, view: 'flex', opacity: 'opacity-1' })
                       }, 10)
                     }}>Crear llamada</Button2>
+                  </div>
+                </div>
+              )
+              : ''
+          }
+          {
+            part === 'Chat'
+              ? (
+                <div className='flex flex-col gap-4 p-4 mb-[104px]'>
+                  <div className='border-b pb-4 dark:border-neutral-700'>
+                    <button onClick={() => setPart('')} className='flex gap-2 pt-1 pb-1 pl-2 pr-2 rounded transition-colors duration-150 hover:bg-neutral-100 dark:hover:bg-neutral-700'><BiArrowBack className='text-xl my-auto' /><p className='my-auto'>Volver</p></button>
+                  </div>
+                  <h2 className='text-lg font-medium'>Chat</h2>
+                  <div className='flex flex-col gap-2'>
+                    <p>Color de fondo</p>
+                    <input type='color' onChange={(e: any) => setChat({ ...chat, bgColor: e.target.value })} value={chat?.bgColor} />
                   </div>
                 </div>
               )
@@ -1195,7 +1455,7 @@ export default function Page () {
                         </>
                       ) 
                   }
-                  <Button2 color='main' action={(e: any) => {
+                  <Button2 action={(e: any) => {
                     setError('')
                     setNewFunnel(funnels.find(funnel => funnel.funnel === part)!)
                     setTitle(funnels.find(funnel => funnel.funnel === part)!.funnel)
@@ -1284,7 +1544,7 @@ export default function Page () {
                         }
                       })
                   }
-                  <Button2 color='main' action={(e: any) => {
+                  <Button2 action={(e: any) => {
                     setError('')
                     setNewService(services.find(service => service.name === part)!)
                     setTitle(services.find(service => service.name === part)!.name)
@@ -1305,9 +1565,10 @@ export default function Page () {
                     <ButtonSubmit action={async () => {
                       if (!loading) {
                         setLoading(true)
+                        console.log(page)
                         if (id) {
                           await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/page/${id}`, page)
-                          await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/design/${id}`, { color: color, header: header })
+                          await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/design/${id}`, { color: color, header: header, footer: footer })
                         }
                         setLoading(false)
                       }
@@ -1365,7 +1626,7 @@ export default function Page () {
                       if (!loading) {
                         setLoading(true)
                         if (services.find(service => service.name === part)?._id) {
-                          await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/service-step/${services.find(service => service.name === part)?._id}`, st)
+                          const res = await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/service-step/${services.find(service => service.name === part)?._id}`, st)
                         }
                         setLoading(false)
                       }
@@ -1376,6 +1637,38 @@ export default function Page () {
               }
             })
           }
+          {
+            part === 'Estilo'
+              ? (
+                <div className='p-4 flex flex-col gap-2 fixed bg-white w-[349px] bottom-0 border-t dark:border-neutral-700 dark:bg-neutral-800'>
+                  <ButtonSubmit action={async () => {
+                    if (!loading) {
+                      setLoading(true)
+                      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/style`, style)
+                      setLoading(false)
+                    }
+                  }} color='main' submitLoading={loading} textButton='Guardar' config='w-full' />
+                  <button className='text-sm'>Cancelar</button>
+                </div>
+              )
+              : ''
+          }
+          {
+              part === 'Chat'
+                ? (
+                  <div className='p-4 flex flex-col gap-2 fixed bg-white w-[349px] bottom-0 border-t dark:border-neutral-700 dark:bg-neutral-800'>
+                    <ButtonSubmit action={async () => {
+                      if (!loading) {
+                        setLoading(true)
+                        await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/design/${id}`, { chat: chat })
+                        setLoading(false)
+                      }
+                    }} color='main' submitLoading={loading} textButton='Guardar' config='w-full' />
+                    <button className='text-sm'>Cancelar</button>
+                  </div>
+                )
+                : ''
+            }
         </div>
         {
           part === ''
@@ -1390,12 +1683,12 @@ export default function Page () {
           pages.map((page, i) => {
             if (part === page.page && type === 'Page') {
               return (
-                <div key={page._id} className={`m-auto h-full bg-white text-black w-full lg:w-[${responsive}]`}>
+                <div key={page._id} className={`m-auto h-full bg-white text-black ${responsive === '400px' ? 'w-[400px]' : 'w-[calc(100%-350px)]'} lg:w-[${responsive}]`}>
                   <div className='flex p-4 bg-white border-b border-border dark:bg-neutral-900 dark:border-neutral-700'>
                     <div className='flex gap-4 w-fit m-auto'>
                       <button onClick={(e: any) => {
                         e.preventDefault()
-                        setResponsive('calc(100%-350px')
+                        setResponsive('calc(100%-350px)')
                       }} className='border border-border rounded-lg p-2 dark:border-neutral-700'><IoLaptopOutline className='text-2xl dark:text-white' /></button>
                       <button  onClick={(e: any) => {
                         e.preventDefault()
@@ -1404,7 +1697,7 @@ export default function Page () {
                     </div>
                   </div>
                   <div className='overflow-y-auto bg-white' style={{ height: 'calc(100% - 75px)' }}>
-                    <Layout edit={edit} setEdit={setEdit} setHeader={setHeader} header={header} setPart={setPart} pages={pages} storeData={storeData} responsive={responsive}>
+                    <Layout edit={edit} setEdit={setEdit} setHeader={setHeader} header={header} setPart={setPart} pages={pages} storeData={storeData} responsive={responsive} style={style} footer={footer} setFooter={setFooter}>
                       <div className='flex flex-col gap-4'>
                         {
                           page.design.length
@@ -1412,55 +1705,63 @@ export default function Page () {
                               <div key={index}>
                                 {
                                   design.content === 'Carrusel'
-                                    ? <Slider design={design} edit={edit} pages={pages} setPages={setPages} index={index} ind={i} pageNeed={pages} funnels={funnels} responsive={responsive} calls={calls} forms={forms} />
+                                    ? <Slider design={design} edit={edit} pages={pages} setPages={setPages} index={index} ind={i} pageNeed={pages} funnels={funnels} responsive={responsive} calls={calls} forms={forms} style={style} />
                                     : design.content === 'Bloque 1'
-                                      ? <Bloque1 edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} pageNeed={pages} funnels={funnels} responsive={responsive} calls={calls} forms={forms} />
+                                      ? <Bloque1 edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} pageNeed={pages} funnels={funnels} responsive={responsive} calls={calls} forms={forms} style={style} />
                                       : design.content === 'Bloque 2'
-                                        ? <Bloque2 edit={edit} design={design} pages={pages} setPages={setPages} index={index} ind={i} pageNeed={pages} responsive={responsive} calls={calls} forms={forms} />
+                                        ? <Bloque2 edit={edit} design={design} pages={pages} setPages={setPages} index={index} ind={i} pageNeed={pages} responsive={responsive} calls={calls} forms={forms} style={style} funnels={funnels} />
                                         : design.content === 'Bloque 3'
-                                          ? <Bloque3 edit={edit} design={design} index={index} pages={pages} setPages={setPages} ind={i} pageNeed={pages} responsive={responsive} calls={calls} forms={forms} />
+                                          ? <Bloque3 edit={edit} design={design} index={index} pages={pages} setPages={setPages} ind={i} pageNeed={pages} responsive={responsive} calls={calls} forms={forms} style={style} storeData={storeData} />
                                           : design.content === 'Bloque 4'
-                                            ? <Bloque4 edit={edit} design={design} pages={pages} setPages={setPages} index={index} ind={i} pageNeed={pages} responsive={responsive} calls={calls} forms={forms} />
+                                            ? <Bloque4 edit={edit} design={design} pages={pages} setPages={setPages} index={index} ind={i} pageNeed={pages} responsive={responsive} calls={calls} forms={forms} style={style} />
                                             : design.content === 'Bloque 5'
-                                              ? <Bloque5 edit={edit} design={design} pages={pages} setPages={setPages} index={index} ind={i} pageNeed={pages} responsive={responsive} calls={calls} forms={forms} />
+                                              ? <Bloque5 edit={edit} design={design} pages={pages} setPages={setPages} index={index} ind={i} pageNeed={pages} responsive={responsive} calls={calls} forms={forms} style={style} />
                                               : design.content === 'Contacto'
-                                                ? <Contact edit={edit} design={design} pages={pages} setPages={setPages} index={index} ind={i} responsive={responsive} />
+                                                ? <Contact edit={edit} design={design} pages={pages} setPages={setPages} index={index} ind={i} responsive={responsive} style={style} />
                                                 : design.content === 'Suscripción'
-                                                  ? <Subscription edit={edit} pages={pages} setPages={setPages} index={index} design={design} ind={i} responsive={responsive} />
+                                                  ? <Subscription edit={edit} pages={pages} setPages={setPages} index={index} design={design} ind={i} responsive={responsive} style={style} />
                                                   : design.content === 'Lead 1'
-                                                    ? <Lead1 edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} forms={forms} popupForm={popupForm} setPopupForm={setPopupForm} setTitleForm={setTitleForm} selectFunnel={selectFunnel} setSelectFunnel={setSelectFunnel} selectStep={step} setNewForm={setNewForm} responsive={responsive} error={error} setError={setError} storeData={storeData} />
+                                                    ? <Lead1 edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} forms={forms} popupForm={popupForm} setPopupForm={setPopupForm} setTitleForm={setTitleForm} selectFunnel={selectFunnel} setSelectFunnel={setSelectFunnel} selectStep={step} setNewForm={setNewForm} responsive={responsive} error={error} setError={setError} storeData={storeData} style={style} />
                                                     : design.content === 'Video'
-                                                      ? <Video edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} responsive={responsive} />
+                                                      ? <Video edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} responsive={responsive} style={style} storeData={storeData} />
                                                       : design.content === 'Agendar llamada'
-                                                        ? <Call edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} calls={calls!} setNewCall={setNewCall} setTitleMeeting={setTitleMeeting} setPopupCall={setPopupCall} popupCall={popupCall} responsive={responsive} error={error} setError={setError} storeData={storeData} />
+                                                        ? <Call edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} calls={calls!} setNewCall={setNewCall} setTitleMeeting={setTitleMeeting} setPopupCall={setPopupCall} popupCall={popupCall} responsive={responsive} error={error} setError={setError} storeData={storeData} style={style} />
                                                         : design.content === 'Bloque 7'
                                                           ? <Bloque7 edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} />
                                                           : design.content === 'Checkout'
-                                                            ? <Checkout edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} services={services} setError={setError} setTitle={setTitle} popupService={popupService} setPopupService={setPopupService} setNewService={setNewService} storeData={storeData}  />
+                                                            ? <Checkout edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} services={services} setError={setError} setTitle={setTitle} popupService={popupService} setPopupService={setPopupService} setNewService={setNewService} storeData={storeData} style={style} />
                                                             : design.content === 'Llamadas'
-                                                              ? <Calls edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} calls={calls} />
+                                                              ? <Calls edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} calls={calls} style={style} />
                                                               : design.content === 'Lead 2'
-                                                                ? <Lead2 edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} forms={forms} popupForm={popupForm} setPopupForm={setPopupForm} setTitleForm={setTitleForm} selectFunnel={selectFunnel} setSelectFunnel={setSelectFunnel} selectStep={step} setNewForm={setNewForm} responsive={responsive} error={error} setError={setError} storeData={storeData} />
+                                                                ? <Lead2 edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} forms={forms} popupForm={popupForm} setPopupForm={setPopupForm} setTitleForm={setTitleForm} selectFunnel={selectFunnel} setSelectFunnel={setSelectFunnel} selectStep={step} setNewForm={setNewForm} responsive={responsive} error={error} setError={setError} storeData={storeData} style={style} />
                                                                 : design.content === 'Servicios'
-                                                                  ? <Services edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} services={services} responsive={responsive} pageNeed={pages} funnels={funnels} setFunnels={setFunnels} />
+                                                                  ? <Services edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} services={services} responsive={responsive} pageNeed={pages} funnels={funnels} setFunnels={setFunnels} style={style} />
                                                                   : design.content === 'Planes'
-                                                                    ? <Plans edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} services={services} responsive={responsive} pageNeed={pages} />
+                                                                    ? <Plans edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} services={services} responsive={responsive} pageNeed={pages} style={style} clientData={clientData} getClientData={getClientData} setNewCall={setNewCall} setTitleMeeting={setTitleMeeting} popupCall={popupCall} setPopupCall={setPopupCall} calls={calls} />
                                                                     : design.content === 'Preguntas frecuentes'
-                                                                      ? <Faq edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} services={services} responsive={responsive} pageNeed={pages} />
-                                                                      : ''
+                                                                      ? <Faq edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} services={services} responsive={responsive} pageNeed={pages} style={style} />
+                                                                      : design.content === 'Bloques'
+                                                                        ? <Blocks edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} responsive={responsive} pageNeed={pages} style={style} forms={forms} funnels={funnels} />
+                                                                        : design.content === 'Reseñas'
+                                                                          ? <Reviews edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} responsive={responsive} pageNeed={pages} style={style} />
+                                                                          : design.content === 'Formulario'
+                                                                            ? <Form edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} responsive={responsive} pageNeed={pages} forms={forms} popupForm={popupForm} setNewForm={setNewForm} setPopupForm={setPopupForm} setTitleForm={setTitleForm} style={style} />
+                                                                            : design.content === 'Lead 3'
+                                                                              ? <Lead3 edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} forms={forms} popupForm={popupForm} setPopupForm={setPopupForm} setTitleForm={setTitleForm} setNewForm={setNewForm} responsive={responsive} storeData={storeData} style={style} pageNeed={pages} />
+                                                                              : ''
                                 }
                                 <div className='m-auto mt-2 mb-6 flex gap-4 w-fit'>
                                   <p className='my-auto font-medium'>{design.content}</p>
                                   {
                                     edit === design.content
-                                      ? <Button2 action={() => setEdit('')} color='main'>Guardar</Button2>
-                                      : <Button2 action={() => setEdit(design.content)} color='main'>Editar</Button2>
+                                      ? <Button2 action={() => setEdit('')}>Guardar</Button2>
+                                      : <Button2 action={() => setEdit(design.content)}>Editar</Button2>
                                   }
-                                  <Button2 action={() => {
+                                  <Button2Red action={() => {
                                     const oldPages = [...pages]
                                     oldPages[i].design.splice(index, 1)
                                     setPages(oldPages)
-                                  }} color='red-500'>Eliminar bloque</Button2>
+                                  }}>Eliminar bloque</Button2Red>
                                   <button onClick={() => moveBlock(i, index, 'up')}><SlArrowUp className='text-lg' /></button>
                                   <button onClick={() => moveBlock(i, index, 'down')}><SlArrowDown className='text-lg' /></button>
                                 </div>
@@ -1645,12 +1946,12 @@ export default function Page () {
                 funnels.find((funnel) => funnel.funnel === part)?.steps.map((st, i) => {
                   if (st.step === step) {
                     return (
-                      <div key={st._id} className='h-full m-auto bg-white text-black' style={{ width: responsive }}>
+                      <div key={st._id} className={`h-full m-auto bg-white text-black ${responsive === '400px' ? 'w-[400px]' : 'w-[calc(100%-350px)]'} lg:w-[${responsive}]`}>
                         <div className='flex p-4 bg-white border-b border-border dark:bg-neutral-900 dark:border-neutral-700'>
                           <div className='flex gap-4 w-fit m-auto'>
                             <button onClick={(e: any) => {
                               e.preventDefault()
-                              setResponsive('calc(100%-350px')
+                              setResponsive('calc(100%-350px)')
                             }} className='border border-border rounded-lg p-2 dark:border-neutral-700'><IoLaptopOutline className='text-2xl dark:text-white' /></button>
                             <button  onClick={(e: any) => {
                               e.preventDefault()
@@ -1666,53 +1967,65 @@ export default function Page () {
                                   <div key={index}>
                                     {
                                       design.content === 'Carrusel'
-                                        ? <Slider design={design} edit={edit} pages={pages} setPages={setPages} index={index} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} pageNeed={pages} funnels={funnels} setFunnels={setFunnels} responsive={responsive} calls={calls} forms={forms} />
+                                        ? <Slider design={design} edit={edit} pages={pages} setPages={setPages} index={index} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} pageNeed={pages} funnels={funnels} setFunnels={setFunnels} responsive={responsive} calls={calls} forms={forms} style={style} />
                                         : design.content === 'Bloque 1'
-                                          ? <Bloque1 edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} pageNeed={pages} funnels={funnels} setFunnels={setFunnels} responsive={responsive} calls={calls} forms={forms} />
+                                          ? <Bloque1 edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} pageNeed={pages} funnels={funnels} setFunnels={setFunnels} responsive={responsive} calls={calls} forms={forms} style={style} />
                                           : design.content === 'Bloque 2'
-                                            ? <Bloque2 edit={edit} design={design} pages={pages} setPages={setPages} index={index} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} pageNeed={pages} funnels={funnels} setFunnels={setFunnels} responsive={responsive} calls={calls} forms={forms} />
+                                            ? <Bloque2 edit={edit} design={design} pages={pages} setPages={setPages} index={index} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} pageNeed={pages} funnels={funnels} setFunnels={setFunnels} responsive={responsive} calls={calls} forms={forms} style={style} />
                                             : design.content === 'Bloque 3'
-                                              ? <Bloque3 edit={edit} design={design} index={index} pages={pages} setPages={setPages} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} pageNeed={pages} funnels={funnels} setFunnels={setFunnels} responsive={responsive} calls={calls} forms={forms} />
+                                              ? <Bloque3 edit={edit} design={design} index={index} pages={pages} setPages={setPages} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} pageNeed={pages} funnels={funnels} setFunnels={setFunnels} responsive={responsive} calls={calls} forms={forms} style={style} storeData={storeData} />
                                               : design.content === 'Bloque 4'
-                                                ? <Bloque4 edit={edit} design={design} pages={pages} setPages={setPages} index={index} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} pageNeed={pages} funnels={funnels} setFunnels={setFunnels} responsive={responsive} calls={calls} forms={forms} />
+                                                ? <Bloque4 edit={edit} design={design} pages={pages} setPages={setPages} index={index} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} pageNeed={pages} funnels={funnels} setFunnels={setFunnels} responsive={responsive} calls={calls} forms={forms} style={style} />
                                                 : design.content === 'Bloque 5'
-                                                  ? <Bloque5 edit={edit} design={design} pages={pages} setPages={setPages} index={index} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} pageNeed={pages} funnels={funnels} setFunnels={setFunnels} responsive={responsive} calls={calls} forms={forms} />
+                                                  ? <Bloque5 edit={edit} design={design} pages={pages} setPages={setPages} index={index} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} pageNeed={pages} funnels={funnels} setFunnels={setFunnels} responsive={responsive} calls={calls} forms={forms} style={style} />
                                                   : design.content === 'Contacto'
-                                                    ? <Contact edit={edit} design={design} pages={pages} setPages={setPages} index={index} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} funnels={funnels} setFunnels={setFunnels} responsive={responsive} />
+                                                    ? <Contact edit={edit} design={design} pages={pages} setPages={setPages} index={index} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} funnels={funnels} setFunnels={setFunnels} responsive={responsive} style={style} />
                                                     : design.content === 'Suscripción'
-                                                      ? <Subscription edit={edit} pages={pages} setPages={setPages} index={index} design={design} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} funnels={funnels} setFunnels={setFunnels} responsive={responsive} />
+                                                      ? <Subscription edit={edit} pages={pages} setPages={setPages} index={index} design={design} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} funnels={funnels} setFunnels={setFunnels} responsive={responsive} style={style} />
                                                       : design.content === 'Lead 1'
-                                                        ? <Lead1 edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} funnels={funnels} setFunnels={setFunnels} forms={forms} popupForm={popupForm} setPopupForm={setPopupForm} setTitleForm={setTitleForm} selectFunnel={selectFunnel} setSelectFunnel={setSelectFunnel} selectStep={step} setNewForm={setNewForm} responsive={responsive} error={error} setError={setError} storeData={storeData} />
+                                                        ? <Lead1 edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} funnels={funnels} setFunnels={setFunnels} forms={forms} popupForm={popupForm} setPopupForm={setPopupForm} setTitleForm={setTitleForm} selectFunnel={selectFunnel} setSelectFunnel={setSelectFunnel} selectStep={step} setNewForm={setNewForm} responsive={responsive} error={error} setError={setError} storeData={storeData} style={style} />
                                                         : design.content === 'Video'
-                                                          ? <Video edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} funnels={funnels} setFunnels={setFunnels} responsive={responsive} />
+                                                          ? <Video edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} funnels={funnels} setFunnels={setFunnels} responsive={responsive} style={style} storeData={storeData} />
                                                           : design.content === 'Agendar llamada'
-                                                            ? <Call edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} funnels={funnels} setFunnels={setFunnels} calls={calls!} setNewCall={setNewCall} setTitleMeeting={setTitleMeeting} setPopupCall={setPopupCall} popupCall={popupCall} responsive={responsive} error={error} setError={setError} storeData={storeData} />
+                                                            ? <Call edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} funnels={funnels} setFunnels={setFunnels} calls={calls!} setNewCall={setNewCall} setTitleMeeting={setTitleMeeting} setPopupCall={setPopupCall} popupCall={popupCall} responsive={responsive} error={error} setError={setError} storeData={storeData} style={style} />
                                                             : design.content === 'Bloque 7'
                                                               ? <Bloque7 edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} funnels={funnels} setFunnels={setFunnels} />
                                                               : design.content === 'Checkout'
-                                                                ? <Checkout edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} services={services} setError={setError} setTitle={setTitle} popupService={popupService} setPopupService={setPopupService} setNewService={setNewService} funnels={funnels} setFunnels={setFunnels} storeData={storeData} />
+                                                                ? <Checkout edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} services={services} setError={setError} setTitle={setTitle} popupService={popupService} setPopupService={setPopupService} setNewService={setNewService} funnels={funnels} setFunnels={setFunnels} storeData={storeData} style={style} />
                                                                 : design.content === 'Llamadas'
-                                                                  ? <Calls edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} calls={calls} funnels={funnels} setFunnels={setFunnels} />
+                                                                  ? <Calls edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} calls={calls} funnels={funnels} setFunnels={setFunnels} style={style} />
                                                                   : design.content === 'Lead 2'
-                                                                    ? <Lead2  edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} funnels={funnels} setFunnels={setFunnels} forms={forms} popupForm={popupForm} setPopupForm={setPopupForm} setTitleForm={setTitleForm} selectFunnel={selectFunnel} setSelectFunnel={setSelectFunnel} selectStep={step} setNewForm={setNewForm} responsive={responsive} error={error} setError={setError} storeData={storeData} />
+                                                                    ? <Lead2 edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} funnels={funnels} setFunnels={setFunnels} forms={forms} popupForm={popupForm} setPopupForm={setPopupForm} setTitleForm={setTitleForm} selectFunnel={selectFunnel} setSelectFunnel={setSelectFunnel} selectStep={step} setNewForm={setNewForm} responsive={responsive} error={error} setError={setError} storeData={storeData} style={style} />
                                                                     : design.content === 'Servicios'
-                                                                      ? <Services edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} calls={calls} funnels={funnels} setFunnels={setFunnels} responsive={responsive} pageNeed={pages} />
+                                                                      ? <Services edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} calls={calls} funnels={funnels} setFunnels={setFunnels} responsive={responsive} pageNeed={pages} style={style} />
                                                                       : design.content === 'Planes'
-                                                                        ? <Plans edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} services={services} responsive={responsive} pageNeed={pages} funnels={funnels} setFunnels={setFunnels} />
-                                                                        : ''
+                                                                        ? <Plans edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} services={services} responsive={responsive} pageNeed={pages} funnels={funnels} setFunnels={setFunnels} style={style} getClientData={getClientData} clientData={clientData} setNewCall={setNewCall} setTitleMeeting={setTitleMeeting} popupCall={popupCall} setPopupCall={setPopupCall} calls={calls} />
+                                                                        : design.content === 'Bloques'
+                                                                          ? <Blocks edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} services={services} responsive={responsive} pageNeed={pages} funnels={funnels} setFunnels={setFunnels} style={style} forms={forms} />
+                                                                          : design.content === 'Reseñas'
+                                                                            ? <Reviews edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} services={services} responsive={responsive} pageNeed={pages} funnels={funnels} setFunnels={setFunnels} style={style} />
+                                                                            : design.content === 'Formulario'
+                                                                              ? <Form edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} services={services} responsive={responsive} pageNeed={pages} funnels={funnels} setFunnels={setFunnels} forms={forms} popupForm={popupForm} setNewForm={setNewForm} setPopupForm={setPopupForm} setTitleForm={setTitleForm} style={style} />
+                                                                              : design.content === 'Lead 3'
+                                                                                ? <Lead3 edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} services={services} responsive={responsive} pageNeed={pages} funnels={funnels} setFunnels={setFunnels} forms={forms} popupForm={popupForm} setNewForm={setNewForm} setPopupForm={setPopupForm} setTitleForm={setTitleForm} style={style} storeData={storeData} />
+                                                                                : design.content === 'Tabla comparativa'
+                                                                                  ? <Table edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} services={services} responsive={responsive} pageNeed={pages} funnels={funnels} setFunnels={setFunnels} style={style} />
+                                                                                  : design.content === 'Preguntas frecuentes'
+                                                                                    ? <Faq edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} inde={funnels.findIndex(funnel => funnel.funnel === part)} services={services} responsive={responsive} pageNeed={pages} funnels={funnels} setFunnels={setFunnels} style={style} />
+                                                                                    : ''
                                     }
                                     <div className='m-auto mt-2 mb-6 flex gap-4 w-fit'>
                                       <p className='my-auto font-medium'>{design.content}</p>
                                       {
                                         edit === design.content
-                                          ? <Button2 action={() => setEdit('')} color='main'>Guardar</Button2>
-                                          : <Button2 action={() => setEdit(design.content)} color='main'>Editar</Button2>
+                                          ? <Button2 action={() => setEdit('')}>Guardar</Button2>
+                                          : <Button2 action={() => setEdit(design.content)}>Editar</Button2>
                                       }
-                                      <Button2 action={() => {
+                                      <Button2Red action={() => {
                                         const oldFunnels = [...funnels]
                                         oldFunnels[funnels.findIndex(funnel => funnel.funnel === part)].steps[i].design?.splice(index, 1)
                                         setFunnels(oldFunnels)
-                                      }} color='red-500'>Eliminar bloque</Button2>
+                                      }}>Eliminar bloque</Button2Red>
                                       <button onClick={() => moveBlockFunnel(funnels.findIndex(funnel => funnel.funnel === part), i, index, 'up')}><SlArrowUp className='text-lg' /></button>
                                       <button onClick={() => moveBlockFunnel(funnels.findIndex(funnel => funnel.funnel === part), i, index, 'down')}><SlArrowDown className='text-lg' /></button>
                                     </div>
@@ -1752,7 +2065,7 @@ export default function Page () {
                                 : ''
                             }
                           </div>
-                          <div className='w-full p-6 bg-neutral-800 flex flex-col'>
+                          <div className='w-full p-6 flex flex-col' style={{ backgroundColor: footer.bgColor, color: footer.textColor }}>
                             {
                               storeData?.logoWhite && storeData?.logoWhite !== ''
                                 ? <Link href='/' className='w-fit m-auto'><Image className='w-auto h-[52px] py-1' src={`${storeData.logoWhite}`} alt='Logo' width={155} height={53.72} /></Link>
@@ -1776,12 +2089,12 @@ export default function Page () {
                 services.find(service => service.name === part)?.steps.map((st, i) => {
                   if (st.step === step) {
                     return (
-                      <div key={st._id} className='h-full m-auto bg-white text-black' style={{ width: responsive }}>
+                      <div key={st._id} className={`h-full m-auto bg-white text-black ${responsive === '400px' ? 'w-[400px]' : 'w-[calc(100%-350px)]'} lg:w-[${responsive}]`}>
                         <div className='flex p-4 bg-white border-b border-border dark:bg-neutral-900 dark:border-neutral-700'>
                           <div className='flex gap-4 w-fit m-auto'>
                             <button onClick={(e: any) => {
                               e.preventDefault()
-                              setResponsive('calc(100%-350px')
+                              setResponsive('calc(100%-350px)')
                             }} className='border border-border rounded-lg p-2 dark:border-neutral-700'><IoLaptopOutline className='text-2xl dark:text-white' /></button>
                             <button  onClick={(e: any) => {
                               e.preventDefault()
@@ -1803,7 +2116,7 @@ export default function Page () {
                                           : design.content === 'Bloque 2'
                                             ? <Bloque2 edit={edit} design={design} pages={pages} setPages={setPages} index={index} ind={i} indx={services.findIndex(service => service.name === part)} pageNeed={pages} funnels={funnels} setFunnels={setFunnels} responsive={responsive} calls={calls} forms={forms} services={services} setServices={setServices} />
                                             : design.content === 'Bloque 3'
-                                              ? <Bloque3 edit={edit} design={design} index={index} pages={pages} setPages={setPages} ind={i} indx={services.findIndex(service => service.name === part)} pageNeed={pages} funnels={funnels} setFunnels={setFunnels} responsive={responsive} calls={calls} forms={forms} services={services} setServices={setServices} />
+                                              ? <Bloque3 edit={edit} design={design} index={index} pages={pages} setPages={setPages} ind={i} indx={services.findIndex(service => service.name === part)} pageNeed={pages} funnels={funnels} setFunnels={setFunnels} responsive={responsive} calls={calls} forms={forms} services={services} setServices={setServices} storeData={storeData} />
                                               : design.content === 'Bloque 4'
                                                 ? <Bloque4 edit={edit} design={design} pages={pages} setPages={setPages} index={index} ind={i} indx={services.findIndex(service => service.name === part)} pageNeed={pages} funnels={funnels} setFunnels={setFunnels} responsive={responsive} calls={calls} forms={forms} services={services} setServices={setServices} />
                                                 : design.content === 'Bloque 5'
@@ -1815,13 +2128,13 @@ export default function Page () {
                                                       : design.content === 'Lead 1'
                                                         ? <Lead1 edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} indx={services.findIndex(service => service.name === part)} funnels={funnels} setFunnels={setFunnels} forms={forms} popupForm={popupForm} setPopupForm={setPopupForm} setTitleForm={setTitleForm} selectFunnel={selectFunnel} setSelectFunnel={setSelectFunnel} selectStep={step} setNewForm={setNewForm} responsive={responsive} error={error} setError={setError} services={services} setServices={setServices} storeData={storeData} />
                                                         : design.content === 'Video'
-                                                          ? <Video edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} indx={services.findIndex(service => service.name === part)} funnels={funnels} setFunnels={setFunnels} responsive={responsive} services={services} setServices={setServices} />
+                                                          ? <Video edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} indx={services.findIndex(service => service.name === part)} funnels={funnels} setFunnels={setFunnels} responsive={responsive} services={services} setServices={setServices} style={style} storeData={storeData} />
                                                           : design.content === 'Agendar llamada'
-                                                            ? <Call edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} indx={services.findIndex(service => service.name === part)} funnels={funnels} setFunnels={setFunnels} calls={calls!} setNewCall={setNewCall} setTitleMeeting={setTitleMeeting} setPopupCall={setPopupCall} popupCall={popupCall} responsive={responsive} error={error} setError={setError} services={services} setServices={setServices} storeData={storeData} />
+                                                            ? <Call edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} indx={services.findIndex(service => service.name === part)} funnels={funnels} setFunnels={setFunnels} calls={calls!} setNewCall={setNewCall} setTitleMeeting={setTitleMeeting} setPopupCall={setPopupCall} popupCall={popupCall} responsive={responsive} error={error} setError={setError} services={services} setServices={setServices} storeData={storeData} style={style} />
                                                             : design.content === 'Bloque 7'
                                                               ? <Bloque7 edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} indx={services.findIndex(service => service.name === part)} funnels={funnels} setFunnels={setFunnels} services={services} setServices={setServices} />
                                                               : design.content === 'Checkout'
-                                                                ? <Checkout edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} indx={services.findIndex(service => service.name === part)} services={services} setServices={setServices} setError={setError} setTitle={setTitle} popupService={popupService} setPopupService={setPopupService} setNewService={setNewService} funnels={funnels} setFunnels={setFunnels} storeData={storeData} />
+                                                                ? <Checkout edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} indx={services.findIndex(service => service.name === part)} services={services} setServices={setServices} setError={setError} setTitle={setTitle} popupService={popupService} setPopupService={setPopupService} setNewService={setNewService} funnels={funnels} setFunnels={setFunnels} storeData={storeData} style={style} />
                                                                 : design.content === 'Llamadas'
                                                                   ? <Calls edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} indx={services.findIndex(service => service.name === part)} calls={calls} funnels={funnels} setFunnels={setFunnels} services={services} setServices={setServices} />
                                                                   : design.content === 'Lead 2'
@@ -1829,21 +2142,27 @@ export default function Page () {
                                                                     : design.content === 'Servicios'
                                                                       ? <Services edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} indx={services.findIndex(service => service.name === part)} calls={calls} funnels={funnels} setFunnels={setFunnels} services={services} setServices={setServices} responsive={responsive} pageNeed={pages} />
                                                                       : design.content === 'Planes'
-                                                                        ? <Plans edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} indx={services.findIndex(service => service.name === part)} services={services} responsive={responsive} pageNeed={pages} funnels={funnels} setFunnels={setFunnels} setServices={setServices} />
-                                                                        : ''
+                                                                        ? <Plans edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} indx={services.findIndex(service => service.name === part)} services={services} responsive={responsive} pageNeed={pages} funnels={funnels} setFunnels={setFunnels} setServices={setServices} getClientData={getClientData} clientData={clientData} setNewCall={setNewCall} setTitleMeeting={setTitleMeeting} popupCall={popupCall} setPopupCall={setPopupCall} calls={calls} />
+                                                                        : design.content === 'Bloques'
+                                                                          ? <Blocks edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} indx={services.findIndex(service => service.name === part)} services={services} responsive={responsive} pageNeed={pages} funnels={funnels} setFunnels={setFunnels} style={style} forms={forms} />
+                                                                          : design.content === 'Reseñas'
+                                                                            ? <Reviews edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} indx={services.findIndex(service => service.name === part)} services={services} responsive={responsive} pageNeed={pages} funnels={funnels} setFunnels={setFunnels} style={style} />
+                                                                            : design.content === 'Formulario'
+                                                                              ? <Form edit={edit} pages={pages} setPages={setPages} design={design} index={index} ind={i} indx={services.findIndex(service => service.name === part)} services={services} responsive={responsive} pageNeed={pages} funnels={funnels} setFunnels={setFunnels} forms={forms} popupForm={popupForm} setNewForm={setNewForm} setPopupForm={setPopupForm} setTitleForm={setTitleForm} style={style} />
+                                                                              : ''
                                     }
                                     <div className='m-auto mt-2 mb-6 flex gap-4 w-fit'>
                                       <p className='my-auto font-medium'>{design.content}</p>
                                       {
                                         edit === design.content
-                                          ? <Button2 action={() => setEdit('')} color='main'>Guardar</Button2>
-                                          : <Button2 action={() => setEdit(design.content)} color='main'>Editar</Button2>
+                                          ? <Button2 action={() => setEdit('')}>Guardar</Button2>
+                                          : <Button2 action={() => setEdit(design.content)}>Editar</Button2>
                                       }
-                                      <Button2 action={() => {
+                                      <Button2Red action={() => {
                                         const oldServices = [...services]
                                         oldServices[services.findIndex(service => service.name === part)].steps[i].design?.splice(index, 1)
                                         setServices(oldServices)
-                                      }} color='red-500'>Eliminar bloque</Button2>
+                                      }}>Eliminar bloque</Button2Red>
                                       <button onClick={() => moveBlockFunnel(funnels.findIndex(funnel => funnel.funnel === part), i, index, 'up')}><SlArrowUp className='text-lg' /></button>
                                       <button onClick={() => moveBlockFunnel(funnels.findIndex(funnel => funnel.funnel === part), i, index, 'down')}><SlArrowDown className='text-lg' /></button>
                                     </div>
@@ -1898,6 +2217,73 @@ export default function Page () {
                 })
               )
               : <p className='m-auto'>Seleccionar paso</p>
+            : ''
+        }
+        {
+          part === 'Estilo'
+            ? (
+              <div className='w-full lg:w-[calc(100%-350px)] overflow-y-auto'>
+                <div className={`w-full p-4 flex gap-4 justify-between`} style={{ boxShadow: style?.design === 'Sombreado' ? `0px 0px 10px 0px ${style.borderColor}15` : '', borderBottom: style?.design === 'Borde' ? `1px solid ${style.borderColor}` : '' }}>
+                  <p className='text-3xl font-semibold my-auto'>LOGO</p>
+                  <div className='flex gap-4 my-auto'>
+                    <p className='my-auto'>Inicio</p>
+                    <p className='my-auto'>Contacto</p>
+                    <p className={`my-auto px-4 py-2 text-white`} style={{ backgroundColor: style?.primary, color: style?.button, borderRadius: style.form === 'Redondeadas' ? `${style.borderButton}px` : '' }}>Hablemos</p>
+                  </div>
+                </div>
+                <div className='w-full flex flex-col gap-4 px-4 py-12'>
+                  <p className='text-center m-auto text-4xl font-semibold'>Lorem ipsum</p>
+                  <p className='text-center m-auto'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Corrupti voluptatem dolorum deleniti doloremque nulla? Dolore, error assumenda. Repellendus similique natus ut accusamus ipsa voluptatem nostrum, eos, quidem sed, non reiciendis.</p>
+                  <div className='flex gap-4 justify-around flex-wrap'>
+                    <div className={`p-6 w-96 flex flex-col gap-3`} style={{ boxShadow: style?.design === 'Sombreado' ? `0px 3px 20px 3px ${style.borderColor}10` : '', borderRadius: style.form === 'Redondeadas' ? `${style.borderBlock}px` : '', border: style?.design === 'Borde' ? `1px solid ${style.borderColor}` : '' }}>
+                      <p className='text-center m-auto font-medium text-2xl'>Lorem ipsum</p>
+                      <p className='text-center m-auto'>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+                      <button className={` m-auto px-4 py-2 text-white w-full`} style={{ backgroundColor: style?.primary, color: style?.button, borderRadius: style.form === 'Redondeadas' ? `${style.borderButton}px` : '' }}>Lorem ipsum</button>
+                    </div>
+                    <div className={`p-6 w-96 flex flex-col gap-3`} style={{ boxShadow: style?.design === 'Sombreado' ? `0px 3px 20px 3px ${style.borderColor}10` : '', borderRadius: style.form === 'Redondeadas' ? `${style.borderBlock}px` : '', border: style?.design === 'Borde' ? `1px solid ${style.borderColor}` : '' }}>
+                      <p className='text-center m-auto font-medium text-2xl'>Lorem ipsum</p>
+                      <p className='text-center m-auto'>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+                      <button className={` m-auto px-4 py-2 text-white w-full`} style={{ backgroundColor: style?.primary, color: style?.button, borderRadius: style.form === 'Redondeadas' ? `${style.borderButton}px` : '' }}>Lorem ipsum</button>
+                    </div>
+                    <div className={`p-6 w-96 flex flex-col gap-3`} style={{ boxShadow: style?.design === 'Sombreado' ? `0px 3px 20px 3px ${style.borderColor}10` : '', borderRadius: style.form === 'Redondeadas' ? `${style.borderBlock}px` : '', border: style?.design === 'Borde' ? `1px solid ${style.borderColor}` : '' }}>
+                      <p className='text-center m-auto font-medium text-2xl'>Lorem ipsum</p>
+                      <p className='text-center m-auto'>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+                      <button className={` m-auto px-4 py-2 text-white w-full`} style={{ backgroundColor: style?.primary, color: style?.button, borderRadius: style.form === 'Redondeadas' ? `${style.borderButton}px` : '' }}>Lorem ipsum</button>
+                    </div>
+                  </div>
+                </div>
+                <div className='w-full px-4 py-12 flex flex-col gap-4'>
+                  <p className='text-2xl font-medium text-center m-auto'>Lorem ipsum dolor sit amet</p>
+                  <div className='flex gap-2'>
+                    <input className={`w-full border px-2`} style={{ borderRadius: style.form === 'Redondeadas' ? `${style.borderButton}px` : '' }} placeholder='Email' />
+                    <button className={` m-auto px-4 py-2 text-white`} style={{ backgroundColor: style?.primary, color: style?.button, borderRadius: style.form === 'Redondeadas' ? `${style.borderButton}px` : '' }}>Envíar</button>
+                  </div>
+                </div>
+              </div>
+            )
+            : ''
+        }
+        {
+          part === 'Chat'
+            ? (
+              <div className={`m-auto flex z-50 h-[480px] justify-between flex-col gap-3 transition-all duration-500 bg-white w-96 sm:h-[600px] sm:gap-4`} style={{ borderRadius: `${style.borderBlock}px`, border: style.design === 'Borde' ? `1px solid ${style.borderColor}` : '', boxShadow: style.design === 'Sobreado' ? `0px 3px 20px 3px ${style.borderColor}10` : '', backgroundColor: chat?.bgColor ? chat?.bgColor : '' }}>
+                <div className='h-28 w-full flex p-4' style={{ backgroundColor: style.primary, borderTopLeftRadius: `${style.borderBlock}px`, borderTopRightRadius: `${style.borderBlock}px` }}>
+                  <span className='text-white mt-auto mb-auto text-xl'>Chat</span>
+                </div>
+                <div className='flex flex-col h-full gap-2 pl-3 sm:pl-4' style={{ overflow: 'overlay' }}>
+                  <div className='flex flex-col gap-2 mr-4'>
+                    <div className='bg-gray-200 p-1.5 rounded-md w-fit ml-auto'><p>Lorem ipsum</p></div>
+                  </div>
+                  <div className='flex flex-col gap-2 mr-6'>
+                    <div className='text-white p-1.5 rounded-md w-fit' style={{ backgroundColor: style.primary }}><p>Lorem ipsum</p></div>
+                  </div>
+                </div>
+                <form className='flex gap-2 pr-3 pl-3 pb-3 sm:pr-4 sm:pl-4 sm:pb-4'>
+                  <Input type={'text'} placeholder={'Mensaje'} change={undefined} />
+                  <button type='submit' className='text-white w-28 rounded-xl dark:bg-neutral-700 transition-colors duration-200 hover:bg-transparent' style={{ backgroundColor: style.primary }}>Enviar</button>
+                </form>
+              </div>
+            )
             : ''
         }
       </div>

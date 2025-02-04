@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import Image from 'next/image'
 import { ICall, ICategoryPage, IDesign, IForm, IFunnel, IPage, IService } from '@/interfaces'
 import { Button, Input, Select, Spinner } from '../ui'
+import { ButtonDesign } from './ButtonDesign'
 
 interface Props {
     edit: any
@@ -22,9 +23,10 @@ interface Props {
     forms: IForm[] | undefined
     services?: IService[]
     setServices?: any
+    style?: any
 }
 
-export const Bloque1: React.FC<Props> = ({ edit, pages, setPages, design, index, ind, inde, indx, pageNeed, funnels, setFunnels, responsive, calls, forms, services, setServices }) => {
+export const Bloque1: React.FC<Props> = ({ edit, pages, setPages, design, index, ind, inde, indx, pageNeed, funnels, setFunnels, responsive, calls, forms, services, setServices, style }) => {
 
   const [gradient, setGradient] = useState('')
   const [firstColor, setFirstColor] = useState('')
@@ -66,14 +68,14 @@ export const Bloque1: React.FC<Props> = ({ edit, pages, setPages, design, index,
                   />
                   {
                     design.info.button && design.info.button !== '' && design.info.buttonLink && design.info.buttonLink !== ''
-                      ? <Button>{design.info.button}</Button>
+                      ? <ButtonDesign style={style} text={design.info.button} />
                       : ''
                   }
                 </div>
                 <div className={`${responsive === '400px' ? 'w-full' : 'w-1/2'} flex`}>
                   {
                     design.info?.image && design.info.image !== ''
-                      ? <Image className='h-fit m-auto' width={480} height={300} alt='Imagen slider prueba' src={design.info.image} />
+                      ? <Image className='h-fit m-auto' style={{ borderRadius: `${style.borderBlock}px`, border: style.design === 'Borde' ? `1px solid ${style.borderColor}` : '' }} width={480} height={300} alt='Imagen slider prueba' src={design.info.image} />
                       : ''
                   }
                 </div>
@@ -331,7 +333,7 @@ export const Bloque1: React.FC<Props> = ({ edit, pages, setPages, design, index,
                     }
                   }} className={`${responsive === '400px' ? 'text-base' : 'text-lg'} p-1.5 rounded border bg-transparent`} style={{ color: design.info.textColor }} />
                   <div className='flex gap-4'>
-                    <div className='bg-main border border-main w-fit text-white py-1.5 px-6 rounded-xl shadow-md shadow-main/30'>
+                    <div className='w-fit text-white py-2 px-6' style={{ backgroundColor: style.primary, color: style.button, borderRadius: style.form === 'Redondeadas' ? `${style.borderButton}px` : '' }}>
                       <input type='text' placeholder='Boton' value={design.info.button} onChange={(e: any) => {
                         if (inde !== undefined) {
                           const oldFunnels = [...funnels!]
@@ -346,7 +348,7 @@ export const Bloque1: React.FC<Props> = ({ edit, pages, setPages, design, index,
                           oldPages[ind].design[index].info.button = e.target.value
                           setPages(oldPages)
                         }
-                      }} className='text-sm lg:text-[16px] bg-main rounded border border-neutral-500' />
+                      }} className='text-sm lg:text-[16px] bg-transparent border border-neutral-500' />
                     </div>
                     <select value={design.info.buttonLink} onChange={(e: any) => {
                       if (inde !== undefined) {
@@ -389,7 +391,7 @@ export const Bloque1: React.FC<Props> = ({ edit, pages, setPages, design, index,
                 <div className="w-1/2 flex flex-col gap-2">
                   {
                     design.info?.image && design.info.image !== ''
-                      ? <Image className='h-fit m-auto' width={480} height={300} alt='Imagen slider prueba' src={design.info.image} />
+                      ? <Image className='h-fit m-auto' style={{ borderRadius: `${style.borderBlock}px`, border: style.design === 'Borde' ? `1px solid ${style.borderColor}` : '' }} width={480} height={300} alt='Imagen slider prueba' src={design.info.image} />
                       : ''
                   }
                   {

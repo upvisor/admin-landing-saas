@@ -1,14 +1,25 @@
 export interface Design {
     _id?: string
     header: IHeader
+    footer: IFooter
+    chat: { bgColor: string }
     pages: IPage[]
     productPage: IProductPage
     categoryPage: ICategoryPage[]
     popup: IPopupWeb
+    whatsapp: boolean
 }
 
 export interface IHeader {
     topStrip: string
+    bgColor?: string
+    textColor?: string
+    logo?: string
+}
+
+export interface IFooter {
+    bgColor: string
+    textColor: string
 }
 
 export interface IPage {
@@ -20,6 +31,7 @@ export interface IPage {
     metaTitle?: string
     metaDescription?: string
     image?: string
+    subPage?: { page?: string, slug?: string }[]
     design: IDesign[]
 }
 
@@ -70,6 +82,7 @@ export interface IInfo {
     description3?: string
     button3?: string
     buttonLink3?: string
+    subTitle4?: string
     descriptionView?: boolean
     products?: string
     banner?: IBanner[]
@@ -78,6 +91,9 @@ export interface IInfo {
     background?: string
     textColor?: string
     faq?: [{ question?: string, response?: string }]
+    blocks?: [{ title?: string, description?: string, buttonText?: string, buttonLink?: string }]
+    reviews?: [{ review?: string, stars?: string, name?: string }]
+    form?: { type: string, text:  string, name: string, data: string, datas?: string[] }[]
 }
 
 export interface IBanner {

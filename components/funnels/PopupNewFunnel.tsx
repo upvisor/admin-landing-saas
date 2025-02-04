@@ -4,6 +4,7 @@ import { Button, Button2, Input, Select, Spinner2, Textarea } from '../ui'
 import { IoMdClose } from 'react-icons/io'
 import { IFunnel, IService } from '@/interfaces'
 import { SlArrowDown, SlArrowUp } from 'react-icons/sl'
+import { useSession } from 'next-auth/react'
 
 interface Props {
     popup: { view: string, opacity: string, mouse: boolean }
@@ -16,11 +17,14 @@ interface Props {
     error: string
     setError: any
     services: IService[]
+    funnels: IFunnel[]
 }
 
-export const PopupNewFunnel: React.FC<Props> = ({ popup, setPopup, getFunnels, newFunnel, setNewFunnel, selectFunnel, title, error, setError, services }) => {
+export const PopupNewFunnel: React.FC<Props> = ({ popup, setPopup, getFunnels, newFunnel, setNewFunnel, selectFunnel, title, error, setError, services, funnels }) => {
 
   const [loading, setLoading] = useState(false)
+
+  const { data: session } = useSession()
 
   const popupRef = useRef<HTMLFormElement | null>(null);
 
@@ -47,8 +51,13 @@ export const PopupNewFunnel: React.FC<Props> = ({ popup, setPopup, getFunnels, n
           if (!loading) {
             setLoading(true)
             setError('')
+            if (session?.user.plan === 'Inicial' && funnels.length === 2) {
+              setError('Solo puedes tener 2 embudos')
+              setLoading(false)
+              return
+            }
             if (title === 'Nuevo embudo') {
-              if (newFunnel.funnel !== '' && newFunnel.slug !== '' && newFunnel.steps[0].step !== '' && newFunnel.steps[0].slug !== '') {
+              if (newFunnel.funnel !== '' && newFunnel.subdomain !== '' && newFunnel.steps[0].step !== '' && newFunnel.steps[0].slug !== '') {
                 await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/funnel`, newFunnel)
                 setPopup({ ...popup, view: 'flex', opacity: 'opacity-0' })
                 getFunnels()
@@ -62,7 +71,7 @@ export const PopupNewFunnel: React.FC<Props> = ({ popup, setPopup, getFunnels, n
                 setLoading(false)
               }
             } else {
-              if (newFunnel.funnel !== '' && newFunnel.slug !== '' && newFunnel.steps[0].step !== '' && newFunnel.steps[0].slug !== '') {
+              if (newFunnel.funnel !== '' && newFunnel.subdomain !== '' && newFunnel.steps[0].step !== '' && newFunnel.steps[0].slug !== '') {
                 await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/funnel/${selectFunnel?._id}`, newFunnel)
                 setPopup({ ...popup, view: 'flex', opacity: 'opacity-0' })
                 getFunnels()
@@ -89,8 +98,8 @@ export const PopupNewFunnel: React.FC<Props> = ({ popup, setPopup, getFunnels, n
             <Input change={(e: any) => setNewFunnel({ ...newFunnel, funnel: e.target.value })} placeholder='Embudo' value={newFunnel.funnel} />
           </div>
           <div className="flex flex-col gap-2">
-            <p className="font-medium">Slug</p>
-            <Input change={(e: any) => setNewFunnel({ ...newFunnel, slug: e.target.value })} placeholder='Slug' value={newFunnel.slug} />
+            <p className="font-medium">Subdominio</p>
+            <Input change={(e: any) => setNewFunnel({ ...newFunnel, subdomain: e.target.value })} placeholder='Embudo' value={newFunnel.subdomain} />
           </div>
           <div className="flex flex-col gap-2">
             <p className="font-medium">Descripción</p>
@@ -161,7 +170,7 @@ export const PopupNewFunnel: React.FC<Props> = ({ popup, setPopup, getFunnels, n
               const oldSteps = [...newFunnel.steps]
               oldSteps.push({ step: '', slug: '' })
               setNewFunnel({ ...newFunnel, steps: oldSteps })
-            }} color='main'>Nuevo paso</Button2>
+            }}>Nuevo paso</Button2>
           </div>
           <Button type='submit' loading={loading} config='w-full min-h-10'>{title === 'Nuevo embudo' ? 'Crear' : 'Editar'} embudo</Button>
         </form>
