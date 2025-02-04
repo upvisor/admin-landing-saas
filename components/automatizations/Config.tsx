@@ -106,7 +106,7 @@ export const Config: React.FC<Props> = ({ setTempEmail, automatization, tempEmai
                   design?.pages.map(page => <option key={page._id} value={`${process.env.NEXT_PUBLIC_WEB_URL}/${page.slug}`}>{page.page}</option>)
                 }
                 {
-                  funnels?.map(funnel => funnel.steps.filter(step => step.slug && step.slug !== '').map(step => <option key={step._id} value={`http://${funnel.subdomain}.${process.env.NEXT_PUBLIC_WEB}/${step.slug}`}>Embudo: {funnel.funnel} - {step.step}</option>))
+                  funnels?.map(funnel => funnel.steps.filter(step => step.slug && step.slug !== '').map(step => <option key={step._id} value={`${process.env.NEXT_PUBLIC_WEB_URL}/${step.slug}`}>Embudo: {funnel.funnel} - {step.step}</option>))
                 }
                 {
                   services?.map(service => service.steps.filter(step => step.slug && step.slug !== '').map(step => <option key={step._id} value={`${process.env.NEXT_PUBLIC_WEB_URL}/${step.slug}`}>Servicio: {service.name} - {step.step}</option>))

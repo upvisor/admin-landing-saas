@@ -10,7 +10,7 @@ export default function FunnelPage () {
 
   const [funnels, setFunnels] = useState<IFunnel[]>([])
   const [popup, setPopup] = useState({ view: 'hidden', opacity: 'opacity-0', mouse: false })
-  const [newFunnel, setNewFunnel] = useState<IFunnel>({ funnel: '', subdomain: '', steps: [{ step: '', slug: '' }] })
+  const [newFunnel, setNewFunnel] = useState<IFunnel>({ funnel: '', steps: [{ step: '', slug: '' }] })
   const [loadingFunnels, setLoadingFunnels] = useState(true)
   const [selectFunnel, setSelectFunnel] = useState<IFunnel>()
   const [clients, setClients] = useState<IClient[]>([])
@@ -62,7 +62,7 @@ export default function FunnelPage () {
             <Button action={(e: any) => {
               e.preventDefault()
               setError('')
-              setNewFunnel({ funnel: '', description: '', subdomain: '', steps: [{ step: '', slug: '' }] })
+              setNewFunnel({ funnel: '', description: '', steps: [{ step: '', slug: '' }] })
               setTitle('Nuevo embudo')
               setPopup({ ...popup, view: 'flex', opacity: 'opacity-0' })
               setTimeout(() => {

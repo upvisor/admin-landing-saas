@@ -63,7 +63,7 @@ export default function Page () {
   const [indexStep, setIndexStep] = useState(-1)
   const [selectFunnel, setSelectFunnel] = useState<IFunnel>()
   const [funnels, setFunnels] = useState<IFunnel[]>([])
-  const [newFunnel, setNewFunnel] = useState<IFunnel>({ funnel: '', subdomain: '', steps: [{ step: '', slug: '' }] })
+  const [newFunnel, setNewFunnel] = useState<IFunnel>({ funnel: '', steps: [{ step: '', slug: '' }] })
   const [title, setTitle] = useState('')
   const [popupNewFunnel, setPopupNewFunnel] = useState({ view: 'hidden', opacity: 'opacity-0', mouse: false })
   const [forms, setForms] = useState<IForm[]>()
@@ -438,7 +438,7 @@ export default function Page () {
                       <ButtonSecondary2 action={(e: any) => {
                         e.preventDefault()
                         setError('')
-                        setNewFunnel({ funnel: '', description: '', subdomain: '', steps: [{ step: '', slug: '' }] })
+                        setNewFunnel({ funnel: '', description: '', steps: [{ step: '', slug: '' }] })
                         setTitle('Nuevo embudo')
                         setPopupNewFunnel({ ...popupNewFunnel, view: 'flex', opacity: 'opacity-0' })
                         setTimeout(() => {
@@ -1133,7 +1133,7 @@ export default function Page () {
                     <ButtonSecondary2 action={(e: any) => {
                       e.preventDefault()
                       setError('')
-                      setNewFunnel({ funnel: '', description: '', subdomain: '', steps: [{ step: '', slug: '' }] })
+                      setNewFunnel({ funnel: '', description: '', steps: [{ step: '', slug: '' }] })
                       setTitle('Nuevo embudo')
                       setPopupNewFunnel({ ...popupNewFunnel, view: 'flex', opacity: 'opacity-0' })
                       setTimeout(() => {
