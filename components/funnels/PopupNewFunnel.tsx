@@ -57,7 +57,7 @@ export const PopupNewFunnel: React.FC<Props> = ({ popup, setPopup, getFunnels, n
               return
             }
             if (title === 'Nuevo embudo') {
-              if (newFunnel.funnel !== '' && newFunnel.subdomain !== '' && newFunnel.steps[0].step !== '' && newFunnel.steps[0].slug !== '') {
+              if (newFunnel.funnel !== '' && newFunnel.steps[0].step !== '' && newFunnel.steps[0].slug !== '') {
                 await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/funnel`, newFunnel)
                 setPopup({ ...popup, view: 'flex', opacity: 'opacity-0' })
                 getFunnels()
@@ -71,7 +71,7 @@ export const PopupNewFunnel: React.FC<Props> = ({ popup, setPopup, getFunnels, n
                 setLoading(false)
               }
             } else {
-              if (newFunnel.funnel !== '' && newFunnel.subdomain !== '' && newFunnel.steps[0].step !== '' && newFunnel.steps[0].slug !== '') {
+              if (newFunnel.funnel !== '' && newFunnel.steps[0].step !== '' && newFunnel.steps[0].slug !== '') {
                 await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/funnel/${selectFunnel?._id}`, newFunnel)
                 setPopup({ ...popup, view: 'flex', opacity: 'opacity-0' })
                 getFunnels()
@@ -96,10 +96,6 @@ export const PopupNewFunnel: React.FC<Props> = ({ popup, setPopup, getFunnels, n
           <div className="flex flex-col gap-2">
             <p className="font-medium">Embudo</p>
             <Input change={(e: any) => setNewFunnel({ ...newFunnel, funnel: e.target.value })} placeholder='Embudo' value={newFunnel.funnel} />
-          </div>
-          <div className="flex flex-col gap-2">
-            <p className="font-medium">Subdominio</p>
-            <Input change={(e: any) => setNewFunnel({ ...newFunnel, subdomain: e.target.value })} placeholder='Embudo' value={newFunnel.subdomain} />
           </div>
           <div className="flex flex-col gap-2">
             <p className="font-medium">Descripción</p>

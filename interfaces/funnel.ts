@@ -3,7 +3,6 @@ import { IBanner } from "./design"
 export interface IFunnel {
     _id?: string
     funnel: string
-    subdomain: string
     description?: string
     service?: string
     steps: IStep[]
