@@ -218,8 +218,8 @@ export const PopupNewUser: React.FC<Props> = ({ popup, setPopup, user, setUser, 
             if (!loadingUser) {
               setLoadingUser(true)
               setError('')
-              if (session?.user.plan === 'Microempresa' && users.length === 3) {
-                setError('Solo puedes tener 3 calendarios')
+              if (session?.user.plan === 'Avanzado' && users.length === 4) {
+                setError('Solo puedes tener 3 sub cuentas')
                 setLoadingUser(false)
                 return
               }

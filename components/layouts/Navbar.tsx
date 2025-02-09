@@ -169,27 +169,27 @@ export const Navbar: React.FC<PropsWithChildren> = ({ children }) => {
                 <div className='flex flex-col gap-1'>
                   <Link href='/' className={`transition-all duration-150 ${pathname === '/' ? 'bg-main' : 'hover:bg-neutral-100 dark:hover:bg-main/30'} flex gap-2 py-1.5 px-3 rounded-xl`}><AiOutlineHome className={`mt-auto mb-auto text-xl ${pathname === '/' ? 'text-white' : 'text-main'}`} /><p className={`${pathname === '/' ? 'text-white' : ''}`}>Inicio</p></Link>
                   {
-                    (session?.user.type === 'Administrador' || session?.user.permissions?.includes('Pagos')) && (session?.user.plan === 'Emprendedor' || session?.user.plan === 'Microempresa' || session?.user.plan === 'Pyme')
+                    (session?.user.type === 'Administrador' || session?.user.permissions?.includes('Pagos')) && (session?.user.plan === 'Avanzado' || session?.user.plan === 'Profesional')
                       ? <Link href='/pagos' className={`transition-all duration-150 ${pathname.includes('/pagos') ? 'bg-main' : 'hover:bg-neutral-100 dark:hover:bg-main/30'} flex py-1.5 px-3 gap-2 rounded-xl`}><MdOutlinePayment className={`mt-auto mb-auto text-xl ${pathname.includes('/pagos') ? 'text-white' : 'text-main'}`} /><p className={`${pathname.includes('/pagos') ? 'text-white' : ''}`}>Pagos</p></Link>
                       : ''
                   }
                   {
-                    (session?.user.type === 'Administrador' || session?.user.permissions?.includes('Servicios')) && (session?.user.plan === 'Emprendedor' || session?.user.plan === 'Microempresa' || session?.user.plan === 'Pyme')
+                    (session?.user.type === 'Administrador' || session?.user.permissions?.includes('Servicios')) && (session?.user.plan === 'Avanzado' || session?.user.plan === 'Profesional')
                       ? <Link href='/servicios' className={`transition-all duration-150 ${pathname.includes('/servicios') ? 'bg-main' : 'hover:bg-neutral-100 dark:hover:bg-main/30'} flex py-1.5 px-3 gap-2 rounded-xl`}><PiSuitcaseSimple className={`mt-auto mb-auto text-xl ${pathname.includes('/servicios') ? 'text-white' : 'text-main'}`} /><p className={`${pathname.includes('/servicios') ? 'text-white' : ''}`}>Servicios</p></Link>
                       : ''
                   }
                   {
-                    session?.user.type === 'Administrador' || session?.user.permissions?.includes('Embudos')
+                    (session?.user.type === 'Administrador' || session?.user.permissions?.includes('Embudos')) && (session?.user.plan === 'Esencial' || session?.user.plan === 'Avanzado' || session?.user.plan === 'Profesional')
                       ? <Link href='/embudos' className={`transition-all duration-150 ${pathname.includes('/embudos') ? 'bg-main' : 'hover:bg-neutral-100 dark:hover:bg-main/30'} flex py-1.5 px-3 gap-2 rounded-xl`}><AiOutlineFunnelPlot className={`mt-auto mb-auto text-xl ${pathname.includes('/embudos') ? 'text-white' : 'text-main'}`} /><p className={`${pathname.includes('/embudos') ? 'text-white' : ''}`}>Embudos</p></Link>
                       : ''
                   }
                   {
-                    (session?.user.type === 'Administrador' || session?.user.permissions?.includes('CRM')) && (session?.user.plan === 'Emprendedor' || session?.user.plan === 'Microempresa' || session?.user.plan === 'Pyme')
+                    (session?.user.type === 'Administrador' || session?.user.permissions?.includes('CRM')) && (session?.user.plan === 'Avanzado' || session?.user.plan === 'Profesional')
                       ? <Link href='/crm' className={`transition-all duration-150 ${pathname.includes('/crm') ? 'bg-main' : 'hover:bg-neutral-100 dark:hover:bg-main/30'} flex py-1.5 px-3 gap-2 rounded-xl`}><LiaClipboardListSolid className={`mt-auto mb-auto text-xl ${pathname.includes('/crm') ? 'text-white' : 'text-main'}`} /><p className={`${pathname.includes('/crm') ? 'text-white' : ''}`}>CRM</p></Link>
                       : ''
                   }
                   {
-                    session?.user.type === 'Administrador' || session?.user.permissions?.includes('Reuniones')
+                    (session?.user.type === 'Administrador' || session?.user.permissions?.includes('Reuniones')) && (session?.user.plan === 'Esencial' || session?.user.plan === 'Avanzado' || session?.user.plan === 'Profesional')
                       ? <Link href='/reuniones' className={`transition-all duration-150 ${pathname.includes('/reuniones') ? 'bg-main' : 'hover:bg-neutral-100 dark:hover:bg-main/30'} flex py-1.5 px-3 gap-2 rounded-xl`}><MdOutlineCall className={`mt-auto mb-auto text-xl ${pathname.includes('/reuniones') ? 'text-white' : 'text-main'}`} /><p className={`${pathname.includes('/reuniones') ? 'text-white' : ''}`}>Reuniones</p></Link>
                       : ''
                   }
@@ -204,12 +204,12 @@ export const Navbar: React.FC<PropsWithChildren> = ({ children }) => {
                       : ''
                   }
                   {
-                    session?.user.type === 'Administrador' || session?.user.permissions?.includes('Campañas')
+                    (session?.user.type === 'Administrador' || session?.user.permissions?.includes('Campañas')) && (session?.user.plan === 'Esencial' || session?.user.plan === 'Avanzado' || session?.user.plan === 'Profesional')
                       ? <Link href='/campanas' className={`transition-all duration-150 ${pathname.includes('/campanas') ? 'bg-main' : 'hover:bg-neutral-100 dark:hover:bg-main/30'} flex gap-2 py-1.5 px-3 rounded-xl`}><AiOutlineNotification className={`mt-auto mb-auto text-xl ${pathname.includes('/campanas') ? 'text-white' : 'text-main'}`} /><p className={`${pathname.includes('/campanas') ? 'text-white' : ''}`}>Campañas</p></Link>
                       : ''
                   }
                   {
-                    session?.user.type === 'Administrador' || session?.user.permissions?.includes('Automatizaciones')
+                    (session?.user.type === 'Administrador' || session?.user.permissions?.includes('Automatizaciones')) && (session?.user.plan === 'Esencial' || session?.user.plan === 'Avanzado' || session?.user.plan === 'Profesional')
                       ? <Link href='/automatizaciones' className={`transition-all duration-150 ${pathname.includes('/automatizaciones') ? 'bg-main' : 'hover:bg-neutral-100 dark:hover:bg-main/30'} flex gap-2 py-1.5 px-3 rounded-xl`}><FaCogs className={`mt-auto mb-auto text-xl ${pathname.includes('/automatizaciones') ? 'text-white' : 'text-main'}`} /><p className={`${pathname.includes('/automatizaciones') ? 'text-white' : ''}`}>Automatizaciones</p></Link>
                       : ''
                   }

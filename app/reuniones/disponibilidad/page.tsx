@@ -103,12 +103,12 @@ export default function AvaliableCallsPage () {
           if (!loading) {
             setLoading(true)
             setError('')
-            if ((session?.user.plan === 'Inicial' || session?.user.plan === 'Emprendedor') && calendars.length === 1) {
+            if (session?.user.plan === 'Esencial' && calendars.length === 1) {
               setError('Solo puedes tener un calendario')
               setLoading(false)
               return
             }
-            if (session?.user.plan === 'Microempresa' && calendars.length === 3) {
+            if (session?.user.plan === 'Avanzado' && calendars.length === 3) {
               setError('Solo puedes tener 3 calendarios')
               setLoading(false)
               return
