@@ -20,6 +20,7 @@ export default function RootLayout({
     <html lang="es" className={myFont.className}>
       <head>
         <title>Panel administrativo</title>
+        <link rel="icon" href={process.env.NEXT_PUBLIC_FAVICON} />
       </head>
       <body>
         <SessionProvider>

@@ -1,5 +1,5 @@
 "use client"
-import { Design, ICall, IForm, IFunnel, IHeader, IPage, IPopupWeb, IService, IStoreData } from '@/interfaces'
+import { Design, ICall, IFooter, IForm, IFunnel, IHeader, IPage, IPopupWeb, IService, IStoreData } from '@/interfaces'
 import axios from 'axios'
 import Head from 'next/head'
 import Link from 'next/link'
@@ -40,7 +40,7 @@ export default function Page () {
     }
   ])
   const [header, setHeader] = useState<IHeader>({ topStrip: 'Lorem ipsum dolor sit amet consectetur' })
-  const [footer, setFooter] = useState({ bgColor: '#ffffff', textColor: '#111111' })
+  const [footer, setFooter] = useState<IFooter>({ bgColor: '#ffffff', textColor: '#111111', funnelText: '' })
   const [popupWeb, setPopupWeb] = useState<IPopupWeb>({ active: false, wait: 5, title: '', description: '' })
   const [color, setColor] = useState('#000000')
   const [loading, setLoading] = useState(false)
@@ -270,7 +270,7 @@ export default function Page () {
             }
           }} className='h-fit'>{menu === 'hidden' ? <SlMenu className='text-lg' /> : <GrClose className='text-lg' />}</button>
         </div>
-        <div className={`${menu} z-50 bg-white flex flex-col gap-4 fixed p-4 overflow-y-auto lg:hidden`} style={{ height: 'calc(100% - 49px)' }}>
+        <div className={`${menu} z-40 bg-white flex flex-col gap-4 fixed p-4 overflow-y-auto lg:hidden`} style={{ height: 'calc(100% - 49px)' }}>
           <button onClick={(e: any) => {
             e.preventDefault()
             if (menu === 'hidden') {
@@ -354,6 +354,12 @@ export default function Page () {
                           setMenu('hidden')
                           setPart('Popup')}
                         } className='text-left w-full'>Popup</button>
+                      </div>
+                      <div className='flex gap-4'>
+                        <button onClick={() => {
+                          setMenu('hidden')
+                          setPart('Chat')
+                        }} className='text-left w-full'>Chat</button>
                       </div>
                     </div>
                     <h2 className='text-lg font-medium'>Embudos</h2>
@@ -641,6 +647,22 @@ export default function Page () {
                 : ''
             }
             {
+              part === 'Chat'
+                ? (
+                  <div className='flex flex-col gap-4 p-4 mb-[104px]'>
+                    <div className='border-b pb-4 dark:border-neutral-700'>
+                      <button onClick={() => setPart('')} className='flex gap-2 pt-1 pb-1 pl-2 pr-2 rounded transition-colors duration-150 hover:bg-neutral-100 dark:hover:bg-neutral-700'><BiArrowBack className='text-xl my-auto' /><p className='my-auto'>Volver</p></button>
+                    </div>
+                    <h2 className='text-lg font-medium'>Chat</h2>
+                    <div className='flex flex-col gap-2'>
+                      <p>Color de fondo</p>
+                      <input type='color' onChange={(e: any) => setChat({ ...chat, bgColor: e.target.value })} value={chat?.bgColor} />
+                    </div>
+                  </div>
+                )
+                : ''
+            }
+            {
               funnels.find(funnel => funnel.funnel === part) && type === 'Funnel'
                 ? (
                   <div className='flex flex-col gap-4 mb-[104px]'>
@@ -881,6 +903,7 @@ export default function Page () {
                           setLoading(true)
                           if (funnels.find(funnel => funnel.funnel === part)?._id) {
                             await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/funnel-step/${funnels.find(funnel => funnel.funnel === part)?._id}`, st)
+                            await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/design/${id}`, { footer: footer })
                           }
                           setLoading(false)
                         }
@@ -901,6 +924,7 @@ export default function Page () {
                           setLoading(true)
                           if (services.find(service => service.name === part)?._id) {
                             await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/service-step/${services.find(service => service.name === part)?._id}`, st)
+                            await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/design/${id}`, { footer: footer })
                           }
                           setLoading(false)
                         }
@@ -1607,6 +1631,7 @@ export default function Page () {
                         setLoading(true)
                         if (funnels.find(funnel => funnel.funnel === part)?._id) {
                           await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/funnel-step/${funnels.find(funnel => funnel.funnel === part)?._id}`, st)
+                          await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/design/${id}`, { footer: footer })
                         }
                         setLoading(false)
                       }
@@ -1626,7 +1651,8 @@ export default function Page () {
                       if (!loading) {
                         setLoading(true)
                         if (services.find(service => service.name === part)?._id) {
-                          const res = await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/service-step/${services.find(service => service.name === part)?._id}`, st)
+                          await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/service-step/${services.find(service => service.name === part)?._id}`, st)
+                          await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/design/${id}`, { footer: footer })
                         }
                         setLoading(false)
                       }
@@ -1654,21 +1680,21 @@ export default function Page () {
               : ''
           }
           {
-              part === 'Chat'
-                ? (
-                  <div className='p-4 flex flex-col gap-2 fixed bg-white w-[349px] bottom-0 border-t dark:border-neutral-700 dark:bg-neutral-800'>
-                    <ButtonSubmit action={async () => {
-                      if (!loading) {
-                        setLoading(true)
-                        await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/design/${id}`, { chat: chat })
-                        setLoading(false)
-                      }
-                    }} color='main' submitLoading={loading} textButton='Guardar' config='w-full' />
-                    <button className='text-sm'>Cancelar</button>
-                  </div>
-                )
-                : ''
-            }
+            part === 'Chat'
+              ? (
+                <div className='p-4 flex flex-col gap-2 fixed bg-white w-[349px] bottom-0 border-t dark:border-neutral-700 dark:bg-neutral-800'>
+                  <ButtonSubmit action={async () => {
+                    if (!loading) {
+                      setLoading(true)
+                      await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/design/${id}`, { chat: chat })
+                      setLoading(false)
+                    }
+                  }} color='main' submitLoading={loading} textButton='Guardar' config='w-full' />
+                  <button className='text-sm'>Cancelar</button>
+                </div>
+              )
+              : ''
+          }
         </div>
         {
           part === ''
@@ -1683,7 +1709,7 @@ export default function Page () {
           pages.map((page, i) => {
             if (part === page.page && type === 'Page') {
               return (
-                <div key={page._id} className={`m-auto h-full bg-white text-black ${responsive === '400px' ? 'w-[400px]' : 'w-[calc(100%-350px)]'} lg:w-[${responsive}]`}>
+                <div key={page._id} className={`m-auto h-full bg-white text-black ${responsive === '400px' ? 'w-[400px]' : 'w-full lg:w-[calc(100%-350px)]'} lg:w-[${responsive}]`}>
                   <div className='flex p-4 bg-white border-b border-border dark:bg-neutral-900 dark:border-neutral-700'>
                     <div className='flex gap-4 w-fit m-auto'>
                       <button onClick={(e: any) => {
@@ -1946,7 +1972,7 @@ export default function Page () {
                 funnels.find((funnel) => funnel.funnel === part)?.steps.map((st, i) => {
                   if (st.step === step) {
                     return (
-                      <div key={st._id} className={`h-full m-auto bg-white text-black ${responsive === '400px' ? 'w-[400px]' : 'w-[calc(100%-350px)]'} lg:w-[${responsive}]`}>
+                      <div key={st._id} className={`h-full m-auto bg-white text-black ${responsive === '400px' ? 'w-[400px]' : 'w-full lg:w-[calc(100%-350px)]'} lg:w-[${responsive}]`}>
                         <div className='flex p-4 bg-white border-b border-border dark:bg-neutral-900 dark:border-neutral-700'>
                           <div className='flex gap-4 w-fit m-auto'>
                             <button onClick={(e: any) => {
@@ -2065,13 +2091,32 @@ export default function Page () {
                                 : ''
                             }
                           </div>
-                          <div className='w-full p-6 flex flex-col' style={{ backgroundColor: footer.bgColor, color: footer.textColor }}>
+                          <div className='w-full p-6 flex flex-col gap-2' style={{ backgroundColor: footer.bgColor, color: footer.textColor }}>
                             {
                               storeData?.logoWhite && storeData?.logoWhite !== ''
                                 ? <Link href='/' className='w-fit m-auto'><Image className='w-auto h-[52px] py-1' src={`${storeData.logoWhite}`} alt='Logo' width={155} height={53.72} /></Link>
                                 : <Link href='/' className='w-fit m-auto'><div className='h-[52px] flex'><p className='m-auto text-2xl font-medium text-white'>TIENDA</p></div></Link>
                             }
-                            <p className='m-auto text-center text-white'>Todos los derechos reservados ©2024</p>
+                            {
+                              edit === 'Footer'
+                                ? (
+                                  <>
+                                    <Input change={(e: any) => setFooter({ ...footer, funnelText: e.target.value })} config='w-fit m-auto text-black' value={footer.funnelText} placeholder='Texto' />
+                                    <Button2 action={() => setEdit('')} config='m-auto'>Guardar</Button2>
+                                  </>
+                                )
+                                : (
+                                  <>
+                                    {
+                                      footer.funnelText && footer.funnelText !== ''
+                                        ? <p className='text-center m-auto text-sm' style={{ color: `${footer.textColor}80` }}>{footer.funnelText}</p>
+                                        : ''
+                                    }
+                                    <Button2 action={() => setEdit('Footer')} config='m-auto'>Editar</Button2>
+                                  </>
+                                )
+                            }
+                            <p className='m-auto text-center' style={{ color: footer.textColor }}>{storeData?.name} © 2024. Todos los derechos reservados.</p>
                           </div>
                         </div>
                       </div>
@@ -2089,7 +2134,7 @@ export default function Page () {
                 services.find(service => service.name === part)?.steps.map((st, i) => {
                   if (st.step === step) {
                     return (
-                      <div key={st._id} className={`h-full m-auto bg-white text-black ${responsive === '400px' ? 'w-[400px]' : 'w-[calc(100%-350px)]'} lg:w-[${responsive}]`}>
+                      <div key={st._id} className={`h-full m-auto bg-white text-black ${responsive === '400px' ? 'w-[400px]' : 'w-full lg:w-[calc(100%-350px)]'} lg:w-[${responsive}]`}>
                         <div className='flex p-4 bg-white border-b border-border dark:bg-neutral-900 dark:border-neutral-700'>
                           <div className='flex gap-4 w-fit m-auto'>
                             <button onClick={(e: any) => {
@@ -2266,7 +2311,7 @@ export default function Page () {
         {
           part === 'Chat'
             ? (
-              <div className={`m-auto flex z-50 h-[480px] justify-between flex-col gap-3 transition-all duration-500 bg-white w-96 sm:h-[600px] sm:gap-4`} style={{ borderRadius: `${style.borderBlock}px`, border: style.design === 'Borde' ? `1px solid ${style.borderColor}` : '', boxShadow: style.design === 'Sobreado' ? `0px 3px 20px 3px ${style.borderColor}10` : '', backgroundColor: chat?.bgColor ? chat?.bgColor : '' }}>
+              <div className={`m-auto flex h-[480px] justify-between flex-col gap-3 transition-all duration-500 bg-white w-96 sm:h-[600px] sm:gap-4`} style={{ borderRadius: `${style.borderBlock}px`, border: style.design === 'Borde' ? `1px solid ${style.borderColor}` : '', boxShadow: style.design === 'Sobreado' ? `0px 3px 20px 3px ${style.borderColor}10` : '', backgroundColor: chat?.bgColor ? chat?.bgColor : '' }}>
                 <div className='h-28 w-full flex p-4' style={{ backgroundColor: style.primary, borderTopLeftRadius: `${style.borderBlock}px`, borderTopRightRadius: `${style.borderBlock}px` }}>
                   <span className='text-white mt-auto mb-auto text-xl'>Chat</span>
                 </div>

@@ -22,14 +22,22 @@ interface Props {
 export const Layout: React.FC<PropsWithChildren<Props>> = ({ children, edit, setEdit, setHeader, header, setPart, pages, storeData, responsive, style, footer, setFooter }) => {
   return (
     <>
-      <div className='bg-[#22262c] text-white flex pl-2 pr-2 pt-1.5 pb-1.5 sticky text-center'>
+      <div className='flex pl-2 pr-2 pt-1.5 pb-1.5 sticky text-center' style={{ backgroundColor: header.bgColorTop, color: header.textColorTop }}>
         {
           edit !== 'Header'
             ? <p onClick={() => setEdit('Header')} className='cursor-pointer m-auto tracking-wide font-medium text-[11px]'>{header?.topStrip}</p>
-            : <input onChange={(e: any) => setHeader({ ...header, topStrip: e.target.value })} type='text' placeholder='Texto superior' value={header.topStrip} className='bg-transparent border border-neutral-500 p-1.5 rounded m-auto w-[800px] text-center' />
+            : (
+              <div className='flex gap-2 m-auto'>
+                <input onChange={(e: any) => setHeader({ ...header, topStrip: e.target.value })} type='text' placeholder='Texto superior' value={header.topStrip} className='bg-transparent border border-neutral-500 p-1.5 rounded m-auto w-[800px] text-center' />
+                <p className='my-auto'>Color fondo</p>
+                <input type='color' className='my-auto' onChange={(e: any) => setHeader({ ...header, bgColorTop: e.target.value })} value={header.bgColorTop} />
+                <p className='my-auto'>Color texto</p>
+                <input type='color' className='my-auto' onChange={(e: any) => setHeader({ ...header, textColorTop: e.target.value })} value={header.textColorTop} />
+              </div>
+            )
         }
       </div>
-      <div style={{ top: '-0.5px', backgroundColor: header.bgColor, color: header.textColor }} className="w-full sticky flex z-40 overflow-x-auto">
+      <div style={{ top: '-0.5px', backgroundColor: header.bgColor, color: header.textColor }} className="w-full sticky flex z-30 overflow-x-auto">
         <div className="w-full" style={{ borderBottom: `1px solid ${style.borderColor}` }}>
           <div className='flex gap-4 px-2 justify-between m-auto max-w-[1280px] w-full'>
             {

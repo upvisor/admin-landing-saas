@@ -627,22 +627,46 @@ export const Lead3: React.FC<Props> = ({ edit, pages, setPages, design, index, i
                   style={{ color: design.info.textColor }}
                   dangerouslySetInnerHTML={{ __html: design.info.description ? design.info.description : '' }}
                 />
-                <div className='flex gap-3 m-auto'>
-                  <FaCheck className='my-auto text-lg min-w-7' style={{ color: style.primary }} />
-                  <p className={`${responsive === '400px' ? 'text-base' : 'text-lg'}`} style={{ color: design.info.textColor }}>{design.info.subTitle}</p>
-                </div>
-                <div className='flex gap-3 m-auto'>
-                  <FaCheck className='my-auto text-lg min-w-7' style={{ color: style.primary }} />
-                  <p className={`${responsive === '400px' ? 'text-base' : 'text-lg'}`} style={{ color: design.info.textColor }}>{design.info.subTitle2}</p>
-                </div>
-                <div className='flex gap-3 m-auto'>
-                  <FaCheck className='my-auto text-lg min-w-7' style={{ color: style.primary }} />
-                  <p className={`${responsive === '400px' ? 'text-base' : 'text-lg'}`} style={{ color: design.info.textColor }}>{design.info.subTitle3}</p>
-                </div>
-                <div className='flex gap-3 m-auto'>
-                  <FaCheck className='my-auto text-lg min-w-7' style={{ color: style.primary }} />
-                  <p className={`${responsive === '400px' ? 'text-base' : 'text-lg'}`} style={{ color: design.info.textColor }}>{design.info.subTitle4}</p>
-                </div>
+                {
+                  design.info.subTitle && design.info.subTitle !== ''
+                    ? (
+                      <div className='flex gap-3 m-auto'>
+                        <FaCheck className='my-auto text-lg min-w-7' style={{ color: style.primary }} />
+                        <p className={`${responsive === '400px' ? 'text-base' : 'text-lg'}`} style={{ color: design.info.textColor }}>{design.info.subTitle}</p>
+                      </div>
+                    )
+                    : ''
+                }
+                {
+                  design.info.subTitle2 && design.info.subTitle2 !== ''
+                    ? (
+                      <div className='flex gap-3 m-auto'>
+                        <FaCheck className='my-auto text-lg min-w-7' style={{ color: style.primary }} />
+                        <p className={`${responsive === '400px' ? 'text-base' : 'text-lg'}`} style={{ color: design.info.textColor }}>{design.info.subTitle2}</p>
+                      </div>
+                    )
+                    : ''
+                }
+                {
+                  design.info.subTitle3 && design.info.subTitle3 !== ''
+                    ? (
+                      <div className='flex gap-3 m-auto'>
+                        <FaCheck className='my-auto text-lg min-w-7' style={{ color: style.primary }} />
+                        <p className={`${responsive === '400px' ? 'text-base' : 'text-lg'}`} style={{ color: design.info.textColor }}>{design.info.subTitle3}</p>
+                      </div>
+                    )
+                    : ''
+                }
+                {
+                  design.info.subTitle4 && design.info.subTitle4 !== ''
+                    ? (
+                      <div className='flex gap-3 m-auto'>
+                        <FaCheck className='my-auto text-lg min-w-7' style={{ color: style.primary }} />
+                        <p className={`${responsive === '400px' ? 'text-base' : 'text-lg'}`} style={{ color: design.info.textColor }}>{design.info.subTitle4}</p>
+                      </div>
+                    )
+                    : ''
+                }
                 {
                   design.info.video && design.info.video !== ''
                     ? (

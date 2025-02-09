@@ -310,7 +310,7 @@ export const Table: React.FC<Props> = ({ edit, pages, setPages, design, index, i
                 {
                   services?.find(service => service._id === design.service?.service)?.plans?.plans.length
                     ? (
-                      <div className={`overflow-x-auto w-full`} style={{ boxShadow: style.design === 'Sombreado' ? `0px 3px 20px 3px ${style.borderColor}10` : '', borderRadius: style.form === 'Redondeadas' ? `${style.borderBlock}px` : '', border: style.design === 'Borde' ? `1px solid ${style.borderColor}10`: '', color: design.info.textColor }}>
+                      <div className={`overflow-x-auto w-full`} style={{ boxShadow: style.design === 'Sombreado' ? `0px 3px 20px 3px ${style.borderColor}10` : '', borderRadius: style.form === 'Redondeadas' ? `${style.borderBlock}px` : '', border: style.design === 'Borde' ? `1px solid ${style.borderColor}`: '', color: design.info.textColor }}>
                         <table className='min-w-full table-auto rounded-xl'>
                           <thead>
                             <tr>
@@ -380,7 +380,7 @@ export const Table: React.FC<Props> = ({ edit, pages, setPages, design, index, i
                 {
                   services?.find(service => service._id === design.service?.service)?.plans?.plans.length
                     ? (
-                      <div className={`overflow-x-auto w-full`} style={{ boxShadow: style.design === 'Sombreado' ? `0px 3px 20px 3px ${style.borderColor}10` : '', borderRadius: style.form === 'Redondeadas' ? `${style.borderBlock}px` : '', border: `1px solid ${style.borderColor}10`, color: design.info.textColor }}>
+                      <div className={`overflow-x-auto w-full`} style={{ boxShadow: style.design === 'Sombreado' ? `0px 3px 20px 3px ${style.borderColor}10` : '', borderRadius: style.form === 'Redondeadas' ? `${style.borderBlock}px` : '', border: `1px solid ${style.borderColor}`, color: design.info.textColor }}>
                         <table className='min-w-full table-auto rounded-xl'>
                           <thead>
                             <tr>

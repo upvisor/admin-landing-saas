@@ -600,7 +600,11 @@ export const Plans: React.FC<Props> = ({ edit, pages, setPages, design, index, i
                               <p className='text-center font-medium text-xl'>{plan.name}</p>
                               <div className='flex gap-2 w-fit m-auto'>
                                 <p className='text-center font-bold text-3xl'>${NumberFormat(Number(plan.price))}</p>
-                                <p className='my-auto'>/ mes</p>
+                                {
+                                  services?.find(service => service._id === design.service?.service)?.typePrice === 'Suscripción'
+                                    ? <p className='my-auto'>/ mes</p>
+                                    : ''
+                                }
                               </div>
                               {
                                 services?.find(service => service._id === design.service?.service)?.plans?.plans[0].characteristics?.length
@@ -661,7 +665,11 @@ export const Plans: React.FC<Props> = ({ edit, pages, setPages, design, index, i
                                 <p className='text-center font-medium text-xl'>{plan.name}</p>
                                 <div className='flex gap-2 w-fit m-auto'>
                                   <p className='text-center font-bold text-3xl'>${NumberFormat(Number(plan.price))}</p>
-                                  <p className='my-auto'>/ mes</p>
+                                  {
+                                    services?.find(service => service._id === design.service?.service)?.typePrice === 'Suscripción'
+                                      ? <p className='my-auto'>/ mes</p>
+                                      : ''
+                                  }
                                 </div>
                                 {
                                   services?.find(service => service._id === design.service?.service)?.plans?.plans[0].characteristics?.length

@@ -398,6 +398,24 @@ export const Lead1: React.FC<Props> = ({ edit, pages, setPages, design, index, i
                     }
                   }} className={`${responsive === '400px' ? 'text-base' : 'text-lg'} p-1 border bg-transparent w-96`} style={{ color: design.info.textColor }} />
                 </div>
+                <div className='flex gap-3'>
+                  <FaCheck className='my-auto text-lg' style={{ color: style.primary }} />
+                  <input value={design.info.subTitle4} onChange={(e: any) => {
+                    if (inde !== undefined) {
+                      const oldFunnels = [...funnels!]
+                      oldFunnels[inde].steps[ind].design![index].info.subTitle4 = e.target.value
+                      setFunnels(oldFunnels)
+                    } else if (indx !== undefined) {
+                      const oldServices = [...services!]
+                      oldServices[indx].steps[ind].design![index].info.subTitle4 = e.target.value
+                      setServices(oldServices)
+                    } else {
+                      const oldPages = [...pages]
+                      oldPages[ind].design[index].info.subTitle4 = e.target.value
+                      setPages(oldPages)
+                    }
+                  }} className={`${responsive === '400px' ? 'text-base' : 'text-lg'} p-1 border bg-transparent w-96`} style={{ color: design.info.textColor }} />
+                </div>
               </div>
               <div className='w-1/2 flex'>
                 <div className={`flex flex-col gap-4 h-fit m-auto w-full p-6 max-w-[500px]`} style={{ boxShadow: style.design === 'Sombreado' ? `0px 3px 20px 3px ${style.borderColor}10` : '', borderRadius: style.form === 'Redondeadas' ? `${style.borderBlock}px` : '', border: style.design === 'Borde' ? `1px solid ${style.borderColor}` : '', color: design.info.textColor }}>
@@ -520,18 +538,46 @@ export const Lead1: React.FC<Props> = ({ edit, pages, setPages, design, index, i
                   style={{ color: design.info.textColor }}
                   dangerouslySetInnerHTML={{ __html: design.info.description ? design.info.description : '' }}
                 />
-                <div className='flex gap-3'>
-                  <FaCheck className='my-auto text-lg min-w-7' style={{ color: style.primary }} />
-                  <p className={`${responsive === '400px' ? 'text-base' : 'text-lg'}`} style={{ color: design.info.textColor }}>{design.info.subTitle}</p>
-                </div>
-                <div className='flex gap-3'>
-                  <FaCheck className='my-auto text-lg min-w-7' style={{ color: style.primary }} />
-                  <p className={`${responsive === '400px' ? 'text-base' : 'text-lg'}`} style={{ color: design.info.textColor }}>{design.info.subTitle2}</p>
-                </div>
-                <div className='flex gap-3'>
-                  <FaCheck className='my-auto text-lg min-w-7' style={{ color: style.primary }} />
-                  <p className={`${responsive === '400px' ? 'text-base' : 'text-lg'}`} style={{ color: design.info.textColor }}>{design.info.subTitle3}</p>
-                </div>
+                {
+                  design.info.subTitle && design.info.subTitle !== ''
+                    ? (
+                      <div className='flex gap-3'>
+                        <FaCheck className='my-auto text-lg min-w-7' style={{ color: style.primary }} />
+                        <p className={`${responsive === '400px' ? 'text-base' : 'text-lg'}`} style={{ color: design.info.textColor }}>{design.info.subTitle}</p>
+                      </div>
+                    )
+                    : ''
+                }
+                {
+                  design.info.subTitle2 && design.info.subTitle2 !== ''
+                    ? (
+                      <div className='flex gap-3'>
+                        <FaCheck className='my-auto text-lg min-w-7' style={{ color: style.primary }} />
+                        <p className={`${responsive === '400px' ? 'text-base' : 'text-lg'}`} style={{ color: design.info.textColor }}>{design.info.subTitle2}</p>
+                      </div>
+                    )
+                    : ''
+                }
+                {
+                  design.info.subTitle3 && design.info.subTitle3 !== ''
+                    ? (
+                      <div className='flex gap-3'>
+                        <FaCheck className='my-auto text-lg min-w-7' style={{ color: style.primary }} />
+                        <p className={`${responsive === '400px' ? 'text-base' : 'text-lg'}`} style={{ color: design.info.textColor }}>{design.info.subTitle3}</p>
+                      </div>
+                    )
+                    : ''
+                }
+                {
+                  design.info.subTitle4 && design.info.subTitle4 !== ''
+                    ? (
+                      <div className='flex gap-3'>
+                        <FaCheck className='my-auto text-lg min-w-7' style={{ color: style.primary }} />
+                        <p className={`${responsive === '400px' ? 'text-base' : 'text-lg'}`} style={{ color: design.info.textColor }}>{design.info.subTitle4}</p>
+                      </div>
+                    )
+                    : ''
+                }
               </div>
               <div className={`${responsive === '400px' ? 'w-full' : 'w-1/2'} flex`}>
                 {
